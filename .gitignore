@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+output/
+tmp/
+benchmarks/neurips-tables/cache/
+benchmarks/neurips-tables/materialized/
+

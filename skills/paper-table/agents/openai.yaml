@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Table"
+  short_description: "Turn experiment data into publication-ready academic tables"
+  default_prompt: "Use $paper-table to diagnose my experiment data and generate a publication-ready table."
