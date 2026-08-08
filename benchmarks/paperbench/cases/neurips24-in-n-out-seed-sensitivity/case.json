@@ -1,0 +1,238 @@
+{
+  "id": "neurips24-in-n-out-seed-sensitivity",
+  "input_tier": "recovered_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/510d0935b543a29d686f93fa52d1c288-Paper-Conference.pdf",
+  "source_case_id": "n2024-510d0935b5-p19-t1",
+  "reference": {
+    "page": 19,
+    "table": "Table 4",
+    "image": "y_reference.png",
+    "sha256": "97786d9328b14c456719274e75e1a6dd5704333dd46e0e716fbd3e67f14d1a04",
+    "render_dpi": 144,
+    "page_crop_px": [
+      210,
+      145,
+      1015,
+      410
+    ]
+  },
+  "license": {
+    "redistribution": "research excerpt",
+    "source_terms_control": true
+  },
+  "limitations": [
+    "Seed rows and the displayed Avg/Std rows were manually recovered; the source table does not state whether Std uses a sample or population convention."
+  ],
+  "schema_version": "2.0",
+  "task": "experimental-data-to-publication-table",
+  "semantic_contract": {
+    "claim": {
+      "text": "The five published random seeds show modest variation; preserve the reported Avg and Std rows without treating them as competing methods.",
+      "priority_metric_keys": [
+        "lpips",
+        "musiq",
+        "fid"
+      ]
+    },
+    "row_identity_key": "seed",
+    "comparison_groups": [
+      {
+        "id": "random_seeds",
+        "row_values": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "excluded_row_values": [
+          "Avg",
+          "Std"
+        ],
+        "metric_keys": [
+          "lpips",
+          "musiq",
+          "fid"
+        ]
+      }
+    ],
+    "statistics": {
+      "aggregation_status": "publication_only",
+      "uncertainty_kind": "published_summary_row",
+      "independent_run_count": 5,
+      "source": "Five seed rows plus author-published Avg and Std rows were manually recovered; the benchmark does not relabel the reported Std as SD, SE, or a confidence interval."
+    },
+    "allowed_transformations": [
+      "equivalent_latex_or_html",
+      "consistent_precision_formatting",
+      "whitespace_and_rule_adjustment",
+      "row_reordering_within_comparison_group",
+      "split_metric_columns_into_semantic_panels_with_repeated_identity"
+    ],
+    "forbidden_inferences": [
+      "change_observed_values",
+      "invent_runs_or_sample_counts",
+      "reinterpret_uncertainty_without_evidence",
+      "compare_rows_outside_declared_groups",
+      "mark_significance_without_a_declared_test",
+      "treat_summary_rows_as_competing_methods",
+      "reinterpret_published_std_without_a_declared_convention"
+    ],
+    "rendering_constraints": {
+      "target_width": "single_column",
+      "max_width_pt": 234.5,
+      "color_mode": "grayscale_safe",
+      "editable": true,
+      "outputs": [
+        "latex",
+        "html"
+      ]
+    },
+    "inquiry_profile": {
+      "fields": [
+        {
+          "id": "claim",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "The five published random seeds show modest variation; preserve the reported Avg and Std rows without treating them as competing methods.",
+          "acceptable_default": "produce a conservative lookup-first table",
+          "rationale": "The intended claim changes hierarchy and emphasis, but a conservative draft remains possible.",
+          "mask_paths": [
+            "semantic_contract.claim",
+            "x.caption"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_directions",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "lpips": "min",
+            "musiq": "max",
+            "fid": "min"
+          },
+          "rationale": "Best-value emphasis is invalid without the optimization direction.",
+          "mask_paths": [
+            "x.columns.*.direction"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_units",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "lpips": "dimensionless",
+            "musiq": "score",
+            "fid": "score"
+          },
+          "rationale": "A numerically correct token can still make a false claim under the wrong unit.",
+          "mask_paths": [
+            "x.columns.*.unit"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "uncertainty_kind",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": "published Std summary row; convention not stated in the table",
+          "rationale": "SD, SE, and confidence intervals are not interchangeable.",
+          "mask_paths": [
+            "semantic_contract.statistics.uncertainty_kind",
+            "x.rows.*.*.sd",
+            "x.rows.*.*.se",
+            "x.rows.*.*.ci90",
+            "x.rows.*.*.ci95",
+            "x.caption",
+            "x.notes",
+            "x.provenance"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "independent_run_count",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": 5,
+          "answer_status": "available",
+          "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
+          "mask_paths": [
+            "semantic_contract.statistics.independent_run_count",
+            "x.provenance.seeds",
+            "x.caption",
+            "x.notes"
+          ]
+        },
+        {
+          "id": "comparison_groups",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": [
+            {
+              "id": "random_seeds",
+              "row_values": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+              ],
+              "excluded_row_values": [
+                "Avg",
+                "Std"
+              ],
+              "metric_keys": [
+                "lpips",
+                "musiq",
+                "fid"
+              ]
+            }
+          ],
+          "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
+          "mask_paths": [
+            "semantic_contract.comparison_groups",
+            "x.rows.*.rank_eligible"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "target_width",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "single_column",
+          "acceptable_default": "full_width",
+          "rationale": "The target width affects column hierarchy and legibility, but a documented default is safe.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.target_width",
+            "semantic_contract.rendering_constraints.max_width_pt"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "color_preference",
+          "importance": "cosmetic",
+          "ask_when_missing": false,
+          "value": "no author preference; use restrained grayscale-safe styling",
+          "acceptable_default": "grayscale_safe",
+          "rationale": "Personal color preference should not block a scientifically valid draft.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.color_mode"
+          ],
+          "answer_status": "available"
+        }
+      ]
+    }
+  },
+  "source_artifacts": [
+    {
+      "kind": "published_pdf",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/510d0935b543a29d686f93fa52d1c288-Paper-Conference.pdf",
+      "sha256": "8562672f4ceedebaac3328c672326fb7cd34c5d3167c21a59081ffb46e407c39",
+      "redistributed": false
+    }
+  ]
+}

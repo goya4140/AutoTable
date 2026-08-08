@@ -1,0 +1,33 @@
+{
+  "source_pdf": "9149fc44c95ce58e3ca529a1e34c2691.pdf",
+  "source_pdf_sha256": "022d8007d8a2dca926f0df24e262732fdad1db78f3282f1d9e0f9e99a9312583",
+  "page_crop_144dpi": [370, 490, 850, 650],
+  "case": {
+    "id": "neurips24-octreeocc-initialization",
+    "input_tier": "recovered_table",
+    "venue": "NeurIPS",
+    "year": 2024,
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/9149fc44c95ce58e3ca529a1e34c2691-Paper-Conference.pdf",
+    "source_case_id": "n2024-9149fc44c9-p15-t1",
+    "reference": {"page": 15, "table": "Table 8", "image": "y_reference.png", "sha256": "PENDING"},
+    "license": {"redistribution": "research excerpt", "source_terms_control": true},
+    "limitations": ["Cells were manually recovered and visually checked against the pinned official PDF; underlying runs and uncertainty are unavailable."]
+  },
+  "x": {
+    "title": "Octree initialization ablation",
+    "label": "tab:octree-initialization",
+    "caption": "Effect of octree query initialization on semantic occupancy mIoU.",
+    "columns": [
+      {"key": "method", "label": "Initialization method", "kind": "text"},
+      {"key": "miou", "label": "mIoU", "kind": "metric", "direction": "max", "precision": 2}
+    ],
+    "rows": [
+      {"method": "Randomly initialised queries", "miou": 34.91},
+      {"method": "Voxel features from FLoSP", "miou": 35.72},
+      {"method": "Semantic-Guided Octree Initialization", "miou": 37.40}
+    ],
+    "emphasis": {"best": "bold", "second": "none", "scope": "all"},
+    "notes": ["Higher mIoU is better; no uncertainty was reported in the source table."],
+    "provenance": {"observed": true, "input_tier": "recovered_table"}
+  }
+}

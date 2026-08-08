@@ -10,7 +10,7 @@ Not every paper releases raw runs. PaperBench therefore records the strongest av
 - `canonical_table`: de-styled cells, metric directions, comparison groups, and provenance; supports content selection and table design evaluation.
 - `recovered_table`: cells recovered from a PDF/LaTeX source and manually verified; supports layout generation but not claims about experiment aggregation.
 
-The bundled mini set contains three `recovered_table`, two `canonical_table`, and one `raw_runs` case. SWT-Bench reconstructs published Table 4 from author-released per-instance reports: 6 models × 276 instances produce 1,656 records, while change coverage uses the 273 instances with countable gold coverage. RankUp is generated from a pinned author-released three-seed aggregate CSV. AgentBoard maps a pinned author-site JSON to the exact Table 3 header and first two contiguous rows; the case is deliberately restricted because the source has 13 models while the final paper has 19. These are real seed cases for end-to-end repository tests, not a statistically representative leaderboard.
+The bundled mini set contains seven `recovered_table`, two `canonical_table`, and one `raw_runs` case. Four recovered cases are rebuilt from pinned official-PDF pages with fixed 144-dpi crop coordinates and manually checked cells: OctreeOcc initialization, In-N-Out seed sensitivity, EPQ runtime thresholds, and SPEAR layer-depth trade-offs. SWT-Bench reconstructs published Table 4 from author-released per-instance reports: 6 models × 276 instances produce 1,656 records, while change coverage uses the 273 instances with countable gold coverage. RankUp is generated from a pinned author-released three-seed aggregate CSV. AgentBoard maps a pinned author-site JSON to the exact Table 3 header and first two contiguous rows; the case is deliberately restricted because the source has 13 models while the final paper has 19. These are real seed cases for end-to-end repository tests, not a statistically representative leaderboard.
 
 ## Case layout
 
@@ -29,6 +29,7 @@ Generated artifacts are written to `output/paperbench/<case-id>/` and are not so
 
 ```bash
 python benchmarks/paperbench/build_seed.py
+python benchmarks/paperbench/build_verified_pdf_cases.py --cache-dir benchmarks/neurips-tables/cache/2024
 python benchmarks/paperbench/build_rankup_case.py
 python benchmarks/paperbench/build_agentboard_case.py
 python benchmarks/paperbench/build_swtbench_case.py --artifact-dir /path/to/downloaded/swt-lite-zips
@@ -84,7 +85,7 @@ The runner appends `TURN_REQUEST.json TURN_RESPONSE.json` to the adapter command
 - `{"action":"ask","questions":[{"field_id":"...","text":"..."}]}`; or
 - `{"action":"submit","candidate_spec":{...},"resolved_fields":{...},"used_answer_fields":[],"assumed_fields":[],"applied_answer_fields":[],"final_status":"verified"}`.
 
-The simulated author answers only fields actually hidden in that scenario and returns `unavailable` for irrelevant questions. Scoring verifies the trace, the resolved value, the final semantic contract, rendered numeric fidelity, and field-specific output evidence. Merely claiming that an answer was used does not pass. The bundled rule adapter is an executable protocol baseline; it detects missing semantics only from the public request and never receives scenario gold.
+The simulated author answers only fields actually hidden in that scenario and returns `unavailable` for irrelevant questions. Scoring verifies the trace, the resolved value, the final semantic contract, rendered numeric fidelity, and field-specific output evidence. Merely claiming that an answer was used does not pass. The ten bundled cases produce 80 single-field scenarios. The bundled rule adapter is an executable protocol baseline; it detects missing semantics only from the public request and never receives scenario gold.
 
 For true per-run inputs, use the deterministic long-form aggregator:
 

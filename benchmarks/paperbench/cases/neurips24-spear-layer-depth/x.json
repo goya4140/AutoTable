@@ -1,0 +1,82 @@
+{
+  "title": "Layer-depth reconstruction trade-off",
+  "label": "tab:spear-layer-depth",
+  "caption": "Effect of attacked-layer depth on SPEAR reconstruction quality and time for 100 TinyImageNet batches of size 20.",
+  "columns": [
+    {
+      "key": "layer",
+      "label": "Layer depth",
+      "kind": "text"
+    },
+    {
+      "key": "mae",
+      "label": "MAE (1e-6)",
+      "kind": "metric",
+      "direction": "min",
+      "precision": 2,
+      "unit": "1e-6 dimensionless"
+    },
+    {
+      "key": "accuracy",
+      "label": "Accuracy",
+      "kind": "metric",
+      "direction": "max",
+      "precision": 0,
+      "unit": "%"
+    },
+    {
+      "key": "time_per_batch",
+      "label": "Time/batch",
+      "kind": "metric",
+      "direction": "min",
+      "precision": 1,
+      "unit": "minutes/batch"
+    }
+  ],
+  "rows": [
+    {
+      "layer": "1",
+      "mae": 1.06,
+      "accuracy": 100,
+      "time_per_batch": 2.3
+    },
+    {
+      "layer": "2",
+      "mae": 1.33,
+      "accuracy": 100,
+      "time_per_batch": 2.2
+    },
+    {
+      "layer": "3",
+      "mae": 1.67,
+      "accuracy": 100,
+      "time_per_batch": 5.6
+    },
+    {
+      "layer": "4",
+      "mae": 2.8,
+      "accuracy": 99,
+      "time_per_batch": 19.0
+    },
+    {
+      "layer": "5",
+      "mae": 3.04,
+      "accuracy": 83,
+      "time_per_batch": 70.0
+    }
+  ],
+  "emphasis": {
+    "best": "bold",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "MAE values are displayed in units of 1e-6. Accuracy is percent and time is minutes per batch; no uncertainty was reported."
+  ],
+  "provenance": {
+    "observed": true,
+    "input_tier": "recovered_table",
+    "evaluation_batches": 100,
+    "batch_size": 20
+  }
+}

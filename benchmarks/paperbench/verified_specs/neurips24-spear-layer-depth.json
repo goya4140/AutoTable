@@ -1,0 +1,37 @@
+{
+  "source_pdf": "c13cd7feab4beb1a27981e19e2455916.pdf",
+  "source_pdf_sha256": "c16e5fd11bd92f5a3de5d539aedbc9e74ab3b3c900de447c6db9d725c11460ea",
+  "page_crop_144dpi": [690, 190, 1015, 430],
+  "case": {
+    "id": "neurips24-spear-layer-depth",
+    "input_tier": "recovered_table",
+    "venue": "NeurIPS",
+    "year": 2024,
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/c13cd7feab4beb1a27981e19e2455916-Paper-Conference.pdf",
+    "source_case_id": "n2024-c13cd7feab-p9-t1",
+    "reference": {"page": 9, "table": "Table 4", "image": "y_reference.png", "sha256": "PENDING"},
+    "license": {"redistribution": "research excerpt", "source_terms_control": true},
+    "limitations": ["Values were manually recovered from the official PDF; the 100 batches are evaluation instances, not evidence for an uncertainty estimate."]
+  },
+  "x": {
+    "title": "Layer-depth reconstruction trade-off",
+    "label": "tab:spear-layer-depth",
+    "caption": "Effect of attacked-layer depth on SPEAR reconstruction quality and time for 100 TinyImageNet batches of size 20.",
+    "columns": [
+      {"key": "layer", "label": "Layer depth", "kind": "text"},
+      {"key": "mae", "label": "MAE (1e-6)", "kind": "metric", "direction": "min", "precision": 2},
+      {"key": "accuracy", "label": "Accuracy", "kind": "metric", "direction": "max", "precision": 0},
+      {"key": "time_per_batch", "label": "Time/batch", "kind": "metric", "direction": "min", "precision": 1}
+    ],
+    "rows": [
+      {"layer": "1", "mae": 1.06, "accuracy": 100, "time_per_batch": 2.3},
+      {"layer": "2", "mae": 1.33, "accuracy": 100, "time_per_batch": 2.2},
+      {"layer": "3", "mae": 1.67, "accuracy": 100, "time_per_batch": 5.6},
+      {"layer": "4", "mae": 2.80, "accuracy": 99, "time_per_batch": 19.0},
+      {"layer": "5", "mae": 3.04, "accuracy": 83, "time_per_batch": 70.0}
+    ],
+    "emphasis": {"best": "bold", "second": "none", "scope": "all"},
+    "notes": ["MAE values are displayed in units of 1e-6. Accuracy is percent and time is minutes per batch; no uncertainty was reported."],
+    "provenance": {"observed": true, "input_tier": "recovered_table", "evaluation_batches": 100, "batch_size": 20}
+  }
+}

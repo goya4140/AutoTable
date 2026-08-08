@@ -45,7 +45,7 @@ def detect_missing(public_request):
     return None
 
 
-def restore(candidate, field_id, value):
+def restore(candidate, field_id, value, row_identity_key="method"):
     if field_id == "claim":
         candidate["caption"] = value
     elif field_id in {"metric_directions", "metric_units"}:
@@ -64,9 +64,11 @@ def restore(candidate, field_id, value):
         candidate.setdefault("notes", []).append(f"Results summarize {value} independent runs.")
     elif field_id == "comparison_groups":
         excluded = {row for group in value for row in group.get("excluded_row_values", [])}
+        included = {row for group in value for row in group.get("row_values", [])}
+        globally_excluded = excluded - included
         for row in candidate.get("rows", []):
             row.pop("rank_eligible", None)
-            if row.get("method") in excluded:
+            if row.get(row_identity_key) in globally_excluded:
                 row["rank_eligible"] = False
 
 
@@ -78,6 +80,7 @@ def submit(turn_request, answers=None, default_field=None):
     assumed = []
     applied = []
     unavailable = False
+    row_identity_key = public_request["input"]["case"]["semantic_contract"].get("row_identity_key", "method")
     for answer in answers or []:
         if answer.get("status") != "answered":
             unavailable = True
@@ -86,7 +89,7 @@ def submit(turn_request, answers=None, default_field=None):
         resolved[field_id] = value
         used.append(field_id)
         applied.append(field_id)
-        restore(candidate, field_id, value)
+        restore(candidate, field_id, value, row_identity_key)
     if default_field == "color_preference":
         resolved[default_field] = "grayscale_safe"
         assumed.append(default_field)

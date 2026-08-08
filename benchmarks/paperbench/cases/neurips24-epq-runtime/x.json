@@ -1,0 +1,105 @@
+{
+  "title": "Offline-RL runtime comparison",
+  "label": "tab:epq-runtime",
+  "caption": "Epoch runtime for 1,000 gradient steps and runtime to reach normalized average-return thresholds on Hopper-medium.",
+  "columns": [
+    {
+      "key": "method",
+      "label": "Method",
+      "kind": "text"
+    },
+    {
+      "key": "epoch_1000_steps",
+      "label": "1,000 steps",
+      "kind": "metric",
+      "group": "Epoch runtime",
+      "direction": "min",
+      "precision": 1,
+      "unit": "seconds"
+    },
+    {
+      "key": "return_60",
+      "label": "Return 60",
+      "kind": "metric",
+      "group": "Score runtime",
+      "direction": "min",
+      "precision": 1,
+      "unit": "seconds"
+    },
+    {
+      "key": "return_80",
+      "label": "Return 80",
+      "kind": "metric",
+      "group": "Score runtime",
+      "direction": "min",
+      "precision": 1,
+      "unit": "seconds"
+    },
+    {
+      "key": "return_100",
+      "label": "Return 100",
+      "kind": "metric",
+      "group": "Score runtime",
+      "direction": "min",
+      "precision": 1,
+      "unit": "seconds"
+    }
+  ],
+  "rows": [
+    {
+      "method": "CQL",
+      "epoch_1000_steps": 43.1,
+      "return_60": 3540.0,
+      "return_80": null,
+      "return_100": null
+    },
+    {
+      "method": "Onestep",
+      "epoch_1000_steps": 12.6,
+      "return_60": 252.5,
+      "return_80": 568.4,
+      "return_100": null
+    },
+    {
+      "method": "IQL",
+      "epoch_1000_steps": 13.8,
+      "return_60": 1600.2,
+      "return_80": null,
+      "return_100": null
+    },
+    {
+      "method": "MCQ",
+      "epoch_1000_steps": 58.1,
+      "return_60": 31143.4,
+      "return_80": 49359.7,
+      "return_100": null
+    },
+    {
+      "method": "MISA",
+      "epoch_1000_steps": 23.5,
+      "return_60": 4632.7,
+      "return_80": null,
+      "return_100": null
+    },
+    {
+      "method": "EPQ",
+      "epoch_1000_steps": 54.8,
+      "return_60": 3232.2,
+      "return_80": 21920.0,
+      "return_100": 30633.2
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "All runtimes are seconds. Missing values preserve source dashes; lower is better only among methods that reached a given target."
+  ],
+  "provenance": {
+    "observed": true,
+    "input_tier": "recovered_table",
+    "task": "Hopper-medium"
+  }
+}

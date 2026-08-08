@@ -303,6 +303,131 @@ CONTRACTS = {
             target_width="single_column",
         )},
     },
+    "neurips24-octreeocc-initialization": {
+        "claim": {
+            "text": "Semantic-Guided Octree Initialization has the highest published mIoU among the three initialization strategies.",
+            "priority_metric_keys": ["miou"],
+        },
+        "row_identity_key": "method",
+        "comparison_groups": [{
+            "id": "initialization_methods",
+            "row_values": ["Randomly initialised queries", "Voxel features from FLoSP", "Semantic-Guided Octree Initialization"],
+            "metric_keys": ["miou"],
+        }],
+        "statistics": {
+            "aggregation_status": "publication_only",
+            "uncertainty_kind": "none",
+            "independent_run_count": None,
+            "source": "The publication table exposes one mIoU point estimate per initialization method.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN,
+        "rendering_constraints": {"target_width": "single_column", "max_width_pt": 234.5, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="Semantic-Guided Octree Initialization has the highest published mIoU among the three initialization strategies.",
+            directions={"miou": "max"},
+            units={"miou": "%"},
+            uncertainty="none reported",
+            uncertainty_blocking=False,
+            run_count=None,
+            comparisons="All three initialization methods are compared under the same published ablation setting.",
+            target_width="single_column",
+        )},
+    },
+    "neurips24-in-n-out-seed-sensitivity": {
+        "claim": {
+            "text": "The five published random seeds show modest variation; preserve the reported Avg and Std rows without treating them as competing methods.",
+            "priority_metric_keys": ["lpips", "musiq", "fid"],
+        },
+        "row_identity_key": "seed",
+        "comparison_groups": [{
+            "id": "random_seeds",
+            "row_values": ["1", "2", "3", "4", "5"],
+            "excluded_row_values": ["Avg", "Std"],
+            "metric_keys": ["lpips", "musiq", "fid"],
+        }],
+        "statistics": {
+            "aggregation_status": "publication_only",
+            "uncertainty_kind": "published_summary_row",
+            "independent_run_count": 5,
+            "source": "Five seed rows plus author-published Avg and Std rows were manually recovered; the benchmark does not relabel the reported Std as SD, SE, or a confidence interval.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN + ["treat_summary_rows_as_competing_methods", "reinterpret_published_std_without_a_declared_convention"],
+        "rendering_constraints": {"target_width": "single_column", "max_width_pt": 234.5, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="The five published random seeds show modest variation; preserve the reported Avg and Std rows without treating them as competing methods.",
+            directions={"lpips": "min", "musiq": "max", "fid": "min"},
+            units={"lpips": "dimensionless", "musiq": "score", "fid": "score"},
+            uncertainty="published Std summary row; convention not stated in the table",
+            uncertainty_blocking=True,
+            run_count=5,
+            comparisons="Only seed rows 1–5 are rank-eligible; Avg and Std are descriptive summary rows.",
+            target_width="single_column",
+        )},
+    },
+    "neurips24-epq-runtime": {
+        "claim": {
+            "text": "Runtime is target-dependent: Onestep is fastest at the reported 60 and 80 return thresholds, while EPQ is the only method reported to reach 100.",
+            "priority_metric_keys": ["epoch_1000_steps", "return_60", "return_80", "return_100"],
+        },
+        "row_identity_key": "method",
+        "comparison_groups": [
+            {"id": "epoch_runtime", "row_values": ["CQL", "Onestep", "IQL", "MCQ", "MISA", "EPQ"], "metric_keys": ["epoch_1000_steps"]},
+            {"id": "return_60_runtime", "row_values": ["CQL", "Onestep", "IQL", "MCQ", "MISA", "EPQ"], "metric_keys": ["return_60"]},
+            {"id": "return_80_runtime", "row_values": ["Onestep", "MCQ", "EPQ"], "excluded_row_values": ["CQL", "IQL", "MISA"], "metric_keys": ["return_80"]},
+            {"id": "return_100_runtime", "row_values": ["EPQ"], "excluded_row_values": ["CQL", "Onestep", "IQL", "MCQ", "MISA"], "metric_keys": ["return_100"]},
+        ],
+        "statistics": {
+            "aggregation_status": "publication_only",
+            "uncertainty_kind": "none",
+            "independent_run_count": None,
+            "source": "The publication reports point runtimes on Hopper-medium; dashes are preserved as missing/not reached rather than numeric zero.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN + ["convert_not_reached_to_zero", "declare_one_method_globally_fastest_across_different_targets"],
+        "rendering_constraints": {"target_width": "full_width", "max_width_pt": 469, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="Runtime is target-dependent: Onestep is fastest at the reported 60 and 80 return thresholds, while EPQ is the only method reported to reach 100.",
+            directions={"epoch_1000_steps": "min", "return_60": "min", "return_80": "min", "return_100": "min"},
+            units={"epoch_1000_steps": "seconds", "return_60": "seconds", "return_80": "seconds", "return_100": "seconds"},
+            uncertainty="none reported",
+            uncertainty_blocking=False,
+            run_count=None,
+            comparisons="Eligibility differs by threshold because a dash means the target was not reported as reached; compare only non-missing cells within each threshold.",
+        )},
+    },
+    "neurips24-spear-layer-depth": {
+        "claim": {
+            "text": "SPEAR remains nearly exact through layer 4, but reconstruction time grows sharply with depth; layer 2 is fastest while layer 1 has the lowest MAE.",
+            "priority_metric_keys": ["mae", "accuracy", "time_per_batch"],
+        },
+        "row_identity_key": "layer",
+        "comparison_groups": [{
+            "id": "attacked_layer_depths",
+            "row_values": ["1", "2", "3", "4", "5"],
+            "metric_keys": ["mae", "accuracy", "time_per_batch"],
+        }],
+        "statistics": {
+            "aggregation_status": "publication_only",
+            "uncertainty_kind": "none",
+            "independent_run_count": None,
+            "source": "The publication reports point values over 100 TinyImageNet batches of size 20; no uncertainty interval is shown.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN + ["infer_uncertainty_from_the_100_batch_count", "treat_layer_depth_as_independent_random_replicates"],
+        "rendering_constraints": {"target_width": "single_column", "max_width_pt": 234.5, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="SPEAR remains nearly exact through layer 4, but reconstruction time grows sharply with depth; layer 2 is fastest while layer 1 has the lowest MAE.",
+            directions={"mae": "min", "accuracy": "max", "time_per_batch": "min"},
+            units={"mae": "1e-6 dimensionless", "accuracy": "%", "time_per_batch": "minutes/batch"},
+            uncertainty="none reported",
+            uncertainty_blocking=False,
+            run_count=None,
+            comparisons="Layer depths 1–5 are comparable within each metric under the same reconstruction setup.",
+            target_width="single_column",
+        )},
+    },
 }
 
 
@@ -317,6 +442,10 @@ UNITS = {
         for metric in ("progress", "success")
     },
     "neurips24-swtbench-models": {"well_formed": "%", "success": "%", "fail_to_any": "%", "coverage": "%"},
+    "neurips24-octreeocc-initialization": {"miou": "%"},
+    "neurips24-in-n-out-seed-sensitivity": {"lpips": "dimensionless", "musiq": "score", "fid": "score"},
+    "neurips24-epq-runtime": {"epoch_1000_steps": "seconds", "return_60": "seconds", "return_80": "seconds", "return_100": "seconds"},
+    "neurips24-spear-layer-depth": {"mae": "1e-6 dimensionless", "accuracy": "%", "time_per_batch": "minutes/batch"},
 }
 
 
