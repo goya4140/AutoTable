@@ -1,5 +1,7 @@
 # Dataset landscape and design choices
 
+For the full task taxonomy, dataset audit, metric failure analysis, inquiry evaluation, and proposed benchmark architecture, see [the detailed table-generation survey](table-generation-research.md).
+
 PaperTable is a generation benchmark, not a table-recognition benchmark. The distinction matters: recognition datasets usually define `image → structure`, while we need `experimental data → publication table`.
 
 | Dataset/work | Available pairing | Scale | What PaperTable borrows | Why it is not sufficient alone |
@@ -32,4 +34,3 @@ PaperBench adds the missing experimental-paper layer:
 3. Fall back to LaTeX/PDF cell recovery only when the input tier is recorded honestly.
 4. Curate train/reference/test by paper and research area.
 5. Collect at least three independent human ratings per test pair before publishing aesthetic leaderboard claims.
-

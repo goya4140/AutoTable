@@ -15,6 +15,7 @@ PaperTable studies code-first generation of publication-quality academic tables.
 - Candidate discovery manifests: 150 NeurIPS, 25 ICLR, and 25 ICML tables from official 2024 proceedings. Discovery cases are explicitly kept separate from paired benchmark cases.
 - External adapters/registry for TableVisBench and TABVERSE rather than silently relicensing their data.
 - A [dataset landscape](docs/dataset-landscape.md) covering TableBank, PubTables-1M, SciTSR, TabLeX, SciGen, TABVERSE, TableVisBench, and TASTE.
+- A detailed [table-generation dataset and evaluation survey](docs/table-generation-research.md), including task boundaries, metric failure modes, an inquiry benchmark, and implications for the next Skill design.
 
 ## Dataset semantics
 
