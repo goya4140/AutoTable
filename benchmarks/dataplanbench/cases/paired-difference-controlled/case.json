@@ -1,0 +1,24 @@
+{
+  "schema_version": "dataplanbench-case-v1",
+  "id": "paired-difference-controlled",
+  "status": "synthetic_gold",
+  "input": {
+    "path": "planning_input.json",
+    "sha256": "7dea738e88a03c0ef20865b308c4d54dacfb6d2acb92dc14730fa7947f9b1c26"
+  },
+  "expected_report": {
+    "path": "expected_report.json",
+    "sha256": "977000a103c38148fd7236e59186a87e764f69d56573d5801f45779dc7862415"
+  },
+  "table_spec": {
+    "path": "acquisition_table.json",
+    "sha256": "eb29cbe299413ffc75a74a4841ca826ada02b5ca72045c7000a7b53e58ea63cc"
+  },
+  "gold_properties": [
+    "paired differences are aligned by declared run ID",
+    "positive differences favor the candidate for either metric direction",
+    "existing grid defects are repaired before new paired IDs",
+    "precision counts use paired-difference SD rather than marginal group SD",
+    "zero paired-difference SD remains unresolved"
+  ]
+}

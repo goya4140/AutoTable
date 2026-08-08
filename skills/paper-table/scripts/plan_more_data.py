@@ -314,7 +314,7 @@ def plan(payload: dict) -> dict:
     known_requirements = [cell["required_total_runs"] for cell in precision_cells if cell["required_total_runs"] is not None]
     unresolved = [cell for cell in precision_cells if cell["required_total_runs"] is None]
     if pairing_mode == "fixed_across_groups":
-        common_total = max(known_requirements, default=len(expected_run_ids))
+        common_total = max([len(expected_run_ids), *known_requirements])
         precision_request = {
             "mode": "add_new_run_ids_across_every_expected_group",
             "provisional_common_total_runs": common_total,

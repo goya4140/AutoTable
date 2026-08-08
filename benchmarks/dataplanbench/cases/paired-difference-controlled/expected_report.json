@@ -1,0 +1,241 @@
+{
+  "schema_version": "paper-table-paired-difference-plan-report-v1",
+  "repeat_unit": "independent training seed",
+  "independence": "independent",
+  "pairing": {
+    "mode": "baseline_vs_all_fixed_ids",
+    "method_key": "method",
+    "baseline": "Baseline",
+    "candidates": [
+      "Method-A",
+      "Method-B"
+    ],
+    "expected_contexts": [
+      {
+        "dataset": "Dataset-1"
+      },
+      {
+        "dataset": "Dataset-2"
+      }
+    ],
+    "expected_run_ids": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "expected_run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708"
+  },
+  "completeness": {
+    "repair_requests": [
+      {
+        "context": {
+          "dataset": "Dataset-1"
+        },
+        "method": "Method-A",
+        "run_id": 4,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      },
+      {
+        "context": {
+          "dataset": "Dataset-2"
+        },
+        "method": "Baseline",
+        "run_id": 3,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      },
+      {
+        "context": {
+          "dataset": "Dataset-2"
+        },
+        "method": "Baseline",
+        "run_id": 4,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      }
+    ],
+    "invalid_metric_requests": [
+      {
+        "context": {
+          "dataset": "Dataset-2"
+        },
+        "method": "Method-B",
+        "run_id": 4,
+        "metric": "accuracy",
+        "request": "rerun_or_recover_missing_metric"
+      }
+    ],
+    "repair_count": 4,
+    "requires_replan_after_repair": true
+  },
+  "precision": {
+    "confidence_level": 0.95,
+    "estimand": "paired_mean_difference",
+    "minimum_pilot_pairs": 5,
+    "maximum_total_pairs": 30,
+    "variance_assumption": "pilot_paired_difference_sd_stable_for_planning_only",
+    "interval_assumption": "t_interval_appropriate_for_paired_difference_distribution",
+    "cells": [
+      {
+        "context": {
+          "dataset": "Dataset-1"
+        },
+        "baseline": "Baseline",
+        "candidate": "Method-A",
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "difference_orientation": "positive_favors_candidate",
+        "complete_pairs": 4,
+        "paired_run_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "paired_run_ids_sha256": "f2f991d74dfbb2edf7f4475dcb7d82989de00a71e44bb11d4a6fbb49442577b6",
+        "mean_improvement": 3.75,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_paired_difference_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_paired_difference_distribution",
+        "paired_difference_sd": 0.5,
+        "current_ci_half_width": 0.7956115763209262,
+        "required_total_pairs": 5,
+        "additional_pairs": 1,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      },
+      {
+        "context": {
+          "dataset": "Dataset-1"
+        },
+        "baseline": "Baseline",
+        "candidate": "Method-B",
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "difference_orientation": "positive_favors_candidate",
+        "complete_pairs": 5,
+        "paired_run_ids": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "paired_run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+        "mean_improvement": 4.0,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_paired_difference_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_paired_difference_distribution",
+        "paired_difference_sd": 1.5811388300841898,
+        "current_ci_half_width": 1.9632431614775552,
+        "required_total_pairs": 7,
+        "additional_pairs": 2,
+        "status": "additional_pairs_provisionally_required",
+        "target_met": false
+      },
+      {
+        "context": {
+          "dataset": "Dataset-2"
+        },
+        "baseline": "Baseline",
+        "candidate": "Method-A",
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "difference_orientation": "positive_favors_candidate",
+        "complete_pairs": 3,
+        "paired_run_ids": [
+          0,
+          1,
+          2
+        ],
+        "paired_run_ids_sha256": "434026bd98ff2d8a2fb346c89ae9de006d1e2a6862832b6b3cd86e51de36d5c5",
+        "mean_improvement": 3.6666666666666665,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_paired_difference_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_paired_difference_distribution",
+        "paired_difference_sd": 2.0816659994661326,
+        "current_ci_half_width": 5.171145012542255,
+        "required_total_pairs": 5,
+        "additional_pairs": 2,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      },
+      {
+        "context": {
+          "dataset": "Dataset-2"
+        },
+        "baseline": "Baseline",
+        "candidate": "Method-B",
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "difference_orientation": "positive_favors_candidate",
+        "complete_pairs": 3,
+        "paired_run_ids": [
+          0,
+          1,
+          2
+        ],
+        "paired_run_ids_sha256": "434026bd98ff2d8a2fb346c89ae9de006d1e2a6862832b6b3cd86e51de36d5c5",
+        "mean_improvement": 3.0,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_paired_difference_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_paired_difference_distribution",
+        "paired_difference_sd": 1.0,
+        "current_ci_half_width": 2.4841377117503263,
+        "required_total_pairs": 5,
+        "additional_pairs": 2,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      }
+    ],
+    "request": {
+      "mode": "add_new_run_ids_for_baseline_and_every_candidate_in_every_context",
+      "provisional_common_total_pairs": 7,
+      "additional_common_run_ids": 2,
+      "contexts": [
+        {
+          "dataset": "Dataset-1"
+        },
+        {
+          "dataset": "Dataset-2"
+        }
+      ],
+      "methods": [
+        "Baseline",
+        "Method-A",
+        "Method-B"
+      ]
+    },
+    "unresolved_cells": 0,
+    "provisional": true
+  },
+  "questions_for_author": [
+    "Can you rerun or recover the listed existing paired cells first, then return the repaired data so paired-difference precision can be recomputed?"
+  ],
+  "notes": [
+    "This report requests observations; it never simulates or imputes experimental outcomes.",
+    "The estimand is the mean within-run candidate improvement over the baseline, not either method's group mean.",
+    "Positive differences always favor the candidate; lower-is-better metrics are sign-reversed before planning.",
+    "Precision projections use the observed paired-difference sample SD in a two-sided Student-t interval and must be recomputed after new pairs arrive.",
+    "Complete existing paired run IDs before starting new paired IDs for every baseline, candidate, and context.",
+    "A zero pilot paired-difference SD is not accepted as proof of zero future variance."
+  ],
+  "provenance": {
+    "source": "deterministic controlled benchmark",
+    "status": "synthetic_gold",
+    "purpose": "test repair-first precision planning for paired baseline differences"
+  }
+}

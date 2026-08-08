@@ -14,5 +14,8 @@ def load_validator():
 
 
 def test_data_acquisition_case_and_safety_mutations_pass():
-    errors, mutations = load_validator().validate_case()
+    validator = load_validator()
+    errors, mutations = validator.validate_case()
     assert errors == [] and mutations == 11
+    errors, mutations = validator.validate_paired_difference_case()
+    assert errors == [] and mutations == 12

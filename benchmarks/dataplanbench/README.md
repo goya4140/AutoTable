@@ -2,9 +2,9 @@
 
 DataPlanBench evaluates whether PaperTable turns incomplete repeated-run evidence into a concrete acquisition request instead of imputing or simulating missing outcomes.
 
-The controlled case contains six method–dataset groups with five declared paired seed IDs. It includes three missing paired runs, one invalid metric cell, pilot groups below the declared minimum, unequal observed variance, and one zero-variance pilot. The planner must repair existing pair IDs first, mark every precision count provisional, use Student-t mean intervals with the observed pilot SD, preserve the common paired grid, and send zero variance for author review.
+Two controlled cases reuse the same six method–dataset groups and five declared seed IDs but target different estimands. Both include three missing runs and one invalid metric cell. The group-mean case tests marginal pilot SD, groups below the declared minimum, and a zero-variance pilot. The paired-difference case aligns every candidate with the baseline by seed, tests direction-aware improvements, and uses the SD of paired differences. Both must repair existing IDs first, preserve the common grid, mark counts provisional, and send zero variance for author review.
 
-Eleven controlled mutations test duplicate IDs, undeclared independence, wrong estimands, missing precision targets or variance/interval assumptions, hidden observed IDs/groups, invalid metric recovery, zero-SD safety, and repair-first author questioning.
+Twenty-three controlled mutations test duplicate IDs, undeclared independence, wrong estimands, missing precision targets or variance/interval assumptions, hidden observed IDs/groups/methods, invalid metric recovery, lower-is-better orientation, zero-SD safety, and repair-first author questioning.
 
 Run:
 

@@ -2,16 +2,22 @@
   "schema_version": "dataplanbench-case-v1",
   "id": "paired-precision-controlled",
   "status": "synthetic_gold",
-  "expected_groups": 6,
-  "expected_run_ids": 5,
-  "input": {"path": "planning_input.json", "sha256": "8426f00c447c522afaf983cb980b1c5b77eb27c62276b1c0c82fcdbe5424a139"},
-  "expected_report": {"path": "expected_report.json", "sha256": "506b46c5f69a8df1e15725bd9acf6f673a7e26d0ca42b82d96c2e9a84493cb6c"},
-  "table_spec": {"path": "acquisition_table.json", "sha256": "ddcd94a9da848d49ce8d3483aca2b52b2024cddcf7f18cba46a5ebc98ec545cc"},
+  "input": {
+    "path": "planning_input.json",
+    "sha256": "8426f00c447c522afaf983cb980b1c5b77eb27c62276b1c0c82fcdbe5424a139"
+  },
+  "expected_report": {
+    "path": "expected_report.json",
+    "sha256": "506b46c5f69a8df1e15725bd9acf6f673a7e26d0ca42b82d96c2e9a84493cb6c"
+  },
+  "table_spec": {
+    "path": "acquisition_table.json",
+    "sha256": "ddcd94a9da848d49ce8d3483aca2b52b2024cddcf7f18cba46a5ebc98ec545cc"
+  },
   "gold_properties": [
     "missing existing paired runs are requested before new run IDs",
     "invalid metric cells receive explicit recovery requests",
-    "precision counts use Student-t intervals and observed pilot SD",
-    "zero pilot SD never claims a precision target is met",
-    "the plan is marked provisional and requires recomputation after repair"
+    "group-mean precision counts use Student-t intervals and observed pilot SD",
+    "zero pilot SD never claims a precision target is met"
   ]
 }

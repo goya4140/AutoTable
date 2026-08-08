@@ -10,7 +10,8 @@ from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
-CASE_DIR = HERE / "cases/paired-precision-controlled"
+MEAN_CASE_DIR = HERE / "cases/paired-precision-controlled"
+DIFFERENCE_CASE_DIR = HERE / "cases/paired-difference-controlled"
 
 
 def digest(path: Path) -> str:
@@ -34,19 +35,19 @@ def expects_error(planner, payload: dict, fragment: str) -> bool:
 
 def validate_case() -> tuple[list[str], int]:
     errors = []
-    case = json.loads((CASE_DIR / "case.json").read_text())
+    case = json.loads((MEAN_CASE_DIR / "case.json").read_text())
     for descriptor_key in ("input", "expected_report", "table_spec"):
         descriptor = case[descriptor_key]
-        path = CASE_DIR / descriptor["path"]
+        path = MEAN_CASE_DIR / descriptor["path"]
         if not path.is_file() or digest(path) != descriptor["sha256"]:
             errors.append(f"artifact hash mismatch: {descriptor['path']}")
     if errors:
         return errors, 0
     builder = load(HERE / "build_case.py", "dataplanbench_builder")
     planner = builder.load_planner()
-    payload = json.loads((CASE_DIR / case["input"]["path"]).read_text())
-    expected = json.loads((CASE_DIR / case["expected_report"]["path"]).read_text())
-    table = json.loads((CASE_DIR / case["table_spec"]["path"]).read_text())
+    payload = json.loads((MEAN_CASE_DIR / case["input"]["path"]).read_text())
+    expected = json.loads((MEAN_CASE_DIR / case["expected_report"]["path"]).read_text())
+    table = json.loads((MEAN_CASE_DIR / case["table_spec"]["path"]).read_text())
     recomputed = planner.plan(payload)
     if recomputed != expected:
         errors.append("data-acquisition report is not reproducible from raw runs")
@@ -94,9 +95,103 @@ def validate_case() -> tuple[list[str], int]:
     return errors, len(mutations)
 
 
+def validate_paired_difference_case() -> tuple[list[str], int]:
+    errors = []
+    case = json.loads((DIFFERENCE_CASE_DIR / "case.json").read_text())
+    for descriptor_key in ("input", "expected_report", "table_spec"):
+        descriptor = case[descriptor_key]
+        path = DIFFERENCE_CASE_DIR / descriptor["path"]
+        if not path.is_file() or digest(path) != descriptor["sha256"]:
+            errors.append(f"artifact hash mismatch: paired-difference/{descriptor['path']}")
+    if errors:
+        return errors, 0
+    builder = load(HERE / "build_case.py", "dataplanbench_difference_builder")
+    planner = builder.load_planner(builder.DIFFERENCE_PLANNER_PATH)
+    payload = json.loads((DIFFERENCE_CASE_DIR / case["input"]["path"]).read_text())
+    expected = json.loads((DIFFERENCE_CASE_DIR / case["expected_report"]["path"]).read_text())
+    table = json.loads((DIFFERENCE_CASE_DIR / case["table_spec"]["path"]).read_text())
+    recomputed = planner.plan(payload)
+    if recomputed != expected:
+        errors.append("paired-difference report is not reproducible from raw runs")
+    if builder.paired_difference_table_spec(recomputed) != table:
+        errors.append("paired-difference table is not reproducible from the report")
+    if recomputed["completeness"]["repair_count"] != 4:
+        errors.append("paired-difference case must expose three missing cells and one invalid metric")
+    request = recomputed["precision"]["request"]
+    if request.get("provisional_common_total_pairs") != 7 or request.get("additional_common_run_ids") != 2:
+        errors.append("paired-difference provisional common-pair request changed")
+    dataset_one_b = next(
+        cell for cell in recomputed["precision"]["cells"]
+        if cell["context"] == {"dataset": "Dataset-1"} and cell["candidate"] == "Method-B"
+    )
+    if dataset_one_b["paired_difference_sd"] != 1.5811388300841898 or dataset_one_b["required_total_pairs"] != 7:
+        errors.append("paired-difference SD or required-pair calculation changed")
+    if recomputed["precision"]["estimand"] != "paired_mean_difference" or not recomputed["precision"]["provisional"]:
+        errors.append("paired estimand or provisional status disappeared")
+
+    mutations = []
+    duplicate = copy.deepcopy(payload)
+    duplicate["runs"].append(dict(duplicate["runs"][0]))
+    mutations.append(expects_error(planner, duplicate, "duplicate run id"))
+    dependent = copy.deepcopy(payload)
+    dependent["independence"] = "unknown"
+    mutations.append(expects_error(planner, dependent, "explicitly declared"))
+    wrong_estimand = copy.deepcopy(payload)
+    wrong_estimand["planning"]["estimand"] = "group_mean"
+    mutations.append(expects_error(planner, wrong_estimand, "paired_mean_difference"))
+    no_variance = copy.deepcopy(payload)
+    no_variance["planning"].pop("variance_assumption")
+    mutations.append(expects_error(planner, no_variance, "variance_assumption"))
+    no_interval = copy.deepcopy(payload)
+    no_interval["planning"].pop("interval_assumption")
+    mutations.append(expects_error(planner, no_interval, "interval_assumption"))
+    hidden_id = copy.deepcopy(payload)
+    hidden_id["pairing"]["expected_run_ids"] = [0, 1, 2, 3]
+    mutations.append(expects_error(planner, hidden_id, "outside expected_run_ids"))
+    hidden_context = copy.deepcopy(payload)
+    hidden_context["pairing"]["expected_contexts"] = [{"dataset": "Dataset-1"}]
+    mutations.append(expects_error(planner, hidden_context, "outside expected_contexts"))
+    hidden_method = copy.deepcopy(payload)
+    hidden_method["pairing"]["candidates"] = ["Method-A"]
+    mutations.append(expects_error(planner, hidden_method, "outside baseline and candidates"))
+    zero_difference = copy.deepcopy(payload)
+    baseline_values = {
+        (row["dataset"], row["seed"]): row["accuracy_pp"]
+        for row in zero_difference["runs"] if row["method"] == "Baseline"
+    }
+    for row in zero_difference["runs"]:
+        if row["dataset"] == "Dataset-1" and row["method"] == "Method-B":
+            row["accuracy_pp"] = baseline_values[(row["dataset"], row["seed"])] + 2
+    zero_report = planner.plan(zero_difference)
+    zero_cell = next(
+        cell for cell in zero_report["precision"]["cells"]
+        if cell["context"] == {"dataset": "Dataset-1"} and cell["candidate"] == "Method-B"
+    )
+    mutations.append(zero_cell["required_total_pairs"] is None and not zero_cell["target_met"])
+    lower_better = copy.deepcopy(payload)
+    lower_better["metrics"][0]["direction"] = "min"
+    lower_report = planner.plan(lower_better)
+    original_cell = next(cell for cell in recomputed["precision"]["cells"] if cell["candidate"] == "Method-A")
+    reversed_cell = next(cell for cell in lower_report["precision"]["cells"] if cell["candidate"] == "Method-A")
+    mutations.append(reversed_cell["mean_improvement"] == -original_cell["mean_improvement"])
+    mutations.append(bool(recomputed["questions_for_author"]) and recomputed["completeness"]["requires_replan_after_repair"])
+    mutations.append(len(recomputed["completeness"]["invalid_metric_requests"]) == 1)
+    if not all(mutations):
+        errors.append("one or more paired-difference safety mutations were not handled")
+    return errors, len(mutations)
+
+
 def main() -> None:
-    errors, mutations = validate_case()
-    report = {"passed": not errors, "cases": 1, "controlled_safety_mutations": mutations, "failures": errors}
+    mean_errors, mean_mutations = validate_case()
+    difference_errors, difference_mutations = validate_paired_difference_case()
+    errors = mean_errors + difference_errors
+    report = {
+        "passed": not errors,
+        "cases": 2,
+        "controlled_safety_mutations": mean_mutations + difference_mutations,
+        "case_mutations": {"group_mean": mean_mutations, "paired_mean_difference": difference_mutations},
+        "failures": errors,
+    }
     print(json.dumps(report, indent=2, ensure_ascii=False))
     raise SystemExit(0 if report["passed"] else 1)
 

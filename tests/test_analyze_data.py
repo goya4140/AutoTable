@@ -123,6 +123,6 @@ def test_precision_planning_requests_pairing_targets_and_budget(tmp_path):
     question = next(item for item in report["inquiry_plan"] if item["id"] == "data_acquisition_plan")
     assert question["importance"] == "blocking"
     assert "paired grid" in question["question"] and "CI half-width targets" in question["question"]
-    assert "group mean or a paired difference" in question["question"]
+    assert "group mean or a within-run candidate-minus-baseline mean difference" in question["question"]
     assert "minimum pilot size" in question["question"] and "maximum run budget" in question["question"]
-    assert "Student-t mean interval appropriate" in question["question"]
+    assert "Student-t interval appropriate" in question["question"]
