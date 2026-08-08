@@ -1,0 +1,146 @@
+{
+  "title": "Episode return",
+  "label": "tab:episode-return",
+  "caption": "Mean episode return over ten runs per trained model.",
+  "columns": [
+    {
+      "key": "method",
+      "label": "Method",
+      "kind": "text"
+    },
+    {
+      "key": "seeker",
+      "label": "Seeker",
+      "kind": "metric",
+      "direction": "max",
+      "precision": 2
+    },
+    {
+      "key": "quad2d",
+      "label": "2D Quad.",
+      "kind": "metric",
+      "direction": "max",
+      "precision": 2
+    },
+    {
+      "key": "quad3d",
+      "label": "3D Quad.",
+      "kind": "metric",
+      "direction": "max",
+      "precision": 2
+    },
+    {
+      "key": "walker2d",
+      "label": "Walker2D",
+      "kind": "metric",
+      "direction": "max",
+      "precision": 2
+    }
+  ],
+  "rows": [
+    {
+      "method": "Baseline",
+      "seeker": {
+        "mean": -71.03,
+        "sd": 19.67
+      },
+      "quad2d": {
+        "mean": -0.8,
+        "sd": 0.15
+      },
+      "quad3d": {
+        "mean": -1.0,
+        "sd": 0.0
+      },
+      "walker2d": {
+        "mean": 1.19,
+        "sd": 0.06
+      }
+    },
+    {
+      "method": "Replacement",
+      "seeker": {
+        "mean": -60.21,
+        "sd": 19.98
+      },
+      "quad2d": {
+        "mean": -0.25,
+        "sd": 0.03
+      },
+      "quad3d": {
+        "mean": -0.68,
+        "sd": 0.09
+      },
+      "walker2d": {
+        "mean": 234.93,
+        "sd": 129.5
+      }
+    },
+    {
+      "method": "Ray",
+      "seeker": {
+        "mean": -20.45,
+        "sd": 16.39
+      },
+      "quad2d": {
+        "mean": -0.26,
+        "sd": 0.05
+      },
+      "quad3d": {
+        "mean": -0.63,
+        "sd": 0.03
+      },
+      "walker2d": {
+        "mean": 1941.82,
+        "sd": 992.83
+      }
+    },
+    {
+      "method": "Generator",
+      "seeker": {
+        "mean": 18.6,
+        "sd": 22.02
+      },
+      "quad2d": {
+        "mean": -0.25,
+        "sd": 0.02
+      },
+      "quad3d": {
+        "mean": -0.68,
+        "sd": 0.07
+      },
+      "walker2d": {
+        "mean": 1443.62,
+        "sd": 702.7
+      }
+    },
+    {
+      "method": "Distributional",
+      "seeker": {
+        "mean": -13.66,
+        "sd": 19.97
+      },
+      "quad2d": {
+        "mean": -0.23,
+        "sd": 0.02
+      },
+      "quad3d": {
+        "mean": -0.66,
+        "sd": 0.02
+      },
+      "walker2d": null
+    }
+  ],
+  "emphasis": {
+    "best": "bold",
+    "second": "underline",
+    "scope": "all"
+  },
+  "notes": [
+    "Mean ± SD over ten runs. Higher is better."
+  ],
+  "provenance": {
+    "observed": true,
+    "input_tier": "recovered_table"
+  }
+}

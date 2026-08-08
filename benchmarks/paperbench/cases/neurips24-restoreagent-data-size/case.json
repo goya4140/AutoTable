@@ -1,0 +1,21 @@
+{
+  "id": "neurips24-restoreagent-data-size",
+  "input_tier": "recovered_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/c78f639424b8d89ceb4f2efbb4dfe4f4-Paper-Conference.pdf",
+  "source_case_id": "n2024-c78f639424-p10-t2",
+  "reference": {
+    "page": 10,
+    "table": "Table 4",
+    "image": "y_reference.png",
+    "sha256": "ab1f033696f72e1a2ecd60ffe49625504bdb29caa09dd4e5727ea6c5fc4116a8"
+  },
+  "license": {
+    "redistribution": "research excerpt",
+    "source_terms_control": true
+  },
+  "limitations": [
+    "Cells were manually recovered from the publication; source training runs were not released with this benchmark case."
+  ]
+}

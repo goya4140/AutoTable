@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PaperBench case",
+  "type": "object",
+  "required": ["id", "input_tier", "venue", "year", "paper_url", "reference", "license"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "input_tier": {"enum": ["raw_runs", "canonical_table", "recovered_table"]},
+    "venue": {"enum": ["NeurIPS", "ICLR", "ICML", "external"]},
+    "year": {"type": "integer"},
+    "paper_url": {"type": "string", "format": "uri"},
+    "reference": {
+      "type": "object",
+      "required": ["page", "table", "image", "sha256"],
+      "properties": {
+        "page": {"type": "integer", "minimum": 1},
+        "table": {"type": "string"},
+        "image": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "license": {"type": "object"},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}
+

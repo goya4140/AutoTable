@@ -15,7 +15,7 @@ def display(cell, precision):
     if isinstance(cell,dict):
         m=cell.get("mean");
         if m is None: return str(cell)
-        for k,label in (("sd"," ± "),("se"," ± "),("ci95"," [95% CI ")):
+        for k,label in (("sd"," ± "),("se"," ± "),("ci90"," ± "),("ci95"," ± ")):
             if k in cell:
                 v=cell[k]
                 if k=="ci95" and isinstance(v,list): return f"{m:.{precision}f} [{v[0]:.{precision}f}, {v[1]:.{precision}f}]"

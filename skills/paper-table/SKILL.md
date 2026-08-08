@@ -16,7 +16,8 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
 6. Render with `scripts/render_table.py SPEC --out-dir OUTPUT`.
 7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex` and visually inspect the compiled PDF or HTML screenshot.
-8. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
+8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, and freeze `y'` before inspecting `y`.
+9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 
 ## Inquiry gate
 
@@ -57,4 +58,3 @@ Never use bolding to hide an unfavorable comparison, compare across incompatible
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.
 - `scripts/verify_table.py`: check that rendered numeric tokens match the spec.
-

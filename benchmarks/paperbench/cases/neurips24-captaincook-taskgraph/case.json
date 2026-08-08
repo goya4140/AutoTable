@@ -1,0 +1,21 @@
+{
+  "id": "neurips24-captaincook-taskgraph",
+  "input_tier": "recovered_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/6d19163eaec3b0f0accbe462a0139466-Paper-Conference.pdf",
+  "source_case_id": "n2024-6d19163eae-p7-t1",
+  "reference": {
+    "page": 7,
+    "table": "Table 1",
+    "image": "y_reference.png",
+    "sha256": "b31ac3220cc97edf5ac54eb3a3f9b603dadb154d49faeb0d4400206b8730f479"
+  },
+  "license": {
+    "redistribution": "research excerpt",
+    "source_terms_control": true
+  },
+  "limitations": [
+    "Cells were recovered from the published table; raw confidence-interval samples were not available."
+  ]
+}

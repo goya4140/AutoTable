@@ -1,0 +1,21 @@
+{
+  "id": "neurips24-rl-action-masking",
+  "input_tier": "recovered_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/acf4a08f67724e9d2de34099f57a9c25-Paper-Conference.pdf",
+  "source_case_id": "n2024-acf4a08f67-p9-t1",
+  "reference": {
+    "page": 9,
+    "table": "Table 1",
+    "image": "y_reference.png",
+    "sha256": "bacccc65b5a9a7c4c4fa86db21f6fc3ed2244cfb26c1c930a119e81cf7d02d8d"
+  },
+  "license": {
+    "redistribution": "research excerpt",
+    "source_terms_control": true
+  },
+  "limitations": [
+    "Cells were recovered from the published table and manually checked; raw ten-run results were not available in this benchmark build."
+  ]
+}

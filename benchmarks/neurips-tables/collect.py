@@ -14,24 +14,32 @@ class Links(HTMLParser):
             if "href" in d: self.hrefs.append(d["href"])
 def get(url): return urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=45).read()
 def sha(data): return hashlib.sha256(data).hexdigest()
-def discover(year):
-    base=f"https://proceedings.neurips.cc/paper_files/paper/{year}"
-    p=Links(); p.feed(get(f"https://papers.nips.cc/paper/{year}").decode("utf-8","ignore"))
+def discover(year,venue):
+    if venue=="icml":
+        volumes={2024:235,2025:267}
+        if year not in volumes: raise ValueError(f"add the PMLR volume for ICML {year}")
+        p=Links(); p.feed(get(f"https://proceedings.mlr.press/v{volumes[year]}/").decode("utf-8","ignore"))
+        return sorted(set(h for h in p.hrefs if h.endswith(".pdf") and "raw.githubusercontent.com/mlresearch/" in h))
+    host="proceedings.iclr.cc" if venue=="iclr" else "proceedings.neurips.cc"
+    index=f"https://proceedings.iclr.cc/paper_files/paper/{year}" if venue=="iclr" else f"https://papers.nips.cc/paper/{year}"
+    p=Links(); p.feed(get(index).decode("utf-8","ignore"))
     urls=[]
     for h in p.hrefs:
         if "-Abstract-" in h and h.endswith(".html"):
             h=h.replace("/hash/","/file/").replace("-Abstract-","-Paper-").removesuffix(".html")+".pdf"
-            urls.append(h if h.startswith("http") else "https://proceedings.neurips.cc"+h)
+            urls.append(h if h.startswith("http") else f"https://{host}"+h)
     return sorted(set(urls))
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("--year",type=int,default=2024); p.add_argument("--papers",type=int,default=50); p.add_argument("--max-tables",type=int,default=200); p.add_argument("--seed",type=int,default=7); p.add_argument("--out",type=Path,default=Path(__file__).with_name("index.jsonl")); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument("--venue",choices=["neurips","iclr","icml"],default="neurips"); p.add_argument("--year",type=int,default=2024); p.add_argument("--papers",type=int,default=50); p.add_argument("--max-tables",type=int,default=200); p.add_argument("--seed",type=int,default=7); p.add_argument("--out",type=Path); a=p.parse_args()
+    if a.out is None: a.out=Path(__file__).with_name("index.jsonl" if a.venue=="neurips" else f"index-{a.venue}-{a.year}.jsonl")
     try: import pypdfium2
     except ImportError: raise SystemExit("Install dependencies with: pip install pypdfium2 Pillow")
-    urls=discover(a.year); random.Random(a.seed).shuffle(urls); urls=urls[:a.papers]
-    cache=Path(__file__).with_name("cache")/str(a.year); material=Path(__file__).with_name("materialized")/str(a.year); cache.mkdir(parents=True,exist_ok=True); material.mkdir(parents=True,exist_ok=True)
+    urls=discover(a.year,a.venue); random.Random(a.seed).shuffle(urls); urls=urls[:a.papers]
+    branch=Path(str(a.year)) if a.venue=="neurips" else Path(a.venue)/str(a.year)
+    cache=Path(__file__).with_name("cache")/branch; material=Path(__file__).with_name("materialized")/branch; cache.mkdir(parents=True,exist_ok=True); material.mkdir(parents=True,exist_ok=True)
     cases=[]
     for pi,url in enumerate(urls,1):
-        paper_id=url.rsplit("/",1)[-1].split("-Paper-")[0]; pdf_path=cache/f"{paper_id}.pdf"
+        paper_id=url.rsplit("/",1)[-1].split("-Paper-")[0].removesuffix(".pdf"); pdf_path=cache/f"{paper_id}.pdf"
         try:
             data=pdf_path.read_bytes() if pdf_path.exists() else get(url)
             if not pdf_path.exists(): pdf_path.write_bytes(data)
@@ -54,9 +62,9 @@ def main():
                         # NeurIPS convention places the caption above the table; retain a generous code-verifiable region.
                         bbox=[0,max(18,cb[1]-300),page_w,min(page_h,cb[3]+5)]
                         pixel=(int(bbox[0]*2),int((page_h-bbox[3])*2),int(bbox[2]*2),int((page_h-bbox[1])*2))
-                        cid=f"n{a.year}-{paper_id[:10]}-p{page_no}-t{ti}"; crop=rendered.crop(pixel); crop_path=material/f"{cid}.png"; crop.save(crop_path)
+                        prefix={"neurips":"n","iclr":"i","icml":"m"}[a.venue]; cid=f"{prefix}{a.year}-{paper_id[:10]}-p{page_no}-t{ti}"; crop=rendered.crop(pixel); crop_path=material/f"{cid}.png"; crop.save(crop_path)
                         region_text=textpage.get_text_bounded(*bbox)
-                        cases.append({"id":cid,"year":a.year,"paper_url":url,"paper_sha256":sha(data),"page":page_no,"bbox_pdf_points":list(map(lambda x:round(float(x),2),bbox)),"caption":caption,"region_text":region_text,"region_text_sha256":sha(region_text.encode()),"crop_path":str(crop_path.relative_to(Path(__file__).parents[2])),"crop_sha256":sha(crop_path.read_bytes())})
+                        cases.append({"id":cid,"venue":a.venue.upper() if a.venue!="neurips" else "NeurIPS","year":a.year,"paper_url":url,"paper_sha256":sha(data),"page":page_no,"bbox_pdf_points":list(map(lambda x:round(float(x),2),bbox)),"caption":caption,"region_text":region_text,"region_text_sha256":sha(region_text.encode()),"crop_path":str(crop_path.relative_to(Path(__file__).parents[2])),"crop_sha256":sha(crop_path.read_bytes())})
                         if len(cases)>=a.max_tables: break
                     if len(cases)>=a.max_tables: break
         except Exception as e: print(f"skip {url}: {e}")
