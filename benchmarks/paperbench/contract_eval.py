@@ -127,7 +127,21 @@ def evaluate(reference: dict, candidate: dict, case: dict) -> dict:
                 groups = {candidate_columns.get(key, {}).get("group") for key in panel["metric_keys"]}
                 groups.discard(None)
                 if len(groups) > 1:
-                    errors.append(violation("comparison_validity", f"layout.panels.{index}", "one panel mixes distinct metric groups", actual=sorted(groups)))
+                    incomplete = {
+                        group for group in groups
+                        if set(panel["metric_keys"]) & {
+                            key for key, column in candidate_columns.items() if column.get("group") == group
+                        } != {
+                            key for key, column in candidate_columns.items() if column.get("group") == group
+                        }
+                    }
+                    if incomplete:
+                        errors.append(violation(
+                            "comparison_validity",
+                            f"layout.panels.{index}",
+                            "a panel may combine adjacent metric groups only when every included group is complete",
+                            actual=sorted(incomplete),
+                        ))
 
     reference_rows, reference_duplicates = row_map(reference, row_key)
     candidate_rows, candidate_duplicates = row_map(candidate, row_key)

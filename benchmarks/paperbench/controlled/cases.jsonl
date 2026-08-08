@@ -1,3 +1,10 @@
+{"id": "neurips24-agentboard-proprietary--numeric_value", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "numeric_value", "expected_violation_category": "numeric_fidelity"}
+{"id": "neurips24-agentboard-proprietary--metric_direction", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "metric_direction", "expected_violation_category": "metric_semantics"}
+{"id": "neurips24-agentboard-proprietary--metric_unit", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "metric_unit", "expected_violation_category": "metric_semantics"}
+{"id": "neurips24-agentboard-proprietary--comparison_eligibility", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "comparison_eligibility", "expected_violation_category": "comparison_validity"}
+{"id": "neurips24-agentboard-proprietary--emphasis_policy", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "emphasis_policy", "expected_violation_category": "comparison_validity"}
+{"id": "neurips24-agentboard-proprietary--row_omission", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "row_omission", "expected_violation_category": "structural_fidelity"}
+{"id": "neurips24-agentboard-proprietary--panel_metric_duplication", "base_case_id": "neurips24-agentboard-proprietary", "mutation": "panel_metric_duplication", "expected_violation_category": "structural_fidelity"}
 {"id": "neurips24-captaincook-taskgraph--numeric_value", "base_case_id": "neurips24-captaincook-taskgraph", "mutation": "numeric_value", "expected_violation_category": "numeric_fidelity"}
 {"id": "neurips24-captaincook-taskgraph--metric_direction", "base_case_id": "neurips24-captaincook-taskgraph", "mutation": "metric_direction", "expected_violation_category": "metric_semantics"}
 {"id": "neurips24-captaincook-taskgraph--metric_unit", "base_case_id": "neurips24-captaincook-taskgraph", "mutation": "metric_unit", "expected_violation_category": "metric_semantics"}

@@ -229,6 +229,48 @@ CONTRACTS = {
             comparisons="Fully-Supervised is an upper bound and must not participate in best-value emphasis.",
         )},
     },
+    "neurips24-agentboard-proprietary": {
+        "claim": {
+            "text": "GPT-4 has higher progress and success rates than Claude2 in every reported AgentBoard environment and in the nine-environment average.",
+            "priority_metric_keys": ["progress_avg", "success_avg"],
+        },
+        "row_identity_key": "model",
+        "comparison_groups": [{
+            "id": "proprietary_models",
+            "row_values": ["GPT-4", "Claude2"],
+            "metric_keys": [
+                f"{metric}_{task}"
+                for task in ("alf", "sw", "ba", "jc", "pl", "ws", "wa", "tq", "to", "avg")
+                for metric in ("progress", "success")
+            ],
+        }],
+        "statistics": {
+            "aggregation_status": "author_aggregate",
+            "uncertainty_kind": "none",
+            "independent_run_count": None,
+            "source": "Pinned author-site JSON exposes the published point estimates; confidence intervals are outside this Table 3 excerpt.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN,
+        "rendering_constraints": {"target_width": "full_width", "max_width_pt": 469, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="GPT-4 has higher progress and success rates than Claude2 in every reported AgentBoard environment and in the nine-environment average.",
+            directions={
+                f"{metric}_{task}": "max"
+                for task in ("alf", "sw", "ba", "jc", "pl", "ws", "wa", "tq", "to", "avg")
+                for metric in ("progress", "success")
+            },
+            units={
+                f"{metric}_{task}": "%"
+                for task in ("alf", "sw", "ba", "jc", "pl", "ws", "wa", "tq", "to", "avg")
+                for metric in ("progress", "success")
+            },
+            uncertainty="none reported in the excerpt",
+            uncertainty_blocking=False,
+            run_count=None,
+            comparisons="GPT-4 and Claude2 use the same AgentBoard task definitions and are comparable within every metric column in this excerpt.",
+        )},
+    },
 }
 
 
@@ -237,6 +279,11 @@ UNITS = {
     "neurips24-restoreagent-data-size": {"psnr": "dB", "ssim": "dimensionless", "lpips": "dimensionless", "dists": "dimensionless", "balanced": "score", "ranking": "%"},
     "neurips24-rl-action-masking": {"seeker": "episode return", "quad2d": "episode return", "quad3d": "episode return", "walker2d": "episode return"},
     "neurips24-rankup-utkface": {"mae_50": "years", "r2_50": "dimensionless", "srcc_50": "dimensionless", "mae_250": "years", "r2_250": "dimensionless", "srcc_250": "dimensionless"},
+    "neurips24-agentboard-proprietary": {
+        f"{metric}_{task}": "%"
+        for task in ("alf", "sw", "ba", "jc", "pl", "ws", "wa", "tq", "to", "avg")
+        for metric in ("progress", "success")
+    },
 }
 
 

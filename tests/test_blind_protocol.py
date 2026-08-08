@@ -34,7 +34,8 @@ def test_generation_blind_protocol_freezes_and_detects_tampering(tmp_path):
     public_dir, private_dir = tmp_path / "public", tmp_path / "private"
     submissions_dir, frozen = tmp_path / "submissions", tmp_path / "frozen.json"
     result = blind.prepare("generation", public_dir, private_dir)
-    assert result["requests"] == 4
+    expected = len(list((BENCH / "cases").glob("*/case.json")))
+    assert result["requests"] == expected
     public_text = "".join(path.read_text() for path in (public_dir / "requests").glob("*.json"))
     assert '"reference"' not in public_text
     assert '"paper_url"' not in public_text
@@ -56,7 +57,8 @@ def test_inquiry_blind_protocol_keeps_gold_private(tmp_path):
     public_dir, private_dir = tmp_path / "public", tmp_path / "private"
     submissions_dir, frozen = tmp_path / "submissions", tmp_path / "frozen.json"
     result = blind.prepare("inquiry", public_dir, private_dir)
-    assert result["requests"] == 32
+    expected = len((BENCH / "inquiry/scenarios.jsonl").read_text().splitlines())
+    assert result["requests"] == expected
     assert "hidden_fields" not in "".join(path.read_text() for path in (public_dir / "requests").glob("*.json"))
     private = json.loads((private_dir / "manifest.json").read_text())
     scenarios = inquiry.load_scenarios(BENCH / "inquiry/scenarios.jsonl")

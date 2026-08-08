@@ -12,7 +12,7 @@ For raw runs, preserve immutable run IDs and reject duplicate seeds. Compute sam
 
 ## Objective scoring
 
-Compute exact normalized token coverage from `x` to editable generated code. Numeric fidelity is a hard gate: a single unexplained changed or hallucinated number fails the case. Metric semantics, uncertainty semantics, comparison validity, and provenance are also hard gates. For semantic panels, count identity-column tokens once per panel but every metric value exactly once; require canonical metric order and reject cross-group mixing. Report component metrics instead of hiding failures inside one average, and run the controlled perturbations to test evaluator sensitivity.
+Compute exact normalized token coverage from `x` to editable generated code. Numeric fidelity is a hard gate: a single unexplained changed or hallucinated number fails the case. Metric semantics, uncertainty semantics, comparison validity, and provenance are also hard gates. For semantic panels, count identity-column tokens once per panel but every metric value exactly once; require canonical metric order, preserve each metric group intact when it shares a panel with another group, and reject partial-group mixing. Report component metrics instead of hiding failures inside one average, and run the controlled perturbations to test evaluator sensitivity.
 
 ## Inquiry scoring
 

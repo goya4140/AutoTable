@@ -50,7 +50,7 @@ Default to:
 
 Never use bolding to hide an unfavorable comparison, compare across incompatible settings, or calculate uncertainty from guessed sample sizes.
 
-Never silently scale an overflowing table. Let the optimizer split only at coherent metric-family boundaries while repeating identity columns and preserving every metric once. Automatically accept at most three stacked panels; a fourth panel is a page-design decision that requires structural feedback or author review. If bounded typography, semantic panels, and lossless text wrapping all fail, return structural feedback and prefer a wider placement or redesigned claim.
+Never silently scale an overflowing table. Let the optimizer split only at coherent metric-family boundaries while repeating identity columns and preserving every metric once. It may pack adjacent complete groups into one panel, but must not separate a paired group or combine a partial group with another family. Automatically accept at most three stacked panels; a fourth panel is a page-design decision that requires structural feedback or author review. If bounded typography, semantic panels, and lossless text wrapping all fail, return structural feedback and prefer a wider placement or redesigned claim.
 
 ## Bundled resources
 

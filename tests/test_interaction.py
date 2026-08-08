@@ -27,7 +27,8 @@ def test_rule_adapter_completes_all_interactive_scenarios(tmp_path):
     blind.freeze(public_dir, submissions, frozen)
     report = blind.score(public_dir, private_dir, submissions, frozen)
     assert report["passed"]
-    assert report["cases"] == 32
+    expected = len((BENCH / "inquiry/scenarios.jsonl").read_text().splitlines())
+    assert report["cases"] == expected
     assert report["critical_question_recall"] == 1.0
     assert report["question_precision"] == 1.0
     assert report["answer_application_rate"] == 1.0

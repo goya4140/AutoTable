@@ -241,11 +241,17 @@ evaluation
 
 从 skill-creator 的角度，这意味着 `SKILL.md` 只保留程序步骤和决策门；统计语义、设计规则和 benchmark 协议应进入按需读取的 `references/`；聚合、渲染和验证这些脆弱步骤应使用确定性 scripts。
 
+### 6.1 真实配对的 artifact gate
+
+后续对 NeurIPS 2024 作者仓库和 supplemental 的审计表明，“代码已公开”远弱于“论文表可重建”。严格 `(x,y)` 配对至少需要：固定版本的结构化 artifact、字段到目标单元格的确定映射、与终稿逐值一致、以及明确的再分发处理。单 seed 训练曲线不能支撑论文中的 mean ± SD，epoch 也不能冒充独立重复；作者网页 JSON 与终稿发生版本漂移时，只能选择其精确支持的连续表格摘录，不能从 PDF 抄值补齐后仍称为 `canonical_table`。
+
+AgentBoard case 把这一门槛落实为可执行样例：固定作者站点 commit 和文件 SHA-256，映射 `score → Progress`、`accuracy → Success`，只选择终稿 Table 3 中被该 artifact 精确覆盖的前两行，并记录 13 行来源与 19 行终稿之间的差异。由于站点仓库没有明确许可，原 JSON 不在本仓库再分发；构建时在线校验，case 只保留派生 spec、官方摘录和 provenance。
+
 ## 7. 建议的下一阶段
 
 1. 先把现有 PaperBench schema 从“图像对”升级为“语义合同”，增加 lineage、allowed transformations、claim、hidden inquiry fields 和 venue rendering constraints。
-2. 用现有 4 个 case 构建第一批 controlled perturbations，先验证评估器能不能稳定抓住负号、单位、误差、比较组和错误粗体。
-3. 手工编写 20-30 个 InquiryBench 场景，测试当前 SKILL 是否真正会问、是否问对、以及是否会停。
+2. 用现有 paired cases 持续扩充 controlled perturbations，验证评估器能稳定抓住负号、单位、误差、比较组和错误粗体。
+3. 扩充 InquiryBench 场景，测试当前 SKILL 是否真正会问、是否问对、以及是否会停。
 4. 继续从作者仓库寻找 `raw_runs`，但将高成本真实对放在 held-out test，不用它们调 prompt。
 5. 等科学硬门槛稳定后，再进行第一轮小规模、随机化、多评者的视觉偏好实验。
 

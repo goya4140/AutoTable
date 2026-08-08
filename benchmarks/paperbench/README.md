@@ -10,7 +10,7 @@ Not every paper releases raw runs. PaperBench therefore records the strongest av
 - `canonical_table`: de-styled cells, metric directions, comparison groups, and provenance; supports content selection and table design evaluation.
 - `recovered_table`: cells recovered from a PDF/LaTeX source and manually verified; supports layout generation but not claims about experiment aggregation.
 
-The bundled mini set contains three `recovered_table` cases and one `canonical_table` case. The latter is generated from RankUp's pinned author-released three-seed aggregate CSV and aligned with its published NeurIPS Table 1. It is a real seed set for end-to-end repository tests, not a statistically representative leaderboard.
+The bundled mini set contains three `recovered_table` cases and two `canonical_table` cases. RankUp is generated from a pinned author-released three-seed aggregate CSV. AgentBoard maps a pinned author-site JSON to the exact Table 3 header and first two contiguous rows; the case is deliberately restricted because the source has 13 models while the final paper has 19. These are real seed cases for end-to-end repository tests, not a statistically representative leaderboard.
 
 ## Case layout
 
@@ -29,6 +29,7 @@ Generated artifacts are written to `output/paperbench/<case-id>/` and are not so
 ```bash
 python benchmarks/paperbench/build_seed.py
 python benchmarks/paperbench/build_rankup_case.py
+python benchmarks/paperbench/build_agentboard_case.py
 python benchmarks/paperbench/validate_cases.py
 python benchmarks/paperbench/build_controlled.py
 python benchmarks/paperbench/evaluate_controlled.py
@@ -58,7 +59,7 @@ python benchmarks/paperbench/blind_protocol.py score \
   --report output/blind/report.json
 ```
 
-For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`. Use `--mode inquiry` to prepare the 32 sanitized InquiryBench requests.
+For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`. Use `--mode inquiry` to prepare the 40 sanitized InquiryBench requests.
 
 Every prepared episode randomly remaps request IDs so they cannot be enumerated back to public case/field names. The freeze manifest hashes every submission file and the public episode. Scoring fails if a request, manifest, directory, or output changes after freezing. Public and private roots must be non-nested. This is an artifact firewall, not an operating-system sandbox: leaderboard execution should additionally disable network access and mount the private root only for the scorer.
 
@@ -103,7 +104,7 @@ Objective metrics are computed from code and canonical cells:
 - measured tabular width/body-height fit, selected typography candidate, panel count, structural transform, and width utilization.
 - recommended visual form plus unresolved design warnings/questions, reported as diagnostics rather than self-scored aesthetics.
 
-The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. A legal multi-panel candidate repeats identity columns, covers every metric exactly once in canonical order, and never mixes distinct nonempty metric groups. The separate publication-readiness gate also requires the XeLaTeX-measured table to fit its declared width and tabular-body height without whole-table scaling; the reference optimizer automatically accepts no more than three stacked panels. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
+The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. A legal multi-panel candidate repeats identity columns and covers every metric exactly once in canonical order. It may pack adjacent complete metric groups together, but it cannot place a partial group beside another group; this keeps paired outcomes intact without forcing one panel per task. The separate publication-readiness gate also requires the XeLaTeX-measured table to fit its declared width and tabular-body height without whole-table scaling; the reference optimizer automatically accepts no more than three stacked panels. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
 
 `inquiry/requests.jsonl` is a committed development set with one author-provided field removed; it strips paper identity, URLs, source commits, reference metadata, and inquiry-profile answers. Always distribute a freshly prepared blind episode—not these static files—for reported evaluation. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, applied, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference, repeated/irrelevant questions, and impossible traces such as using an answer it never requested, then stops at the right time.
 

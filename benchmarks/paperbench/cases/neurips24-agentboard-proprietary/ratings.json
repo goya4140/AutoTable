@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "status": "unrated",
+  "required_raters": 3,
+  "dimensions": [
+    "typography",
+    "visual_hierarchy",
+    "readability",
+    "claim_salience",
+    "overall_aesthetics"
+  ],
+  "ratings": []
+}

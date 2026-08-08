@@ -1,0 +1,295 @@
+{
+  "schema_version": "2.0",
+  "id": "neurips24-agentboard-proprietary",
+  "task": "experimental-data-to-publication-table",
+  "input_tier": "canonical_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/877b40688e330a0e2a3fc24084208dfa-Paper-Datasets_and_Benchmarks_Track.pdf",
+  "reference": {
+    "page": 7,
+    "table": "Table 3 (header and first two rows)",
+    "image": "y_reference.png",
+    "sha256": "95a5946b10cdd4185f29e07d76d75a457909aac8c4d04835229b19f5e072bfc5"
+  },
+  "source_artifacts": [
+    {
+      "role": "author aggregate data",
+      "url": "https://raw.githubusercontent.com/hkust-nlp/hkust-nlp.github.io/5d72338a19f6b177cfe8d77d586421961b90aa8e/agentboard/data/To_Release/main_data_new.json",
+      "sha256": "00970015d126d234d3574dd2f8286f2725679f96eacf4d843eded8ac9b0ffbb2",
+      "commit": "5d72338a19f6b177cfe8d77d586421961b90aa8e",
+      "redistributed": false
+    },
+    {
+      "role": "published paper",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/877b40688e330a0e2a3fc24084208dfa-Paper-Datasets_and_Benchmarks_Track.pdf",
+      "sha256": "72154c4c71d0295deee5f9266a40db63fa4111f4b167f8ed17fd61556f9d8220"
+    }
+  ],
+  "transformation": {
+    "selection": "GPT-4 and Claude2, all nine environments plus Avg.",
+    "cell_mapping": "score -> Progress and accuracy -> Success; strip percent sign without rescaling",
+    "rounding": "none; preserve the author's one-decimal values",
+    "uncertainty": "not present in this Table 3 excerpt"
+  },
+  "license": {
+    "author_site_data": "source repository terms control",
+    "paper_excerpt": "source publication terms control",
+    "source_terms_control": true
+  },
+  "semantic_contract": {
+    "claim": {
+      "text": "GPT-4 has higher progress and success rates than Claude2 in every reported AgentBoard environment and in the nine-environment average.",
+      "priority_metric_keys": [
+        "progress_avg",
+        "success_avg"
+      ]
+    },
+    "row_identity_key": "model",
+    "comparison_groups": [
+      {
+        "id": "proprietary_models",
+        "row_values": [
+          "GPT-4",
+          "Claude2"
+        ],
+        "metric_keys": [
+          "progress_alf",
+          "success_alf",
+          "progress_sw",
+          "success_sw",
+          "progress_ba",
+          "success_ba",
+          "progress_jc",
+          "success_jc",
+          "progress_pl",
+          "success_pl",
+          "progress_ws",
+          "success_ws",
+          "progress_wa",
+          "success_wa",
+          "progress_tq",
+          "success_tq",
+          "progress_to",
+          "success_to",
+          "progress_avg",
+          "success_avg"
+        ]
+      }
+    ],
+    "statistics": {
+      "aggregation_status": "author_aggregate",
+      "uncertainty_kind": "none",
+      "independent_run_count": null,
+      "source": "Pinned author-site JSON exposes the published point estimates; confidence intervals are outside this Table 3 excerpt."
+    },
+    "allowed_transformations": [
+      "equivalent_latex_or_html",
+      "consistent_precision_formatting",
+      "whitespace_and_rule_adjustment",
+      "row_reordering_within_comparison_group",
+      "split_metric_columns_into_semantic_panels_with_repeated_identity"
+    ],
+    "forbidden_inferences": [
+      "change_observed_values",
+      "invent_runs_or_sample_counts",
+      "reinterpret_uncertainty_without_evidence",
+      "compare_rows_outside_declared_groups",
+      "mark_significance_without_a_declared_test"
+    ],
+    "rendering_constraints": {
+      "target_width": "full_width",
+      "max_width_pt": 469,
+      "color_mode": "grayscale_safe",
+      "editable": true,
+      "outputs": [
+        "latex",
+        "html"
+      ]
+    },
+    "inquiry_profile": {
+      "fields": [
+        {
+          "id": "claim",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "GPT-4 has higher progress and success rates than Claude2 in every reported AgentBoard environment and in the nine-environment average.",
+          "acceptable_default": "produce a conservative lookup-first table",
+          "rationale": "The intended claim changes hierarchy and emphasis, but a conservative draft remains possible.",
+          "mask_paths": [
+            "semantic_contract.claim",
+            "x.caption"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_directions",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "progress_alf": "max",
+            "success_alf": "max",
+            "progress_sw": "max",
+            "success_sw": "max",
+            "progress_ba": "max",
+            "success_ba": "max",
+            "progress_jc": "max",
+            "success_jc": "max",
+            "progress_pl": "max",
+            "success_pl": "max",
+            "progress_ws": "max",
+            "success_ws": "max",
+            "progress_wa": "max",
+            "success_wa": "max",
+            "progress_tq": "max",
+            "success_tq": "max",
+            "progress_to": "max",
+            "success_to": "max",
+            "progress_avg": "max",
+            "success_avg": "max"
+          },
+          "rationale": "Best-value emphasis is invalid without the optimization direction.",
+          "mask_paths": [
+            "x.columns.*.direction"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_units",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "progress_alf": "%",
+            "success_alf": "%",
+            "progress_sw": "%",
+            "success_sw": "%",
+            "progress_ba": "%",
+            "success_ba": "%",
+            "progress_jc": "%",
+            "success_jc": "%",
+            "progress_pl": "%",
+            "success_pl": "%",
+            "progress_ws": "%",
+            "success_ws": "%",
+            "progress_wa": "%",
+            "success_wa": "%",
+            "progress_tq": "%",
+            "success_tq": "%",
+            "progress_to": "%",
+            "success_to": "%",
+            "progress_avg": "%",
+            "success_avg": "%"
+          },
+          "rationale": "A numerically correct token can still make a false claim under the wrong unit.",
+          "mask_paths": [
+            "x.columns.*.unit"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "uncertainty_kind",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "none reported in the excerpt",
+          "rationale": "SD, SE, and confidence intervals are not interchangeable.",
+          "mask_paths": [
+            "semantic_contract.statistics.uncertainty_kind",
+            "x.rows.*.*.sd",
+            "x.rows.*.*.se",
+            "x.rows.*.*.ci90",
+            "x.rows.*.*.ci95",
+            "x.caption",
+            "x.notes",
+            "x.provenance"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "independent_run_count",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "unavailable",
+          "answer_status": "unavailable",
+          "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
+          "mask_paths": [
+            "semantic_contract.statistics.independent_run_count",
+            "x.provenance.seeds",
+            "x.caption",
+            "x.notes"
+          ]
+        },
+        {
+          "id": "comparison_groups",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": [
+            {
+              "id": "proprietary_models",
+              "row_values": [
+                "GPT-4",
+                "Claude2"
+              ],
+              "metric_keys": [
+                "progress_alf",
+                "success_alf",
+                "progress_sw",
+                "success_sw",
+                "progress_ba",
+                "success_ba",
+                "progress_jc",
+                "success_jc",
+                "progress_pl",
+                "success_pl",
+                "progress_ws",
+                "success_ws",
+                "progress_wa",
+                "success_wa",
+                "progress_tq",
+                "success_tq",
+                "progress_to",
+                "success_to",
+                "progress_avg",
+                "success_avg"
+              ]
+            }
+          ],
+          "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
+          "mask_paths": [
+            "semantic_contract.comparison_groups",
+            "x.rows.*.rank_eligible"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "target_width",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "full_width",
+          "acceptable_default": "full_width",
+          "rationale": "The target width affects column hierarchy and legibility, but a documented default is safe.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.target_width",
+            "semantic_contract.rendering_constraints.max_width_pt"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "color_preference",
+          "importance": "cosmetic",
+          "ask_when_missing": false,
+          "value": "no author preference; use restrained grayscale-safe styling",
+          "acceptable_default": "grayscale_safe",
+          "rationale": "Personal color preference should not block a scientifically valid draft.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.color_mode"
+          ],
+          "answer_status": "available"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "The pinned author-site JSON contains 13 models while the final paper contains 19; this strict case therefore uses only the first two contiguous rows, which the artifact supports exactly.",
+    "The author artifact contains aggregate point estimates rather than per-example trajectories, so this case does not test aggregation correctness or uncertainty estimation."
+  ]
+}

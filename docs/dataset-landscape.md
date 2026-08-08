@@ -27,6 +27,8 @@ PaperBench adds the missing experimental-paper layer:
 - paper-level leakage prevention;
 - published `y` versus frozen code-generated `y'` comparison artifacts.
 
+Its executable mini set currently has five NeurIPS 2024 pairs: three honestly labeled PDF-recovered layout cases and two pinned author-artifact `canonical_table` cases. Candidate promotion requires exact artifact-to-cell mapping and final-paper agreement. Public code alone is insufficient; incomplete seeds, mutable dashboards, and author-data/final-paper version drift are recorded as limitations instead of repaired with guessed or PDF-copied values.
+
 PaperTable-Discovery complements—but does not enlarge—the paired leaderboard. Its diversity-capped NeurIPS 2024 manifest contains 200 records from 30 papers, with at most eight tables per paper. The 121-record prospective partition comes from 17 papers absent from the legacy development index. Rule-based purpose/form annotations, caption false-positive flags, crop contamination signals, and a pending 40-item audit queue support routing and extraction stress tests; all records explicitly set `gold: false` and `paperbench_generation_pair: false`.
 
 ## Scaling plan

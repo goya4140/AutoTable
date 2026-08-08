@@ -95,6 +95,36 @@ def test_optimizer_rejects_fragmented_four_panel_page(tmp_path):
     assert max(candidate["panel_count"] for candidate in report["candidates"])==3
 
 
+def test_optimizer_can_pack_adjacent_complete_groups_into_three_panels(tmp_path):
+    optimizer=load("layout_optimizer_group_pack",SKILL/"optimize_layout.py")
+    contract_eval=load("layout_group_pack_contract",ROOT/"benchmarks/paperbench/contract_eval.py")
+    case_dir=ROOT/"benchmarks/paperbench/cases/neurips24-agentboard-proprietary"
+    spec=json.loads((case_dir/"x.json").read_text())
+    partitions=optimizer.panel_partitions(spec,3)
+    assert partitions
+    chosen=min(partitions,key=lambda part:max(len(panel["metric_keys"]) for panel in part["panels"]))
+    columns={column["key"]:column for column in spec["columns"]}
+    for panel in chosen["panels"]:
+        groups={columns[key]["group"] for key in panel["metric_keys"]}
+        for group in groups:
+            assert {key for key in panel["metric_keys"] if columns[key]["group"]==group}=={
+                column["key"] for column in spec["columns"] if column.get("group")==group
+            }
+    candidate=json.loads(json.dumps(spec))
+    candidate["layout"]={"font_size":"footnotesize","column_padding_pt":2,"row_stretch":.9,"panels":chosen["panels"]}
+    report=contract_eval.evaluate(spec,candidate,json.loads((case_dir/"case.json").read_text()))
+    assert report["passed_scientific_gate"] and report["passed_full_contract"]
+
+    metric_keys=[column["key"] for column in spec["columns"] if column.get("kind")=="metric"]
+    candidate["layout"]["panels"]=[
+        {"label":"(a) Detached progress","metric_keys":[metric_keys[0]]},
+        {"label":"(b) Partial pair mixed with other tasks","metric_keys":metric_keys[1:]},
+    ]
+    rejected=contract_eval.evaluate(spec,candidate,json.loads((case_dir/"case.json").read_text()))
+    assert not rejected["passed_scientific_gate"]
+    assert any(error["path"]=="layout.panels.1" for error in rejected["violations"])
+
+
 def test_panelized_render_has_exact_numeric_multiset():
     renderer=load("layout_panel_renderer",SKILL/"render_table.py")
     evaluator=load("layout_panel_evaluator",ROOT/"benchmarks/paperbench/evaluate.py")

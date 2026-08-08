@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import copy
 import importlib.util
+import itertools
 import json
 import re
 import shutil
@@ -101,7 +102,22 @@ def panel_partitions(spec, panel_count=2):
         if not runs or runs[-1][0]!=group: runs.append([group,[]])
         runs[-1][1].append(column)
     partitions=[]
-    if all(group for group,_ in runs):
+    if all(group for group,_ in runs) and len(runs)>=panel_count:
+        # Keep every semantic group intact, but allow a panel to contain
+        # several adjacent complete groups. This is essential for matrices
+        # such as one Progress/Success pair per task: one panel per task would
+        # be needlessly fragmented, while splitting a pair would be ambiguous.
+        for boundaries in itertools.combinations(range(1,len(runs)),panel_count-1):
+            chunks=[]
+            starts=(0,*boundaries); ends=(*boundaries,len(runs))
+            for start,end in zip(starts,ends):
+                selected=runs[start:end]
+                keys=[column["key"] for _group,columns in selected for column in columns]
+                names=[group for group,_columns in selected]
+                label=names[0] if len(names)==1 else f"{names[0]} - {names[-1]}"
+                chunks.append((label,keys))
+            partitions.append((f"whole-groups-{'-'.join(map(str,boundaries))}",chunks))
+    elif all(group for group,_ in runs):
         def allocations(remaining,index,current):
             if index==len(runs):
                 if remaining==0: yield current
@@ -117,7 +133,7 @@ def panel_partitions(spec, panel_count=2):
                     size=base+(1 if part<remainder else 0); chunk=columns[offset:offset+size]; offset+=size
                     label=group if count==1 else f"{group} ({part+1}/{count})"
                     chunks.append((label,[column["key"] for column in chunk]))
-            partitions.append((f"group-preserving-{'-'.join(map(str,allocation))}",chunks))
+            partitions.append((f"group-splitting-{'-'.join(map(str,allocation))}",chunks))
     else:
         base,remainder=divmod(len(metrics),panel_count); chunks=[]; offset=0
         for index in range(panel_count):

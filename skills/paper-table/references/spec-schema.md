@@ -27,7 +27,7 @@ Required keys are `columns` and `rows`. Column `kind` is `text` or `metric`; eve
 
 The optional `layout` object accepts `font_size` (`small`, `footnotesize`, or `scriptsize`), `column_padding_pt` from 1.5 to 10, `row_stretch` from 0.8 to 1.5, and an optional `text_column_width_pt` from 45 to 160 for lossless wrapping. Let `optimize_layout.py` choose these values unless the venue template fixes them.
 
-For a semantic panel split, add `panels`, for example `[{"label":"(a) Dataset A","metric_keys":["acc_a","f1_a"]},{"label":"(b) Dataset B","metric_keys":["acc_b","f1_b"]}]`. Panel keys must cover every metric exactly once and in original column order. Do not mix different nonempty metric groups within one panel. Identity columns repeat automatically; the underlying `columns` and `rows` remain canonical and unchanged.
+For a semantic panel split, add `panels`, for example `[{"label":"(a) Dataset A","metric_keys":["acc_a","f1_a"]},{"label":"(b) Dataset B","metric_keys":["acc_b","f1_b"]}]`. Panel keys must cover every metric exactly once and in original column order. A panel may contain several adjacent complete metric groups; if a group is only partially included, it must be the panel's sole group. Identity columns repeat automatically; the underlying `columns` and `rows` remain canonical and unchanged.
 
 Keep the broader claim, comparison-group membership, statistics source, run count, allowed transformations, forbidden inferences, and rendering constraints in a semantic-contract sidecar as described in `semantic-contract.md`. The table spec controls rendering; the sidecar controls what the renderer is scientifically allowed to imply.
 
