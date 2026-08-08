@@ -38,6 +38,30 @@ python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
+## Blind evaluation
+
+Use the three-stage protocol when comparing generators. Keep the private directory unavailable to the generator until after freezing:
+
+```bash
+python benchmarks/paperbench/blind_protocol.py prepare \
+  --mode generation --public-dir output/blind/public --private-dir output/blind/private
+
+# Give only output/blind/public to the generator. It writes one directory per opaque request ID.
+
+python benchmarks/paperbench/blind_protocol.py freeze \
+  --public-dir output/blind/public --submissions-dir output/blind/submissions \
+  --frozen-manifest output/blind/frozen.json
+
+python benchmarks/paperbench/blind_protocol.py score \
+  --public-dir output/blind/public --private-dir output/blind/private \
+  --submissions-dir output/blind/submissions --frozen-manifest output/blind/frozen.json \
+  --report output/blind/report.json
+```
+
+For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`. Use `--mode inquiry` to prepare the 32 sanitized InquiryBench requests.
+
+The freeze manifest hashes every submission file and the public episode. Scoring fails if a request, manifest, directory, or output changes after freezing. Public and private roots must be non-nested. This is an artifact firewall, not an operating-system sandbox: leaderboard execution should additionally disable network access and mount the private root only for the scorer.
+
 For true per-run inputs, use the deterministic long-form aggregator:
 
 ```bash
@@ -58,7 +82,7 @@ Objective metrics are computed from code and canonical cells:
 
 The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
 
-`inquiry/requests.jsonl` contains model-visible inputs with one author-provided field removed; it uses opaque request IDs and exposes neither the missing field nor the inquiry-profile answers. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference and over-questioning, uses the answer, and stops at the right time.
+`inquiry/requests.jsonl` contains model-visible inputs with one author-provided field removed; it uses opaque request IDs and exposes neither the missing field nor the inquiry-profile answers. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference, repeated/irrelevant questions, and impossible traces such as using an answer it never requested, then stops at the right time.
 
 Subjective dimensions use order-randomized human judgments:
 

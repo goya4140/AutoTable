@@ -65,3 +65,40 @@ def test_irrelevant_questions_are_penalized():
     assert result["overquestioning_count"] == 3
     assert result["question_budget_exceeded"]
     assert not result["pass"]
+
+
+def test_declared_cosmetic_default_is_safe_and_metrics_are_not_applicable():
+    evaluator = load("evaluate_inquiry_default", BENCH / "evaluate_inquiry.py")
+    scenario = next(row for row in scenarios() if row["hidden_fields"][0]["importance"] == "cosmetic")
+    result = evaluator.evaluate_trace(scenario, evaluator.gold_trace(scenario))
+    assert result["pass"]
+    assert result["unsupported_inference_count"] == 0
+    assert result["critical_question_recall"] is None
+    assert result["question_precision"] is None
+    assert result["weighted_question_recall"] is None
+    assert result["answer_utilization"] is None
+
+
+def test_answer_cannot_be_claimed_without_a_question():
+    evaluator = load("evaluate_inquiry_inconsistent", BENCH / "evaluate_inquiry.py")
+    scenario = next(row for row in scenarios() if row["hidden_fields"][0]["importance"] == "valuable_nonblocking")
+    field_id = scenario["hidden_fields"][0]["id"]
+    trace = {
+        "scenario_id": scenario["id"], "asked_fields": [], "answered_fields": [field_id],
+        "used_answer_fields": [field_id], "assumed_fields": [], "stopped": True, "final_status": "verified",
+    }
+    result = evaluator.evaluate_trace(scenario, trace)
+    assert result["trace_consistency_violation_count"] == 1
+    assert not result["pass"]
+
+
+def test_repeated_questions_count_against_budget_and_precision():
+    evaluator = load("evaluate_inquiry_repeat", BENCH / "evaluate_inquiry.py")
+    scenario = next(row for row in scenarios() if row["hidden_fields"][0]["ask_when_missing"])
+    trace = evaluator.gold_trace(scenario)
+    trace["asked_fields"] *= 4
+    result = evaluator.evaluate_trace(scenario, trace)
+    assert result["repeated_question_count"] == 3
+    assert result["question_budget_exceeded"]
+    assert result["question_precision"] == 0.25
+    assert not result["pass"]

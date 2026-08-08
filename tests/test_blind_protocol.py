@@ -1,0 +1,89 @@
+import importlib.util
+import json
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).parents[1]
+BENCH = ROOT / "benchmarks/paperbench"
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def build_generation_submissions(public_dir, submissions_dir):
+    renderer = load("blind_renderer", ROOT / "skills/paper-table/scripts/render_table.py")
+    manifest = json.loads((public_dir / "manifest.json").read_text())
+    for item in manifest["requests"]:
+        request = json.loads((public_dir / item["path"]).read_text())
+        request_id = request["request_id"]
+        destination = submissions_dir / request_id
+        destination.mkdir(parents=True)
+        latex, html = renderer.render(request["x"])
+        (destination / "table.tex").write_text(latex)
+        (destination / "table.html").write_text(html)
+        (destination / "submission.json").write_text(json.dumps({"request_id": request_id, "candidate_spec": request["x"]}))
+
+
+def test_generation_blind_protocol_freezes_and_detects_tampering(tmp_path):
+    blind = load("blind_generation", BENCH / "blind_protocol.py")
+    public_dir, private_dir = tmp_path / "public", tmp_path / "private"
+    submissions_dir, frozen = tmp_path / "submissions", tmp_path / "frozen.json"
+    result = blind.prepare("generation", public_dir, private_dir)
+    assert result["requests"] == 4
+    public_text = "".join(path.read_text() for path in (public_dir / "requests").glob("*.json"))
+    assert '"reference"' not in public_text
+    assert '"paper_url"' not in public_text
+    assert '"inquiry_profile"' not in public_text
+    build_generation_submissions(public_dir, submissions_dir)
+    blind.freeze(public_dir, submissions_dir, frozen)
+    report = blind.score(public_dir, private_dir, submissions_dir, frozen)
+    assert report["passed"]
+    assert report["scientific_pass_rate"] == 1.0
+    first = next(submissions_dir.glob("*/table.tex"))
+    first.write_text(first.read_text() + "% changed after freeze\n")
+    with pytest.raises(ValueError, match="changed after freeze"):
+        blind.score(public_dir, private_dir, submissions_dir, frozen)
+
+
+def test_inquiry_blind_protocol_keeps_gold_private(tmp_path):
+    blind = load("blind_inquiry", BENCH / "blind_protocol.py")
+    inquiry = load("blind_inquiry_eval", BENCH / "evaluate_inquiry.py")
+    public_dir, private_dir = tmp_path / "public", tmp_path / "private"
+    submissions_dir, frozen = tmp_path / "submissions", tmp_path / "frozen.json"
+    result = blind.prepare("inquiry", public_dir, private_dir)
+    assert result["requests"] == 32
+    assert "hidden_fields" not in "".join(path.read_text() for path in (public_dir / "requests").glob("*.json"))
+    private = json.loads((private_dir / "manifest.json").read_text())
+    scenarios = inquiry.load_scenarios(BENCH / "inquiry/scenarios.jsonl")
+    for item in private["request_map"]:
+        request_id = item["request_id"]
+        destination = submissions_dir / request_id
+        destination.mkdir(parents=True)
+        trace = inquiry.gold_trace(scenarios[item["scenario_id"]])
+        trace["request_id"] = request_id
+        (destination / "submission.json").write_text(json.dumps(trace))
+    blind.freeze(public_dir, submissions_dir, frozen)
+    report = blind.score(public_dir, private_dir, submissions_dir, frozen)
+    assert report["passed"]
+    assert report["safe_pass_rate"] == 1.0
+    assert report["unsupported_inference_total"] == 0
+
+
+def test_blind_protocol_rejects_nested_public_private_dirs(tmp_path):
+    blind = load("blind_paths", BENCH / "blind_protocol.py")
+    with pytest.raises(ValueError, match="non-nested"):
+        blind.prepare("generation", tmp_path / "episode", tmp_path / "episode/private")
+
+
+def test_blind_protocol_rejects_unmanifested_public_file(tmp_path):
+    blind = load("blind_public_contamination", BENCH / "blind_protocol.py")
+    public_dir, private_dir = tmp_path / "public", tmp_path / "private"
+    blind.prepare("generation", public_dir, private_dir)
+    (public_dir / "unexpected.txt").write_text("possible leaked context")
+    with pytest.raises(ValueError, match="differ from manifest"):
+        blind.validate_public(public_dir)

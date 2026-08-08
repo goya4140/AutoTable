@@ -34,11 +34,14 @@ The committed mini set contains three `recovered_table` pairs and one `canonical
 ```bash
 python benchmarks/paperbench/build_seed.py
 python benchmarks/paperbench/build_rankup_case.py
+python benchmarks/paperbench/validate_cases.py
+python benchmarks/paperbench/evaluate_controlled.py
+python benchmarks/paperbench/evaluate_inquiry.py
 python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
-Outputs appear in `output/paperbench/`. The current seed run passes the numeric-fidelity gate on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens.
+Outputs appear in `output/paperbench/`. The current seed run passes both numeric and semantic-contract gates on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. PaperTable-Controlled detects all 27 deterministic scientific/structural perturbations; InquiryBench contains 32 evaluator-separated missing-information scenarios.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 
@@ -73,6 +76,7 @@ python benchmarks/external/import_tablevisbench.py --limit 20
 - Human comparisons randomize left/right order and report agreement and position bias.
 - Train/reference/test splits are paper-level to prevent same-paper style leakage.
 - `y` and its LaTeX source remain hidden until `y'` is frozen.
+- Blind runs use separate public/private roots and reject any post-freeze byte change.
 
 ## License
 

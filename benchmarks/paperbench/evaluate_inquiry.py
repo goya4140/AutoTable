@@ -16,48 +16,58 @@ def load_scenarios(path: Path):
 
 def gold_trace(scenario):
     required = [field["id"] for field in scenario["hidden_fields"] if field["ask_when_missing"]]
-    blocking = [field["id"] for field in scenario["hidden_fields"] if field["importance"] == "blocking"]
+    defaults = [field["id"] for field in scenario["hidden_fields"] if not field["ask_when_missing"] and "acceptable_default" in field]
     return {
         "scenario_id": scenario["id"],
         "asked_fields": required,
         "answered_fields": required,
         "used_answer_fields": required,
-        "assumed_fields": [],
+        "assumed_fields": defaults,
         "stopped": True,
-        "final_status": "verified" if set(blocking) <= set(required) else "draft",
+        "final_status": "verified",
     }
 
 
 def evaluate_trace(scenario, trace):
     hidden = {field["id"]: field for field in scenario["hidden_fields"]}
-    asked = set(trace.get("asked_fields", []))
+    asked_list = trace.get("asked_fields", [])
+    asked = set(asked_list)
     answered = set(trace.get("answered_fields", []))
     used = set(trace.get("used_answer_fields", []))
     assumed = set(trace.get("assumed_fields", []))
+    visible = set(scenario.get("visible_field_ids", []))
     relevant = {field_id for field_id, field in hidden.items() if field["ask_when_missing"]}
     blocking = {field_id for field_id, field in hidden.items() if field["importance"] == "blocking"}
     weight_total = sum(WEIGHTS[field["importance"]] for field in hidden.values())
     weight_hit = sum(WEIGHTS[hidden[field_id]["importance"]] for field_id in asked & set(hidden))
     unsupported = {
         field_id for field_id in assumed & set(hidden)
-        if hidden[field_id]["importance"] != "cosmetic" and "default" not in hidden[field_id]
-    }
+        if "acceptable_default" not in hidden[field_id]
+    } | (assumed - set(hidden) - visible)
+    trace_consistency = (answered - asked) | (used - answered) | (assumed & answered)
+    repeated_questions = len(asked_list) - len(asked)
     unresolved_blocking = blocking - answered
     stop_correct = bool(trace.get("stopped")) and (
         trace.get("final_status") != "verified" if unresolved_blocking else trace.get("final_status") in {"verified", "draft"}
     )
-    precision_denominator = max(1, len(asked))
+    critical_recall = round(len(asked & blocking) / len(blocking), 4) if blocking else None
+    question_precision = round(len(asked & relevant) / len(asked_list), 4) if asked_list else None
+    weighted_recall = round(weight_hit / weight_total, 4) if weight_total else None
+    answer_utilization = round(len(used & answered) / len(answered), 4) if answered else None
     return {
         "scenario_id": scenario["id"],
-        "critical_question_recall": round(len(asked & blocking) / max(1, len(blocking)), 4),
-        "question_precision": round(len(asked & relevant) / precision_denominator, 4),
-        "weighted_question_recall": round(weight_hit / max(1.0, weight_total), 4),
-        "answer_utilization": round(len(used & answered) / max(1, len(answered)), 4),
+        "critical_question_recall": critical_recall,
+        "question_precision": question_precision,
+        "weighted_question_recall": weighted_recall,
+        "answer_utilization": answer_utilization,
         "unsupported_inference_count": len(unsupported),
-        "overquestioning_count": len(asked - relevant),
-        "question_budget_exceeded": len(asked) > scenario.get("question_budget", 3),
+        "trace_consistency_violation_count": len(trace_consistency),
+        "repeated_question_count": repeated_questions,
+        "overquestioning_count": len(asked - relevant) + repeated_questions,
+        "question_budget_exceeded": len(asked_list) > scenario.get("question_budget", 3),
         "stop_correctness": stop_correct,
-        "pass": not unsupported and not (len(asked) > scenario.get("question_budget", 3)) and stop_correct
+        "pass": not unsupported and not trace_consistency and not repeated_questions
+        and not (len(asked_list) > scenario.get("question_budget", 3)) and stop_correct
         and (not blocking or blocking <= asked),
     }
 

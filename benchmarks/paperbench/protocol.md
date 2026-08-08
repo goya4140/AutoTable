@@ -16,7 +16,7 @@ Compute exact normalized token coverage from `x` to editable generated code. Num
 
 ## Inquiry scoring
 
-Hide contract fields before generation and log the full question/answer trace. Report critical-question recall, question precision, importance-weighted recall, unsupported inference count, over-questioning count, answer utilization, question-budget violations, and stop correctness. A system may produce a labeled draft when a blocking field is unavailable, but it must not declare the artifact verified.
+Hide contract fields before generation and log the full question/answer trace. Report critical-question recall, question precision, importance-weighted recall, unsupported inference count, trace-consistency violations, repeated/irrelevant questions, answer utilization, question-budget violations, and stop correctness. Mark metrics with no applicable gold item as null rather than zero. A system may produce a labeled draft when a blocking field is unavailable, but it must not declare the artifact verified.
 
 ## Subjective scoring
 
@@ -27,3 +27,5 @@ Report majority preference, mean opinion score with bootstrap confidence interva
 ## Leakage policy
 
 References, exemplars, and prompts must not contain the target `y`, its LaTeX source, or any table from the target paper. The evaluator may access `y` only after `y'` is frozen.
+
+Use `blind_protocol.py` to enforce the artifact boundary. Distribute only the public directory; keep the private manifest and evaluator-only gold on a separate mount. Freeze all submission files before enabling that mount or inspecting references. Reject altered request hashes, extra or missing submission IDs, symlinks, and any post-freeze byte change. For an externally reported leaderboard, also run the generator without network access because method names or captions can be searchable even when paper identifiers are removed.
