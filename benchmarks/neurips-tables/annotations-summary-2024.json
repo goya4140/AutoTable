@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "annotation_tier": "weak_rule_based",
+  "gold": false,
+  "records": 200,
+  "papers": 30,
+  "partitions": {
+    "legacy_development": 79,
+    "prospective_stress_test": 121
+  },
+  "papers_by_partition": {
+    "legacy_development": 13,
+    "prospective_stress_test": 17
+  },
+  "purposes": {
+    "ablation": 25,
+    "dataset_statistics": 6,
+    "efficiency": 8,
+    "experimental_configuration": 17,
+    "main_results": 67,
+    "method_taxonomy": 3,
+    "narrative_false_positive": 26,
+    "other": 19,
+    "robustness": 20,
+    "sensitivity": 9
+  },
+  "recommended_forms": {
+    "ablation_table": 25,
+    "comparison_table": 106,
+    "descriptive_table": 6,
+    "efficiency_table": 8,
+    "exclude": 26,
+    "experimental_configuration_table": 17,
+    "sensitivity_table": 9,
+    "taxonomy_table": 3
+  },
+  "quality_flags": {
+    "caption_probably_truncated": 19,
+    "large_crop_may_include_context": 130,
+    "non_numeric_or_sparse_table": 2,
+    "probable_narrative_mention": 26,
+    "region_contains_multiple_tables": 49,
+    "text_extraction_artifact": 55
+  },
+  "eligible_caption_filter_diagnostic": 200,
+  "eligible_visual_structure_stress": 40,
+  "eligible_form_routing_diagnostic": 135,
+  "paperbench_generation_pairs": 0,
+  "generator": "papertable-weak-structure-v1",
+  "source_manifest": {
+    "records": 200,
+    "papers": 30,
+    "record_set_sha256": "8bf1acb6f4f7d11d137bd41c14309510da54629795fffbee2b7b967f43e381b6"
+  },
+  "legacy_development_manifest": {
+    "records": 150,
+    "papers": 13,
+    "record_set_sha256": "532d1ac29c8104961b34e1be06d920376ba3fb4ddc6f94166ff7eba51e73754d"
+  }
+}

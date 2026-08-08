@@ -16,7 +16,7 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
 6. Route by the accepted visual proposal. For a conventional, ablation, leaderboard, or semantic-panel table, run `scripts/optimize_layout.py SPEC --out-dir OUTPUT --target-width-pt WIDTH`. For a recommended one-metric `ranked_table_chart` or `diverging_table_chart`, run `scripts/render_table_chart.py SPEC --out-dir OUTPUT`; retain direct exact-value labels and the generated chart contract. Use `render_table.py` directly only when layout parameters are already fixed.
 7. Verify the artifact with `scripts/verify_table.py OUTPUT/selected-spec.json OUTPUT/table.tex` for tables or `scripts/verify_table.py SPEC OUTPUT/table-chart.svg` for table-charts. Require the relevant physical/layout gate, verify that every claimed-used author answer changed its corresponding contract field or visual encoding, treat numeric and semantic-contract checks as hard gates, then visually inspect the final PDF or PNG for clipping, collisions, scale honesty, and grayscale-safe non-color distinctions.
-8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, and freeze `y'` before inspecting `y`.
+8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, freeze `y'` before inspecting `y`, and keep weak discovery annotations separate from PaperBench generation pairs or aesthetic gold.
 9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 
 ## Inquiry gate

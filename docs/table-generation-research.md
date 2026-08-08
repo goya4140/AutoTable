@@ -160,6 +160,8 @@ PaperBanana 对我们有两个特别重要的经验。第一，统计产物需�
 
 ### 5.1 三层数据，不混成一个排行榜
 
+在三个评估层之外，PaperTable-Discovery 只负责真实论文表的候选发现和结构压力测试。2024 NeurIPS diversity-capped 索引含 200 条、30 篇论文，单篇最多 8 条；其中 121 条来自 17 篇旧索引未出现的论文。用途、形式和质量标志都是可重建的规则弱标注，必须保留 `gold: false`；没有结构化 `x` 的 crop 不能用于数值重建评分或生成 leaderboard。
+
 #### A. `PaperTable-Real`：真实 `(x, y)` 作者对
 
 - 优先纳入有作者释放 raw runs、处理脚本和发表 PDF 的 NeurIPS/ICLR/ICML 表。

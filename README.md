@@ -12,7 +12,7 @@ PaperTable studies code-first generation of publication-quality academic tables.
 - A reusable Codex Skill in [`skills/paper-table`](skills/paper-table).
 - Deterministic JSON → LaTeX/HTML tables or SVG/PDF/PNG table-charts, with numeric verification.
 - [`PaperBench`](benchmarks/paperbench): a versioned `(x,y)` dataset schema, real NeurIPS seed cases, evaluation scripts, human-rating protocol, and reference-vs-generated dashboard.
-- Candidate discovery manifests: 150 NeurIPS, 25 ICLR, and 25 ICML tables from official 2024 proceedings. Discovery cases are explicitly kept separate from paired benchmark cases.
+- Candidate discovery manifests from official 2024 proceedings: a legacy 150-table NeurIPS index, a diversity-capped 200-table/30-paper NeurIPS index, and 25-table ICLR/ICML indexes. Discovery cases are explicitly kept separate from paired benchmark cases.
 - External adapters/registry for TableVisBench and TABVERSE rather than silently relicensing their data.
 - A [dataset landscape](docs/dataset-landscape.md) covering TableBank, PubTables-1M, SciTSR, TabLeX, SciGen, TABVERSE, TableVisBench, and TASTE.
 - A detailed [table-generation dataset and evaluation survey](docs/table-generation-research.md), including task boundaries, metric failure modes, an inquiry benchmark, and implications for the next Skill design.
@@ -70,10 +70,24 @@ The Skill actively asks for missing repeats, units, metric direction, sample siz
 ## Scale the real-paper set
 
 ```bash
-python benchmarks/neurips-tables/collect.py --year 2024 --papers 50 --max-tables 200
+python benchmarks/neurips-tables/collect.py --year 2024 --papers 50 --max-tables 200 --max-tables-per-paper 8 \
+  --out benchmarks/neurips-tables/index-diverse-2024.jsonl
+python benchmarks/neurips-tables/annotate.py benchmarks/neurips-tables/index-diverse-2024.jsonl \
+  --legacy-development-index benchmarks/neurips-tables/index.jsonl \
+  --out benchmarks/neurips-tables/annotations-diverse-2024.jsonl \
+  --summary benchmarks/neurips-tables/annotations-summary-2024.json \
+  --audit-queue benchmarks/neurips-tables/audit-queue-2024.jsonl
+python benchmarks/neurips-tables/validate_annotations.py \
+  benchmarks/neurips-tables/index-diverse-2024.jsonl \
+  benchmarks/neurips-tables/annotations-diverse-2024.jsonl \
+  --legacy-development-index benchmarks/neurips-tables/index.jsonl \
+  --summary benchmarks/neurips-tables/annotations-summary-2024.json \
+  --audit-queue benchmarks/neurips-tables/audit-queue-2024.jsonl
 ```
 
-The collector uses official proceedings and stores PDFs/crops in ignored local caches. A discovered table becomes a PaperBench pair only after a structured `x` is linked and verified. Future collection prioritizes NeurIPS, ICLR, and ICML papers with author-released per-seed CSV/JSON artifacts.
+The diversity-capped NeurIPS set contains 200 records from 30 papers; 121 records from 17 previously unseen papers form a prospective stress partition. Its purpose/form labels are explicitly weak, 26 likely narrative false positives are retained as negative cases, and the 40-item audit queue remains pending. The collector stores PDFs/crops in ignored local caches. A discovered table becomes a PaperBench pair only after a structured `x` is linked and verified.
+
+`evaluate_annotations.py` can score routing predictions against the public weak labels for CI regression, but its report is permanently marked diagnostic-only and leaderboard-ineligible. Numeric fidelity and aesthetic claims still require PaperBench pairs and blinded human evaluation respectively.
 
 Optional external stress test:
 
