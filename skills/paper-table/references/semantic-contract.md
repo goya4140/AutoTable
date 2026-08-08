@@ -7,7 +7,7 @@ Before rendering, represent the scientific meaning that must survive visual tran
 - metric direction and units;
 - valid comparison groups and excluded rows;
 - uncertainty type, independent-run count, repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and aggregation source;
-- expected run grid, target estimand, confidence level, per-metric CI half-width targets, minimum pilot size, maximum run budget, pilot-variance assumption, and interval-distribution assumption when additional data are requested; for paired differences also record the baseline, candidate family, contexts, difference orientation, and exact paired ID set;
+- expected run grid, target estimand, confidence level, per-metric CI half-width targets, minimum pilot size, maximum run budget, pilot-variance assumption, interval-distribution assumption, and leave-one-run-out sensitivity when additional data are requested; for paired differences also record the baseline, candidate family, contexts, difference orientation, and exact paired ID set; retain influential IDs and their provenance resolution without post-hoc deletion;
 - hyperparameter selection metric, validation tie-break, rank tie policy, Z-score denominator, and win policy when reporting cross-dataset summaries;
 - inferential unit, cluster/block structure, pairing, exchangeability rationale, predeclared baseline and family, tie policy, omnibus gate, effect orientation, test, confidence-interval method, correction, alpha, and randomization seeds when significance is requested;
 - unit of observation, fixed denominator population, exclusions, and missing-observation policy;

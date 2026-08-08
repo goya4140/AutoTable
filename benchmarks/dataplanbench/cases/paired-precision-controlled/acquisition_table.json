@@ -33,7 +33,7 @@
     },
     {
       "key": "suggested_total",
-      "label": "Next checkpoint",
+      "label": "Plan [LOO range]",
       "kind": "text",
       "precision": 0
     },
@@ -50,7 +50,7 @@
       "current_runs": 5,
       "current_half_width": 1.96,
       "target_half_width": 1.5,
-      "suggested_total": 7,
+      "suggested_total": "7 [6–9]",
       "action": "Add runs"
     },
     {
@@ -86,7 +86,7 @@
       "current_runs": 5,
       "current_half_width": 3.21,
       "target_half_width": 1.5,
-      "suggested_total": 14,
+      "suggested_total": "14 [11–18]",
       "action": "Add runs"
     },
     {
@@ -108,7 +108,8 @@
     "Repair 4 missing or invalid existing run cells before adding new run IDs; then recompute this plan.",
     "The current pilot provisionally suggests 9 new paired run IDs across every group, up to 14 total runs.",
     "Suggested totals use the observed pilot SD in a Student-t mean interval; they are planning estimates, not guaranteed final widths.",
-    "Zero pilot SD is sent for review rather than treated as proof that no more data are needed."
+    "Zero pilot SD is sent for review rather than treated as proof that no more data are needed.",
+    "Leave-one-run-out stability flags 1 cell(s) for provenance review; bracketed ranges show how the projected total changes when each run is omitted in turn."
   ],
   "provenance": {
     "source": "deterministic controlled benchmark",

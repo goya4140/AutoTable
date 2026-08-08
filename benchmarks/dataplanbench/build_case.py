@@ -119,13 +119,16 @@ def table_spec(report: dict) -> dict:
     }
     rows = []
     for cell in report["precision"]["cells"]:
+        required = cell["required_total_runs"]
+        loo = cell["pilot_stability"].get("leave_one_run_out", {}).get("required_total_range")
+        checkpoint = required if required is None or loo is None else f"{required} [{loo[0]}–{loo[1]}]"
         rows.append({
             "dataset": cell["group"]["dataset"],
             "method": cell["group"]["method"],
             "current_runs": cell["current_valid_runs"],
             "current_half_width": None if cell["current_ci_half_width"] is None else round(cell["current_ci_half_width"], 2),
             "target_half_width": round(cell["target_ci_half_width"], 2),
-            "suggested_total": cell["required_total_runs"],
+            "suggested_total": checkpoint,
             "action": action_labels[cell["status"]],
         })
     repair_count = report["completeness"]["repair_count"]
@@ -140,7 +143,7 @@ def table_spec(report: dict) -> dict:
             {"key": "current_runs", "label": "Valid runs", "kind": "text", "precision": 0},
             {"key": "current_half_width", "label": "Current 95% CI ±", "kind": "text", "precision": 2},
             {"key": "target_half_width", "label": "Target ±", "kind": "text", "precision": 2},
-            {"key": "suggested_total", "label": "Next checkpoint", "kind": "text", "precision": 0},
+            {"key": "suggested_total", "label": "Plan [LOO range]", "kind": "text", "precision": 0},
             {"key": "action", "label": "Action", "kind": "text"},
         ],
         "rows": rows,
@@ -150,6 +153,7 @@ def table_spec(report: dict) -> dict:
             f"The current pilot provisionally suggests {common['additional_common_run_ids']} new paired run IDs across every group, up to {common['provisional_common_total_runs']} total runs.",
             "Suggested totals use the observed pilot SD in a Student-t mean interval; they are planning estimates, not guaranteed final widths.",
             "Zero pilot SD is sent for review rather than treated as proof that no more data are needed.",
+            f"Leave-one-run-out stability flags {report['precision']['stability_review_cells']} cell(s) for provenance review; bracketed ranges show how the projected total changes when each run is omitted in turn.",
         ],
         "provenance": report["provenance"] | {"data_plan_schema": report["schema_version"]},
     }
@@ -165,6 +169,9 @@ def paired_difference_table_spec(report: dict) -> dict:
     }
     rows = []
     for cell in report["precision"]["cells"]:
+        required = cell["required_total_pairs"]
+        loo = cell["pilot_stability"].get("leave_one_run_out", {}).get("required_total_range")
+        checkpoint = required if required is None or loo is None else f"{required} [{loo[0]}–{loo[1]}]"
         rows.append({
             "dataset": cell["context"]["dataset"],
             "candidate": cell["candidate"],
@@ -173,7 +180,7 @@ def paired_difference_table_spec(report: dict) -> dict:
             "paired_sd": None if cell["paired_difference_sd"] is None else round(cell["paired_difference_sd"], 2),
             "current_half_width": None if cell["current_ci_half_width"] is None else round(cell["current_ci_half_width"], 2),
             "target_half_width": round(cell["target_ci_half_width"], 2),
-            "suggested_total": cell["required_total_pairs"],
+            "suggested_total": checkpoint,
             "action": action_labels[cell["status"]],
         })
     request = report["precision"]["request"]
@@ -189,7 +196,7 @@ def paired_difference_table_spec(report: dict) -> dict:
             {"key": "paired_sd", "label": "Pair SD", "kind": "text", "precision": 2},
             {"key": "current_half_width", "label": "Current 95% CI ±", "kind": "text", "precision": 2},
             {"key": "target_half_width", "label": "Target ±", "kind": "text", "precision": 2},
-            {"key": "suggested_total", "label": "Next checkpoint", "kind": "text", "precision": 0},
+            {"key": "suggested_total", "label": "Plan [LOO range]", "kind": "text", "precision": 0},
             {"key": "action", "label": "Action", "kind": "text"},
         ],
         "rows": rows,
@@ -199,6 +206,7 @@ def paired_difference_table_spec(report: dict) -> dict:
             f"The current pilot provisionally suggests {request['additional_common_run_ids']} new run IDs for the baseline and every candidate, up to {request['provisional_common_total_pairs']} complete pairs.",
             "Mean improvement is the within-run candidate minus baseline difference; positive values favor the candidate.",
             "Counts use paired-difference SD, not either method's marginal SD, and are planning estimates rather than guaranteed final widths.",
+            f"Leave-one-pair-out stability flags {report['precision']['stability_review_cells']} comparison(s) for provenance review; bracketed ranges show projected-total sensitivity.",
         ],
         "provenance": report["provenance"] | {"data_plan_schema": report["schema_version"]},
     }
@@ -231,6 +239,8 @@ def main() -> None:
         "invalid metric cells receive explicit recovery requests",
         "group-mean precision counts use Student-t intervals and observed pilot SD",
         "zero pilot SD never claims a precision target is met",
+        "leave-one-run-out planning ranges and omission-audit hashes are preserved",
+        "influential runs trigger provenance review without automatic deletion",
     ])
 
     difference_payload = build_paired_difference_input()
@@ -245,6 +255,8 @@ def main() -> None:
         "existing grid defects are repaired before new paired IDs",
         "precision counts use paired-difference SD rather than marginal group SD",
         "zero paired-difference SD remains unresolved",
+        "leave-one-pair-out planning ranges and omission-audit hashes are preserved",
+        "influential pairs trigger provenance review without automatic deletion",
     ])
     print(json.dumps({
         "cases": {

@@ -45,7 +45,7 @@
     },
     {
       "key": "suggested_total",
-      "label": "Next checkpoint",
+      "label": "Plan [LOO range]",
       "kind": "text",
       "precision": 0
     },
@@ -75,7 +75,7 @@
       "paired_sd": 1.58,
       "current_half_width": 1.96,
       "target_half_width": 1.5,
-      "suggested_total": 7,
+      "suggested_total": "7 [6–9]",
       "action": "Add paired runs"
     },
     {
@@ -110,7 +110,8 @@
     "Repair 4 missing or invalid existing run cells before adding new IDs; then recompute this paired-difference plan.",
     "The current pilot provisionally suggests 2 new run IDs for the baseline and every candidate, up to 7 complete pairs.",
     "Mean improvement is the within-run candidate minus baseline difference; positive values favor the candidate.",
-    "Counts use paired-difference SD, not either method's marginal SD, and are planning estimates rather than guaranteed final widths."
+    "Counts use paired-difference SD, not either method's marginal SD, and are planning estimates rather than guaranteed final widths.",
+    "Leave-one-pair-out stability flags 0 comparison(s) for provenance review; bracketed ranges show projected-total sensitivity."
   ],
   "provenance": {
     "source": "deterministic controlled benchmark",

@@ -8,17 +8,19 @@
   },
   "expected_report": {
     "path": "expected_report.json",
-    "sha256": "977000a103c38148fd7236e59186a87e764f69d56573d5801f45779dc7862415"
+    "sha256": "9de6d83326febc97c7137aa0683f9b3b17b173463ed937240f19738eb7d538ac"
   },
   "table_spec": {
     "path": "acquisition_table.json",
-    "sha256": "eb29cbe299413ffc75a74a4841ca826ada02b5ca72045c7000a7b53e58ea63cc"
+    "sha256": "0475c91ca716b46bc275e5cf8aea87295f1d56dd7e6d9fe9963a551c212d4fc3"
   },
   "gold_properties": [
     "paired differences are aligned by declared run ID",
     "positive differences favor the candidate for either metric direction",
     "existing grid defects are repaired before new paired IDs",
     "precision counts use paired-difference SD rather than marginal group SD",
-    "zero paired-difference SD remains unresolved"
+    "zero paired-difference SD remains unresolved",
+    "leave-one-pair-out planning ranges and omission-audit hashes are preserved",
+    "influential pairs trigger provenance review without automatic deletion"
   ]
 }

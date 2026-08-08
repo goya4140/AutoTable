@@ -90,6 +90,20 @@ def validate_case() -> tuple[list[str], int]:
     mutations.append(zero_cell["required_total_runs"] is None and not zero_cell["target_met"])
     mutations.append(len(recomputed["completeness"]["invalid_metric_requests"]) == 1)
     mutations.append(bool(recomputed["questions_for_author"]) and recomputed["completeness"]["requires_replan_after_repair"])
+    influential = copy.deepcopy(payload)
+    for row in influential["runs"]:
+        if row["dataset"] == "Dataset-1" and row["method"] == "Baseline":
+            row["accuracy_pp"] = 100.0 if row["seed"] == 4 else 70.0
+    influential_report = planner.plan(influential)
+    influential_cell = next(
+        cell for cell in influential_report["precision"]["cells"]
+        if cell["group"] == {"dataset": "Dataset-1", "method": "Baseline"}
+    )
+    mutations.append(
+        influential_cell["pilot_stability"]["status"] == "review_required"
+        and influential_cell["pilot_stability"]["leave_one_run_out"]["zero_variance_after_omitting_run_ids"] == [4]
+    )
+    mutations.append(any("without deleting observations post hoc" in question for question in influential_report["questions_for_author"]))
     if not all(mutations):
         errors.append("one or more acquisition-safety mutations were not handled")
     return errors, len(mutations)
@@ -176,6 +190,24 @@ def validate_paired_difference_case() -> tuple[list[str], int]:
     mutations.append(reversed_cell["mean_improvement"] == -original_cell["mean_improvement"])
     mutations.append(bool(recomputed["questions_for_author"]) and recomputed["completeness"]["requires_replan_after_repair"])
     mutations.append(len(recomputed["completeness"]["invalid_metric_requests"]) == 1)
+    influential = copy.deepcopy(payload)
+    baseline_values = {
+        (row["dataset"], row["seed"]): row["accuracy_pp"]
+        for row in influential["runs"] if row["method"] == "Baseline"
+    }
+    for row in influential["runs"]:
+        if row["dataset"] == "Dataset-1" and row["method"] == "Method-B":
+            row["accuracy_pp"] = baseline_values[(row["dataset"], row["seed"])] + (20 if row["seed"] == 4 else 2)
+    influential_report = planner.plan(influential)
+    influential_cell = next(
+        cell for cell in influential_report["precision"]["cells"]
+        if cell["context"] == {"dataset": "Dataset-1"} and cell["candidate"] == "Method-B"
+    )
+    mutations.append(
+        influential_cell["pilot_stability"]["status"] == "review_required"
+        and influential_cell["pilot_stability"]["leave_one_run_out"]["zero_variance_after_omitting_run_ids"] == [4]
+    )
+    mutations.append(any("without deleting observations post hoc" in question for question in influential_report["questions_for_author"]))
     if not all(mutations):
         errors.append("one or more paired-difference safety mutations were not handled")
     return errors, len(mutations)

@@ -214,16 +214,28 @@ def plan(payload: dict) -> dict:
                             "status": "target_not_reached_within_cap" if required is None else ("target_met" if required <= pair_count else "additional_pairs_provisionally_required"),
                             "target_met": required is not None and required <= pair_count,
                         })
+                cell["pilot_stability"] = _MEAN._STABILITY.diagnose(
+                    differences,
+                    paired_ids,
+                    target,
+                    float(confidence),
+                    maximum_total,
+                    _MEAN.ci_half_width,
+                    _MEAN.required_total_runs,
+                )
                 cells.append(cell)
 
     known_requirements = [cell["required_total_pairs"] for cell in cells if cell["required_total_pairs"] is not None]
     unresolved = [cell for cell in cells if cell["required_total_pairs"] is None]
+    stability_reviews = [cell for cell in cells if cell["pilot_stability"]["status"] == "review_required"]
     common_total = max([len(expected_ids), *known_requirements])
     questions = []
     if repair_requests or invalid_metric_requests:
         questions.append("Can you rerun or recover the listed existing paired cells first, then return the repaired data so paired-difference precision can be recomputed?")
     if unresolved:
         questions.append("Some paired-difference targets are unresolved because pilot difference variance is zero or the pair cap is too low; should the author collect a fresh paired pilot, raise the cap, or revise the target width?")
+    if stability_reviews:
+        questions.append("Leave-one-pair-out diagnostics show a potential extreme pair, one-pair-dependent variance, a cap-sensitive projection, or target-status reversal in one or more comparisons; can the author inspect the listed run provenance and choose whether to collect a fresh paired pilot or use another interval plan without deleting observations post hoc?")
 
     return {
         "schema_version": "paper-table-paired-difference-plan-report-v1",
@@ -254,6 +266,7 @@ def plan(payload: dict) -> dict:
                 "contexts": [contexts[key] for key in expected_contexts], "methods": methods,
             },
             "unresolved_cells": len(unresolved), "provisional": True,
+            "stability_review_cells": len(stability_reviews),
         },
         "questions_for_author": questions,
         "notes": [
@@ -263,6 +276,7 @@ def plan(payload: dict) -> dict:
             "Precision projections use the observed paired-difference sample SD in a two-sided Student-t interval and must be recomputed after new pairs arrive.",
             "Complete existing paired run IDs before starting new paired IDs for every baseline, candidate, and context.",
             "A zero pilot paired-difference SD is not accepted as proof of zero future variance.",
+            "Pilot stability uses descriptive skewness, modified-Z potential-extreme labels, and leave-one-pair-out sensitivity; it is not a normality test or permission to discard a pair.",
         ],
         "provenance": payload.get("provenance", {}),
     }

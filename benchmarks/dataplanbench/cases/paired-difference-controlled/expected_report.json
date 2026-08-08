@@ -112,7 +112,24 @@
         "required_total_pairs": 5,
         "additional_pairs": 1,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 4,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": -1.9999999999999998,
+          "median": 4.0,
+          "median_absolute_deviation": 0.0,
+          "modified_z_status": "unavailable_zero_mad",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       },
       {
         "context": {
@@ -142,7 +159,56 @@
         "required_total_pairs": 7,
         "additional_pairs": 2,
         "status": "additional_pairs_provisionally_required",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "no_automatic_flag",
+          "diagnostic_runs": 5,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 4.0,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance.",
+          "leave_one_run_out": {
+            "mean_range": [
+              3.5,
+              4.5
+            ],
+            "maximum_absolute_mean_shift": 0.5,
+            "sd_range": [
+              1.2909944487358056,
+              1.8257418583505538
+            ],
+            "minimum_sd_omitted_run_ids": [
+              1,
+              2
+            ],
+            "maximum_sd_omitted_run_ids": [
+              0
+            ],
+            "required_total_range": [
+              6,
+              9
+            ],
+            "minimum_required_total_omitted_run_ids": [
+              1,
+              2
+            ],
+            "maximum_required_total_omitted_run_ids": [
+              0
+            ],
+            "zero_variance_after_omitting_run_ids": [],
+            "cap_exceeded_after_omitting_run_ids": [],
+            "target_attainment_changes_across_omissions": false,
+            "omission_count": 5,
+            "omission_audit_sha256": "a437124d22edabc0b6906328bcf4647d1146aaab38be43f92827f2fe0623b631"
+          }
+        }
       },
       {
         "context": {
@@ -170,7 +236,24 @@
         "required_total_pairs": 5,
         "additional_pairs": 2,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 3,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 1.2933427807333961,
+          "median": 3.0,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       },
       {
         "context": {
@@ -198,7 +281,24 @@
         "required_total_pairs": 5,
         "additional_pairs": 2,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 3,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 3.0,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       }
     ],
     "request": {
@@ -220,7 +320,8 @@
       ]
     },
     "unresolved_cells": 0,
-    "provisional": true
+    "provisional": true,
+    "stability_review_cells": 0
   },
   "questions_for_author": [
     "Can you rerun or recover the listed existing paired cells first, then return the repaired data so paired-difference precision can be recomputed?"
@@ -231,7 +332,8 @@
     "Positive differences always favor the candidate; lower-is-better metrics are sign-reversed before planning.",
     "Precision projections use the observed paired-difference sample SD in a two-sided Student-t interval and must be recomputed after new pairs arrive.",
     "Complete existing paired run IDs before starting new paired IDs for every baseline, candidate, and context.",
-    "A zero pilot paired-difference SD is not accepted as proof of zero future variance."
+    "A zero pilot paired-difference SD is not accepted as proof of zero future variance.",
+    "Pilot stability uses descriptive skewness, modified-Z potential-extreme labels, and leave-one-pair-out sensitivity; it is not a normality test or permission to discard a pair."
   ],
   "provenance": {
     "source": "deterministic controlled benchmark",

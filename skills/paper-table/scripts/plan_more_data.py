@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import statistics
@@ -12,6 +13,18 @@ from typing import Any
 
 
 SCHEMA_VERSION = "paper-table-more-data-plan-v1"
+
+
+def _load_stability():
+    path = Path(__file__).with_name("pilot_stability.py")
+    spec = importlib.util.spec_from_file_location("paper_table_pilot_stability", path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    return module
+
+
+_STABILITY = _load_stability()
 
 
 def _finite(value: Any) -> bool:
@@ -257,7 +270,9 @@ def plan(payload: dict) -> dict:
         by_id = observed.get(encoded_group, {})
         for metric in metrics:
             field = metric.get("field", metric["key"])
-            values = [float(entry["record"][field]) for entry in by_id.values() if _finite(entry["record"].get(field))]
+            valid_entries = [entry for entry in by_id.values() if _finite(entry["record"].get(field))]
+            values = [float(entry["record"][field]) for entry in valid_entries]
+            valid_run_ids = [entry["id"] for entry in valid_entries]
             current_runs = len(values)
             target = float(targets[metric["key"]])
             cell = {
@@ -309,10 +324,20 @@ def plan(payload: dict) -> dict:
                         "status": status,
                         "target_met": target_met,
                     })
+            cell["pilot_stability"] = _STABILITY.diagnose(
+                values,
+                valid_run_ids,
+                target,
+                float(confidence_level),
+                maximum_total,
+                ci_half_width,
+                required_total_runs,
+            )
             precision_cells.append(cell)
 
     known_requirements = [cell["required_total_runs"] for cell in precision_cells if cell["required_total_runs"] is not None]
     unresolved = [cell for cell in precision_cells if cell["required_total_runs"] is None]
+    stability_reviews = [cell for cell in precision_cells if cell["pilot_stability"]["status"] == "review_required"]
     if pairing_mode == "fixed_across_groups":
         common_total = max([len(expected_run_ids), *known_requirements])
         precision_request = {
@@ -341,6 +366,8 @@ def plan(payload: dict) -> dict:
         questions.append("Can you rerun or recover the listed existing run cells first, then return the repaired data so the precision plan can be recomputed?")
     if unresolved:
         questions.append("Some precision targets are unresolved because pilot variance is zero or the run cap is too low; should the author raise the cap, collect a fresh pilot, or revise the target width?")
+    if stability_reviews:
+        questions.append("Leave-one-run-out diagnostics show a potential extreme run, one-run-dependent variance, a cap-sensitive projection, or target-status reversal in one or more cells; can the author inspect the listed run provenance and choose whether to collect a fresh pilot or use another interval plan without deleting observations post hoc?")
 
     return {
         "schema_version": "paper-table-more-data-plan-report-v1",
@@ -370,6 +397,7 @@ def plan(payload: dict) -> dict:
             "cells": precision_cells,
             "request": precision_request,
             "unresolved_cells": len(unresolved),
+            "stability_review_cells": len(stability_reviews),
             "provisional": True,
         },
         "questions_for_author": questions,
@@ -380,6 +408,7 @@ def plan(payload: dict) -> dict:
             "The author must judge the Student-t mean interval appropriate for the repeat distribution; small, strongly skewed, or heavy-tailed pilots need another plan.",
             "Complete existing paired run IDs before starting new paired IDs.",
             "A zero pilot SD is not accepted as proof of zero future variance.",
+            "Pilot stability uses descriptive skewness, modified-Z potential-extreme labels, and leave-one-run-out sensitivity; it is not a normality test or permission to discard a run.",
         ],
         "provenance": payload.get("provenance", {}),
     }

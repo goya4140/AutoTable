@@ -116,7 +116,56 @@
         "required_total_runs": 7,
         "additional_runs": 2,
         "status": "additional_runs_provisionally_required",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "no_automatic_flag",
+          "diagnostic_runs": 5,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 70.0,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance.",
+          "leave_one_run_out": {
+            "mean_range": [
+              69.5,
+              70.5
+            ],
+            "maximum_absolute_mean_shift": 0.5,
+            "sd_range": [
+              1.2909944487358056,
+              1.8257418583505538
+            ],
+            "minimum_sd_omitted_run_ids": [
+              1,
+              2
+            ],
+            "maximum_sd_omitted_run_ids": [
+              0
+            ],
+            "required_total_range": [
+              6,
+              9
+            ],
+            "minimum_required_total_omitted_run_ids": [
+              1,
+              2
+            ],
+            "maximum_required_total_omitted_run_ids": [
+              0
+            ],
+            "zero_variance_after_omitting_run_ids": [],
+            "cap_exceeded_after_omitting_run_ids": [],
+            "target_attainment_changes_across_omissions": false,
+            "omission_count": 5,
+            "omission_audit_sha256": "5de3eb47185d1ba846a738b8980a256fac3827a1cad15f21c21a8859b3fc7000"
+          }
+        }
       },
       {
         "group": {
@@ -135,7 +184,24 @@
         "required_total_runs": 5,
         "additional_runs": 1,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 4,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 74.0,
+          "median_absolute_deviation": 1.5,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       },
       {
         "group": {
@@ -154,7 +220,63 @@
         "required_total_runs": null,
         "additional_runs": null,
         "status": "zero_pilot_variance_requires_review",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "review_required",
+          "diagnostic_runs": 5,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": null,
+          "median": 74.0,
+          "median_absolute_deviation": 0.0,
+          "modified_z_status": "unavailable_zero_mad",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "zero_full_sample_variance"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance.",
+          "leave_one_run_out": {
+            "mean_range": [
+              74.0,
+              74.0
+            ],
+            "maximum_absolute_mean_shift": 0.0,
+            "sd_range": [
+              0.0,
+              0.0
+            ],
+            "minimum_sd_omitted_run_ids": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "maximum_sd_omitted_run_ids": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "required_total_range": null,
+            "minimum_required_total_omitted_run_ids": [],
+            "maximum_required_total_omitted_run_ids": [],
+            "zero_variance_after_omitting_run_ids": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "cap_exceeded_after_omitting_run_ids": [],
+            "target_attainment_changes_across_omissions": false,
+            "omission_count": 5,
+            "omission_audit_sha256": "6c234b893e0e68f46ec81efa97bd9ab1538a7bcf0e693ace410e7934aa29524c"
+          }
+        }
       },
       {
         "group": {
@@ -173,7 +295,24 @@
         "required_total_runs": 5,
         "additional_runs": 2,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 3,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 80.0,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       },
       {
         "group": {
@@ -192,7 +331,54 @@
         "required_total_runs": 14,
         "additional_runs": 9,
         "status": "additional_runs_provisionally_required",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "no_automatic_flag",
+          "diagnostic_runs": 5,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.3632690058584689,
+          "median": 83.0,
+          "median_absolute_deviation": 2.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance.",
+          "leave_one_run_out": {
+            "mean_range": [
+              83.0,
+              84.5
+            ],
+            "maximum_absolute_mean_shift": 0.7999999999999972,
+            "sd_range": [
+              2.160246899469287,
+              2.943920288775949
+            ],
+            "minimum_sd_omitted_run_ids": [
+              1
+            ],
+            "maximum_sd_omitted_run_ids": [
+              0
+            ],
+            "required_total_range": [
+              11,
+              18
+            ],
+            "minimum_required_total_omitted_run_ids": [
+              1
+            ],
+            "maximum_required_total_omitted_run_ids": [
+              0
+            ],
+            "zero_variance_after_omitting_run_ids": [],
+            "cap_exceeded_after_omitting_run_ids": [],
+            "target_attainment_changes_across_omissions": false,
+            "omission_count": 5,
+            "omission_audit_sha256": "fcb26d086cdaa24fa29c28829b5b8b30108e50a66cf499c80cc6757268f8b49f"
+          }
+        }
       },
       {
         "group": {
@@ -211,7 +397,24 @@
         "required_total_runs": 5,
         "additional_runs": 1,
         "status": "collect_minimum_pilot_then_replan",
-        "target_met": false
+        "target_met": false,
+        "pilot_stability": {
+          "method": "descriptive_plus_leave_one_run_out_v1",
+          "status": "insufficient_runs_for_stability_diagnostics",
+          "diagnostic_runs": 4,
+          "minimum_runs_for_leave_one_out": 5,
+          "adjusted_fisher_pearson_skewness": 0.0,
+          "median": 83.5,
+          "median_absolute_deviation": 1.0,
+          "modified_z_status": "computed",
+          "modified_z_label_threshold": 3.5,
+          "potential_extreme_run_ids": [],
+          "potential_extreme_count": 0,
+          "review_reasons": [
+            "fewer_than_five_valid_runs"
+          ],
+          "interpretation": "Sensitivity evidence only; do not delete or relabel an observed run without investigating its provenance."
+        }
       }
     ],
     "request": {
@@ -246,11 +449,13 @@
       ]
     },
     "unresolved_cells": 1,
+    "stability_review_cells": 1,
     "provisional": true
   },
   "questions_for_author": [
     "Can you rerun or recover the listed existing run cells first, then return the repaired data so the precision plan can be recomputed?",
-    "Some precision targets are unresolved because pilot variance is zero or the run cap is too low; should the author raise the cap, collect a fresh pilot, or revise the target width?"
+    "Some precision targets are unresolved because pilot variance is zero or the run cap is too low; should the author raise the cap, collect a fresh pilot, or revise the target width?",
+    "Leave-one-run-out diagnostics show a potential extreme run, one-run-dependent variance, a cap-sensitive projection, or target-status reversal in one or more cells; can the author inspect the listed run provenance and choose whether to collect a fresh pilot or use another interval plan without deleting observations post hoc?"
   ],
   "notes": [
     "This report requests observations; it never simulates or imputes experimental outcomes.",
@@ -258,7 +463,8 @@
     "Precision projections use the observed pilot sample SD in a two-sided Student-t mean interval and must be recomputed after new runs arrive.",
     "The author must judge the Student-t mean interval appropriate for the repeat distribution; small, strongly skewed, or heavy-tailed pilots need another plan.",
     "Complete existing paired run IDs before starting new paired IDs.",
-    "A zero pilot SD is not accepted as proof of zero future variance."
+    "A zero pilot SD is not accepted as proof of zero future variance.",
+    "Pilot stability uses descriptive skewness, modified-Z potential-extreme labels, and leave-one-run-out sensitivity; it is not a normality test or permission to discard a run."
   ],
   "provenance": {
     "source": "deterministic controlled benchmark",
