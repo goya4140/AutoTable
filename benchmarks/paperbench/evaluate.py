@@ -79,7 +79,10 @@ def render(case_dir: Path,out: Path):
     optimized=subprocess.run([sys.executable,str(OPTIMIZE),str(case_dir/"x.json"),"--case",str(case_dir/"case.json"),"--out-dir",str(out),"--no-preview"],capture_output=True,text=True)
     if optimized.returncode not in {0,2}: raise RuntimeError(optimized.stderr or optimized.stdout)
     layout_report=json.loads((out/"layout-report.json").read_text())
-    wrapper="\\documentclass{article}\n\\usepackage[margin=0.5in]{geometry}\n\\usepackage{booktabs}\n\\usepackage{fontspec}\n\\pagestyle{empty}\n\\begin{document}\n\\input{table.tex}\n\\end{document}\n"
+    case=json.loads((case_dir/"case.json").read_text())
+    target_width=float(case["semantic_contract"]["rendering_constraints"]["max_width_pt"])
+    paper_width=target_width+72
+    wrapper=f"\\documentclass{{article}}\n\\usepackage[paperwidth={paper_width}pt,paperheight=12in,margin=0.5in]{{geometry}}\n\\usepackage{{booktabs}}\n\\usepackage{{fontspec}}\n\\pagestyle{{empty}}\n\\begin{{document}}\n\\input{{table.tex}}\n\\end{{document}}\n"
     (out/"preview.tex").write_text(wrapper)
     subprocess.run(["latexmk","-xelatex","-interaction=nonstopmode","-halt-on-error","preview.tex"],cwd=out,check=True,capture_output=True,text=True)
     subprocess.run([str(PDFTOPPM),"-png","-r","180","-singlefile","preview.pdf","y_prime"],cwd=out,check=True,capture_output=True,text=True)

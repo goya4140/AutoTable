@@ -17,16 +17,20 @@ def load(name, path):
 
 def build_generation_submissions(public_dir, submissions_dir):
     renderer = load("blind_renderer", ROOT / "skills/paper-table/scripts/render_table.py")
+    aggregator = load("blind_aggregator", ROOT / "skills/paper-table/scripts/aggregate_observations.py")
     manifest = json.loads((public_dir / "manifest.json").read_text())
     for item in manifest["requests"]:
         request = json.loads((public_dir / item["path"]).read_text())
         request_id = request["request_id"]
         destination = submissions_dir / request_id
         destination.mkdir(parents=True)
-        latex, html = renderer.render(request["x"])
+        candidate = request["x"]
+        if candidate.get("schema_version") == "paper-table-observations-v1":
+            candidate = aggregator.aggregate(candidate)
+        latex, html = renderer.render(candidate)
         (destination / "table.tex").write_text(latex)
         (destination / "table.html").write_text(html)
-        (destination / "submission.json").write_text(json.dumps({"request_id": request_id, "candidate_spec": request["x"]}))
+        (destination / "submission.json").write_text(json.dumps({"request_id": request_id, "candidate_spec": candidate}))
 
 
 def test_generation_blind_protocol_freezes_and_detects_tampering(tmp_path):
@@ -40,6 +44,9 @@ def test_generation_blind_protocol_freezes_and_detects_tampering(tmp_path):
     assert '"reference"' not in public_text
     assert '"paper_url"' not in public_text
     assert '"inquiry_profile"' not in public_text
+    requests = [json.loads(path.read_text()) for path in (public_dir / "requests").glob("*.json")]
+    assert any(request["x"].get("schema_version") == "paper-table-observations-v1" for request in requests)
+    assert any("rows" in request["x"] for request in requests)
     build_generation_submissions(public_dir, submissions_dir)
     blind.freeze(public_dir, submissions_dir, frozen)
     report = blind.score(public_dir, private_dir, submissions_dir, frozen)

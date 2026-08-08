@@ -10,7 +10,7 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 ## Workflow
 
 1. Inspect the supplied data, manuscript context, venue constraints, and target claim.
-2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON.
+2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON. If the input contains repeated independent runs, aggregate with the run-aware path. If it contains per-example observations, run `scripts/aggregate_observations.py INPUT --out AGGREGATED.json` before design; never treat examples as independent seeds.
 3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, apply them to the next table draft, and never claim `verified` while a blocking field is unresolved.
 4. Run `scripts/design_advisor.py SPEC --case CASE` once a draft spec exists. Offer its evidence-backed form, hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, width target, warnings, and alternatives before rendering.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
@@ -33,6 +33,8 @@ Ask for missing data when it could change the scientific interpretation:
 Do not block on cosmetic preferences. Choose conservative defaults and state them. Stop asking once all blocking fields are resolved and further answers would not change scientific interpretation.
 
 If the author asks for plausible variation without repeated runs, label it **simulated**, keep it separate from observed results, record the assumed distribution and seed, and never use it for significance claims. Prefer requesting real repeats.
+
+For per-example aggregation, freeze the observation universe before computing values. Record the observation identity key, exclusions, named denominator ID lists, metric formula, scale, precision, and missing-report policy. Preserve the generated cell-level audit—including operation, denominator, sufficient statistic, and observation-ID hash—through every visual transformation. A changed or missing audit is a scientific failure even when the displayed rounded value is unchanged.
 
 ## Visual strategy
 
@@ -59,6 +61,7 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
+- `scripts/aggregate_observations.py`: deterministically aggregate per-example observations with fixed denominators and a cell-level provenance audit.
 - `scripts/design_advisor.py`: derive a structured visual form, proposal, alternatives, warnings, and bounded follow-up questions from the table spec and semantic contract.
 - `scripts/optimize_layout.py`: search measured typography, semantic panel, and lossless text-wrap candidates; emit structural feedback when none fit.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.

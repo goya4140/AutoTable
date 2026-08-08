@@ -1,0 +1,296 @@
+{
+  "schema_version": "2.0",
+  "id": "neurips24-swtbench-models",
+  "task": "experimental-data-to-publication-table",
+  "input_tier": "raw_runs",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/94f093b41fc2666376fb1f667fe282f3-Paper-Conference.pdf",
+  "input": {
+    "path": "raw_outcomes.json",
+    "sha256": "1822a51fd7b0c696e5c2665c595346bf9a184bc8326495c040e974b2c0b37b6a",
+    "schema": "paper-table-observations-v1"
+  },
+  "reference": {
+    "page": 8,
+    "table": "Table 4",
+    "image": "y_reference.png",
+    "sha256": "342e1da3d9b62ba6e78a116d9249c8fd33294e35be5e494f4d6ac48fad2e602d"
+  },
+  "source_artifacts": [
+    {
+      "role": "paper-time exclusion list",
+      "url": "https://raw.githubusercontent.com/logic-star-ai/swt-bench/dce4aeee1ea944c5de4f61e556dd2b94c118751d/dataset/filter_cases_lite.txt",
+      "sha256": "d88e9ecfc5ab4f68cb961cea90bf54ddcd7d8af58b77c15e7def8a5b2fd00f2b",
+      "commit": "dce4aeee1ea944c5de4f61e556dd2b94c118751d",
+      "redistributed": false
+    },
+    {
+      "role": "paper-time aggregation definitions",
+      "url": "https://raw.githubusercontent.com/logic-star-ai/swt-bench/dce4aeee1ea944c5de4f61e556dd2b94c118751d/figures/util.py",
+      "sha256": "ac527c58095404c2875af1c400ffd69157b48d1a531ec79bb5a59dde55f4528f",
+      "commit": "dce4aeee1ea944c5de4f61e556dd2b94c118751d",
+      "redistributed": false
+    },
+    {
+      "role": "gold per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/validate-gold-1.zip",
+      "sha256": "04b358070eda134ea77c9c5f233b05a15a3a266c164eee6e1d5ac7c9e0d05ca7",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__mistral_large.zip",
+      "sha256": "62aa327b6b563c22d758798b5cfc2f4cbdb3ff3e24316e0b41f1e4ad5fba9a73",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__gpt-4-1106-preview.zip",
+      "sha256": "6f66e5205314d8002c4115b1e3c82cbb0b7a71af57afad3a197a3f2a382bed26",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__claude-3.5-sonnet.zip",
+      "sha256": "ce83c62d691b3ab1012342a3364c41397da0018fdf10d9f4844d3b69ab40b07c",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__gpt-4o-mini-2024-07-18.zip",
+      "sha256": "f199cde36b870bae1c5adc5b74f3fce24b275c04243045ef31df9aa19a24c875",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__claude-3-haiku-20240307.zip",
+      "sha256": "3555bc8a9de875d8bcd107b49bc42df2dc8cee50a25fb2869041a86e07ca6cab",
+      "redistributed": false
+    },
+    {
+      "role": "model per-instance reports",
+      "url": "https://files.sri.inf.ethz.ch/swt-bench/run_instance_swt_logs/swt-lite/swea__together_mistralai_Mixtral-8x22B-Instruct-v0.1.zip",
+      "sha256": "7a96089027c39a05301b20c468651850cbb7ad18754dd31449cef45d6bace38e",
+      "redistributed": false
+    },
+    {
+      "role": "published paper",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/94f093b41fc2666376fb1f667fe282f3-Paper-Conference.pdf",
+      "sha256": "2a81c5bbcfa28e74448d8d10d0a3a455eca468f8ebf8c205694b4cf11515be9e"
+    }
+  ],
+  "transformation": {
+    "selection": "Table 4: six SWE-Agent language-model backbones and four reported metrics",
+    "aggregation": "W/S/F→× are per-instance rates over n=276; ΔC is the sum of per-instance coverage deltas divided by 273 countable gold-coverage instances",
+    "rounding": "one decimal, matching the paper",
+    "missing_reports": "a missing per-instance report contributes false/zero, exactly as the paper-time evaluator's fixed-denominator calculation"
+  },
+  "license": {
+    "code_and_evaluation_artifacts": "MIT",
+    "paper_excerpt": "source publication terms control",
+    "source_terms_control": true
+  },
+  "semantic_contract": {
+    "claim": {
+      "text": "No single SWE-Agent backbone dominates every metric: GPT-4 is most often well-formed, Mistral Large 2 has the highest success rate, and Claude 3.5 Sonnet leads fail-to-any and change coverage.",
+      "priority_metric_keys": [
+        "well_formed",
+        "success",
+        "fail_to_any",
+        "coverage"
+      ]
+    },
+    "row_identity_key": "model",
+    "comparison_groups": [
+      {
+        "id": "swe_agent_backbones",
+        "row_values": [
+          "Mistral Large 2",
+          "GPT-4",
+          "Claude 3.5 Sonnet",
+          "GPT-4o mini",
+          "Claude 3.0 Haiku",
+          "Mixtral 8x22B"
+        ],
+        "metric_keys": [
+          "well_formed",
+          "success",
+          "fail_to_any",
+          "coverage"
+        ]
+      }
+    ],
+    "statistics": {
+      "aggregation_status": "raw_recomputed",
+      "uncertainty_kind": "none",
+      "independent_run_count": null,
+      "observation_count": 276,
+      "source": "Author-released per-instance reports are recomputed using the paper-time evaluator: rates use 276 instances and change coverage uses 273 countable gold-coverage instances."
+    },
+    "allowed_transformations": [
+      "equivalent_latex_or_html",
+      "consistent_precision_formatting",
+      "whitespace_and_rule_adjustment",
+      "row_reordering_within_comparison_group",
+      "split_metric_columns_into_semantic_panels_with_repeated_identity"
+    ],
+    "forbidden_inferences": [
+      "change_observed_values",
+      "invent_runs_or_sample_counts",
+      "reinterpret_uncertainty_without_evidence",
+      "compare_rows_outside_declared_groups",
+      "mark_significance_without_a_declared_test"
+    ],
+    "rendering_constraints": {
+      "target_width": "single_column",
+      "max_width_pt": 234.5,
+      "color_mode": "grayscale_safe",
+      "editable": true,
+      "outputs": [
+        "latex",
+        "html"
+      ]
+    },
+    "inquiry_profile": {
+      "fields": [
+        {
+          "id": "claim",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "No single SWE-Agent backbone dominates every metric; retain per-metric emphasis rather than declaring one overall winner.",
+          "acceptable_default": "produce a conservative lookup-first table",
+          "rationale": "The intended claim changes hierarchy and emphasis, but a conservative draft remains possible.",
+          "mask_paths": [
+            "semantic_contract.claim",
+            "x.caption"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_directions",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "well_formed": "max",
+            "success": "max",
+            "fail_to_any": "max",
+            "coverage": "max"
+          },
+          "rationale": "Best-value emphasis is invalid without the optimization direction.",
+          "mask_paths": [
+            "x.columns.*.direction"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "metric_units",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "well_formed": "%",
+            "success": "%",
+            "fail_to_any": "%",
+            "coverage": "%"
+          },
+          "rationale": "A numerically correct token can still make a false claim under the wrong unit.",
+          "mask_paths": [
+            "x.columns.*.unit"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "uncertainty_kind",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "none; deterministic per-instance aggregation",
+          "rationale": "SD, SE, and confidence intervals are not interchangeable.",
+          "mask_paths": [
+            "semantic_contract.statistics.uncertainty_kind",
+            "x.rows.*.*.sd",
+            "x.rows.*.*.se",
+            "x.rows.*.*.ci90",
+            "x.rows.*.*.ci95",
+            "x.caption",
+            "x.notes",
+            "x.provenance"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "independent_run_count",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "unavailable",
+          "answer_status": "unavailable",
+          "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
+          "mask_paths": [
+            "semantic_contract.statistics.independent_run_count",
+            "x.provenance.seeds",
+            "x.caption",
+            "x.notes"
+          ]
+        },
+        {
+          "id": "comparison_groups",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": [
+            {
+              "id": "swe_agent_backbones",
+              "row_values": [
+                "Mistral Large 2",
+                "GPT-4",
+                "Claude 3.5 Sonnet",
+                "GPT-4o mini",
+                "Claude 3.0 Haiku",
+                "Mixtral 8x22B"
+              ],
+              "metric_keys": [
+                "well_formed",
+                "success",
+                "fail_to_any",
+                "coverage"
+              ]
+            }
+          ],
+          "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
+          "mask_paths": [
+            "semantic_contract.comparison_groups",
+            "x.rows.*.rank_eligible"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "target_width",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "single_column",
+          "acceptable_default": "full_width",
+          "rationale": "The target width affects column hierarchy and legibility, but a documented default is safe.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.target_width",
+            "semantic_contract.rendering_constraints.max_width_pt"
+          ],
+          "answer_status": "available"
+        },
+        {
+          "id": "color_preference",
+          "importance": "cosmetic",
+          "ask_when_missing": false,
+          "value": "no author preference; use restrained grayscale-safe styling",
+          "acceptable_default": "grayscale_safe",
+          "rationale": "Personal color preference should not block a scientifically valid draft.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.color_mode"
+          ],
+          "answer_status": "available"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "The source ZIP archives are hash-pinned but not redistributed; the committed raw_outcomes.json contains only derived per-instance booleans and coverage deltas needed for Table 4.",
+    "These are deterministic per-instance evaluations, not repeated stochastic seeds, so no run-to-run uncertainty is estimated."
+  ]
+}

@@ -73,7 +73,8 @@ def prepare(mode: str, public_dir: Path, private_dir: Path) -> dict:
     if mode == "generation":
         for case_path in sorted((HERE / "cases").glob("*/case.json")):
             case = json.loads(case_path.read_text())
-            x = json.loads((case_path.parent / "x.json").read_text())
+            input_path = case_path.parent / case.get("input", {}).get("path", "x.json")
+            x = json.loads(input_path.read_text())
             request_id = fresh_request_id(issued_ids)
             request = public_generation_request(case, x, request_id)
             request_path = public_dir / "requests" / f"{request_id}.json"

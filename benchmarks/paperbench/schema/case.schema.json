@@ -19,6 +19,15 @@
     "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
     "task": {"const": "experimental-data-to-publication-table"},
     "input_tier": {"enum": ["raw_runs", "canonical_table", "recovered_table"]},
+    "input": {
+      "type": "object",
+      "required": ["path", "sha256", "schema"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "schema": {"type": "string", "minLength": 1}
+      }
+    },
     "venue": {"enum": ["NeurIPS", "ICLR", "ICML", "external"]},
     "year": {"type": "integer"},
     "paper_url": {"type": "string", "format": "uri"},
@@ -76,6 +85,7 @@
             "aggregation_status": {"enum": ["raw_recomputed", "author_aggregate", "publication_only", "not_applicable"]},
             "uncertainty_kind": {"enum": ["sd", "se", "ci90", "ci95", "none", "mixed", "unknown"]},
             "independent_run_count": {"type": ["integer", "null"], "minimum": 2},
+            "observation_count": {"type": ["integer", "null"], "minimum": 1},
             "source": {"type": "string"}
           }
         },
@@ -134,5 +144,11 @@
     },
     "transformation": {"type": "object"},
     "limitations": {"type": "array", "items": {"type": "string"}}
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"input_tier": {"const": "raw_runs"}}, "required": ["input_tier"]},
+      "then": {"required": ["input"]}
+    }
+  ]
 }

@@ -271,6 +271,38 @@ CONTRACTS = {
             comparisons="GPT-4 and Claude2 use the same AgentBoard task definitions and are comparable within every metric column in this excerpt.",
         )},
     },
+    "neurips24-swtbench-models": {
+        "claim": {
+            "text": "No single SWE-Agent backbone dominates every metric: GPT-4 is most often well-formed, Mistral Large 2 has the highest success rate, and Claude 3.5 Sonnet leads fail-to-any and change coverage.",
+            "priority_metric_keys": ["well_formed", "success", "fail_to_any", "coverage"],
+        },
+        "row_identity_key": "model",
+        "comparison_groups": [{
+            "id": "swe_agent_backbones",
+            "row_values": ["Mistral Large 2", "GPT-4", "Claude 3.5 Sonnet", "GPT-4o mini", "Claude 3.0 Haiku", "Mixtral 8x22B"],
+            "metric_keys": ["well_formed", "success", "fail_to_any", "coverage"],
+        }],
+        "statistics": {
+            "aggregation_status": "raw_recomputed",
+            "uncertainty_kind": "none",
+            "independent_run_count": None,
+            "observation_count": 276,
+            "source": "Author-released per-instance reports are recomputed using the paper-time evaluator: rates use 276 instances and change coverage uses 273 countable gold-coverage instances.",
+        },
+        "allowed_transformations": COMMON_ALLOWED,
+        "forbidden_inferences": COMMON_FORBIDDEN,
+        "rendering_constraints": {"target_width": "single_column", "max_width_pt": 234.5, "color_mode": "grayscale_safe", "editable": True, "outputs": ["latex", "html"]},
+        "inquiry_profile": {"fields": inquiry_fields(
+            claim="No single SWE-Agent backbone dominates every metric; retain per-metric emphasis rather than declaring one overall winner.",
+            directions={"well_formed": "max", "success": "max", "fail_to_any": "max", "coverage": "max"},
+            units={"well_formed": "%", "success": "%", "fail_to_any": "%", "coverage": "%"},
+            uncertainty="none; deterministic per-instance aggregation",
+            uncertainty_blocking=False,
+            run_count=None,
+            comparisons="All six language-model backbones use the same SWE-Agent setup and SWT-Bench Lite denominator and are comparable within every metric.",
+            target_width="single_column",
+        )},
+    },
 }
 
 
@@ -284,6 +316,7 @@ UNITS = {
         for task in ("alf", "sw", "ba", "jc", "pl", "ws", "wa", "tq", "to", "avg")
         for metric in ("progress", "success")
     },
+    "neurips24-swtbench-models": {"well_formed": "%", "success": "%", "fail_to_any": "%", "coverage": "%"},
 }
 
 

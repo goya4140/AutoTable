@@ -90,6 +90,27 @@ def row_map(spec: dict, row_key: str) -> tuple[dict[Any, dict], list[Any]]:
     return rows, duplicates
 
 
+def audit_map(spec: dict, row_key: str) -> tuple[dict[tuple[Any, Any], dict], list[tuple[Any, Any]], list[Any]]:
+    items = {}
+    duplicates = []
+    invalid = []
+    raw_items = spec.get("aggregation_audit", [])
+    if not isinstance(raw_items, list):
+        return items, duplicates, ["not-an-array"]
+    for index, item in enumerate(raw_items):
+        if not isinstance(item, dict) or not isinstance(item.get("group"), dict) or item.get("metric") is None:
+            invalid.append(index)
+            continue
+        identity = (item["group"].get(row_key), item.get("metric"))
+        if identity[0] is None:
+            invalid.append(index)
+            continue
+        if identity in items:
+            duplicates.append(identity)
+        items[identity] = item
+    return items, duplicates, invalid
+
+
 def evaluate(reference: dict, candidate: dict, case: dict) -> dict:
     contract = case["semantic_contract"]
     row_key = contract["row_identity_key"]
@@ -182,8 +203,34 @@ def evaluate(reference: dict, candidate: dict, case: dict) -> dict:
         if unknown_metrics:
             errors.append(violation("provenance", f"semantic_contract.comparison_groups.{group['id']}", "contract references unknown metrics", actual=sorted(unknown_metrics)))
 
-    if case["input_tier"] == "raw_runs" and not candidate.get("aggregation_audit"):
-        errors.append(violation("provenance", "aggregation_audit", "raw-run candidate must retain contributing run IDs"))
+    if case["input_tier"] == "raw_runs":
+        reference_audit, reference_audit_duplicates, reference_audit_invalid = audit_map(reference, row_key)
+        candidate_audit, candidate_audit_duplicates, candidate_audit_invalid = audit_map(candidate, row_key)
+        if not reference_audit:
+            errors.append(violation("provenance", "aggregation_audit", "raw-run reference lacks a cell-level aggregation audit"))
+        if not candidate_audit:
+            errors.append(violation("provenance", "aggregation_audit", "raw-run candidate must preserve the cell-level aggregation audit"))
+        for identity in reference_audit_duplicates:
+            errors.append(violation("provenance", f"aggregation_audit.{identity}", "reference aggregation audit key is not unique"))
+        for identity in candidate_audit_duplicates:
+            errors.append(violation("provenance", f"aggregation_audit.{identity}", "candidate aggregation audit key is not unique"))
+        for index in reference_audit_invalid:
+            errors.append(violation("provenance", f"aggregation_audit.{index}", "reference aggregation audit record is malformed"))
+        for index in candidate_audit_invalid:
+            errors.append(violation("provenance", f"aggregation_audit.{index}", "candidate aggregation audit record is malformed"))
+        for identity in reference_audit.keys() - candidate_audit.keys():
+            errors.append(violation("provenance", f"aggregation_audit.{identity}", "required aggregation audit cell missing"))
+        for identity in candidate_audit.keys() - reference_audit.keys():
+            errors.append(violation("provenance", f"aggregation_audit.{identity}", "unexpected aggregation audit cell added"))
+        for identity in reference_audit.keys() & candidate_audit.keys():
+            if reference_audit[identity] != candidate_audit[identity]:
+                errors.append(violation(
+                    "provenance",
+                    f"aggregation_audit.{identity}",
+                    "aggregation operation, denominator, sufficient statistic, or observation-ID hash changed",
+                    reference_audit[identity],
+                    candidate_audit[identity],
+                ))
 
     counts = Counter(error["category"] for error in errors)
     scientific_errors = [error for error in errors if error["category"] in SCIENTIFIC_CATEGORIES]

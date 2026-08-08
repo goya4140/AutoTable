@@ -12,6 +12,8 @@ Use `benchmarks/paperbench/` for `(x,y)` generation evaluation. Record whether `
 
 For per-run data, use `benchmarks/paperbench/aggregate_runs.py`. Preserve run IDs, reject duplicate seeds and groups with fewer than two independent runs, and retain the generated aggregation audit. Never manufacture per-seed values by inverting a published mean and uncertainty.
 
+For per-example observations, use `skills/paper-table/scripts/aggregate_observations.py`. Declare a stable observation identity key and explicit denominator ID lists before aggregation. The blind public episode must expose these raw observations—not private `x.json`—while scoring against a privately recomputed canonical spec. Recompute `x.json` during case validation and require an exact match for columns, rows, and every cell-level audit record. Preserve operation, denominator name, sample count, sufficient statistic, and observation-ID hash; matching rounded values alone is insufficient.
+
 Use `benchmarks/neurips-tables/collect.py` only for candidate discovery. Cap tables per paper before claiming corpus scale. Use `annotations-diverse-2024.jsonl` for purpose/form-routing and extraction-quality stress diagnostics only; its rule labels are `gold: false`. A captioned crop without structured `x` is not a generation pair and must not enter the PaperBench leaderboard. Keep `audit-queue-2024.jsonl` pending until crop inspection and reviewer metadata are complete.
 
 Use `evaluate_annotations.py` only as a public-label regression diagnostic. Report coverage, narrative filtering, purpose routing, form routing, and quality-flag detection separately. Never publish its agreement with the exposed heuristic labels as model quality, human preference, or a PaperTable score.

@@ -247,6 +247,8 @@ evaluation
 
 AgentBoard case 把这一门槛落实为可执行样例：固定作者站点 commit 和文件 SHA-256，映射 `score → Progress`、`accuracy → Success`，只选择终稿 Table 3 中被该 artifact 精确覆盖的前两行，并记录 13 行来源与 19 行终稿之间的差异。由于站点仓库没有明确许可，原 JSON 不在本仓库再分发；构建时在线校验，case 只保留派生 spec、官方摘录和 provenance。
 
+SWT-Bench case 进一步落实了真正的 `raw_runs` artifact gate：固定论文期代码 commit、作者发布的 7 个 ZIP 哈希、24 个论文期排除项和评估公式；从 6×276 条逐实例结果重算 Table 4 的 24 个单元格。公开盲测只交付逐样本观测和固定分母定义，私有侧保留 canonical `x.json`，验证器要求列、行和 cell-level aggregation audit 完全重现。这里的实例不是独立 seeds，因此只支持确定性数据集指标，不虚构 between-run uncertainty。
+
 ## 7. 建议的下一阶段
 
 1. 先把现有 PaperBench schema 从“图像对”升级为“语义合同”，增加 lineage、allowed transformations、claim、hidden inquiry fields 和 venue rendering constraints。

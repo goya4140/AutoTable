@@ -69,6 +69,10 @@ def apply_mutation(spec: dict, mutation: str) -> dict:
             {"label": "(a) First", "metric_keys": [keys[0]]},
             {"label": "(b) Duplicate", "metric_keys": [keys[0], *keys[2:]]},
         ]
+    elif mutation == "aggregation_audit":
+        item = candidate["aggregation_audit"][0]
+        statistic = "numerator_count" if "numerator_count" in item else "sum"
+        item[statistic] += 1
     else:
         raise ValueError(f"unknown mutation: {mutation}")
     return candidate
@@ -93,6 +97,8 @@ def build() -> list[dict[str, Any]]:
             mutations.append(("uncertainty_kind", "uncertainty_semantics"))
         except ValueError:
             pass
+        if spec.get("aggregation_audit"):
+            mutations.append(("aggregation_audit", "provenance"))
         for mutation, expected in mutations:
             cases.append({
                 "id": f"{case['id']}--{mutation}",

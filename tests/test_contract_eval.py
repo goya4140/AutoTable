@@ -1,4 +1,5 @@
 import importlib.util
+import copy
 import json
 from pathlib import Path
 
@@ -38,3 +39,27 @@ def test_controlled_mutations_hit_expected_categories():
         candidate = controlled.apply_mutation(table, descriptor["mutation"])
         result = evaluator.evaluate(table, candidate, case)
         assert descriptor["expected_violation_category"] in result["category_counts"]
+
+
+def test_raw_run_aggregation_audit_is_part_of_the_contract():
+    evaluator = load("contract_eval_raw_audit", BENCH / "contract_eval.py")
+    case_path = BENCH / "cases/neurips24-swtbench-models/case.json"
+    case = json.loads(case_path.read_text())
+    table = json.loads((case_path.parent / "x.json").read_text())
+    candidate = copy.deepcopy(table)
+    candidate["aggregation_audit"][0]["numerator_count"] += 1
+    result = evaluator.evaluate(table, candidate, case)
+    assert not result["passed_scientific_gate"]
+    assert result["category_counts"]["provenance"] == 1
+
+
+def test_raw_run_malformed_extra_audit_record_is_rejected():
+    evaluator = load("contract_eval_raw_malformed_audit", BENCH / "contract_eval.py")
+    case_path = BENCH / "cases/neurips24-swtbench-models/case.json"
+    case = json.loads(case_path.read_text())
+    table = json.loads((case_path.parent / "x.json").read_text())
+    candidate = copy.deepcopy(table)
+    candidate["aggregation_audit"].append({"unkeyed": True})
+    result = evaluator.evaluate(table, candidate, case)
+    assert not result["passed_scientific_gate"]
+    assert result["category_counts"]["provenance"] == 1

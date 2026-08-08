@@ -138,7 +138,8 @@ def panel_partitions(spec, panel_count=2):
         base,remainder=divmod(len(metrics),panel_count); chunks=[]; offset=0
         for index in range(panel_count):
             size=base+(1 if index<remainder else 0); chunk=metrics[offset:offset+size]; offset+=size
-            chunks.append((f"Metrics {offset-size+1}–{offset}",[column["key"] for column in chunk]))
+            label=" / ".join(column.get("label", column["key"]) for column in chunk)
+            chunks.append((label,[column["key"] for column in chunk]))
         partitions.append((f"balanced-{panel_count}",chunks))
     unique=[]; seen=set()
     for partition_id,chunks in partitions:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
@@ -35,6 +36,14 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def load_observation_aggregator():
+    path = HERE.parents[1] / "skills/paper-table/scripts/aggregate_observations.py"
+    spec = importlib.util.spec_from_file_location("paperbench_aggregate_observations", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def validate_case(case_dir: Path) -> list[str]:
     errors = []
     case = json.loads((case_dir / "case.json").read_text())
@@ -47,6 +56,25 @@ def validate_case(case_dir: Path) -> list[str]:
         errors.append("schema_version must be 2.0")
     if case["task"] != "experimental-data-to-publication-table":
         errors.append("unexpected task")
+    if case["input_tier"] == "raw_runs":
+        descriptor = case.get("input")
+        if not descriptor:
+            errors.append("raw_runs case requires an input descriptor")
+        else:
+            input_path = case_dir / descriptor.get("path", "")
+            if not input_path.is_file() or digest(input_path) != descriptor.get("sha256"):
+                errors.append("raw input hash mismatch")
+            else:
+                try:
+                    payload = json.loads(input_path.read_text())
+                    if payload.get("schema_version") != descriptor.get("schema"):
+                        errors.append("raw input schema mismatch")
+                    recomputed = load_observation_aggregator().aggregate(payload)
+                    for key in ("columns", "rows", "aggregation_audit"):
+                        if recomputed.get(key) != spec.get(key):
+                            errors.append(f"raw input does not reproduce x.json {key}")
+                except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+                    errors.append(f"raw input aggregation failed: {exc}")
     contract = case["semantic_contract"]
     if REQUIRED_CONTRACT_KEYS - contract.keys():
         errors.append(f"missing contract keys: {sorted(REQUIRED_CONTRACT_KEYS - contract.keys())}")

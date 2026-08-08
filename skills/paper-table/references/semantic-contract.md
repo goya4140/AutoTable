@@ -7,6 +7,7 @@ Before rendering, represent the scientific meaning that must survive visual tran
 - metric direction and units;
 - valid comparison groups and excluded rows;
 - uncertainty type, independent-run count, and aggregation source;
+- unit of observation, fixed denominator population, exclusions, and missing-observation policy;
 - allowed transformations and forbidden inferences;
 - target width and accessibility constraints.
 
@@ -27,3 +28,5 @@ Stop asking when all blocking fields are resolved and no remaining question woul
 Record answer availability separately from its value. An author response such as “the run count is unavailable” confirms absence; it does not resolve a blocking run-count requirement. Use `blocked` for unavailable blocking evidence and `draft` for unavailable valuable nonblocking evidence.
 
 Never infer metric direction, units, comparison eligibility, independence of runs, uncertainty type, or statistical significance. Simulated variation is allowed only when explicitly requested, labeled simulated, and excluded from inferential claims.
+
+Distinguish repeated runs from per-example records. Runs support between-run uncertainty only when they are genuinely independent. Examples support deterministic dataset metrics but do not become repeated trials. For per-example inputs, bind each reported cell to a declared formula and denominator and retain a cell-level aggregation audit. Ask the author when exclusions, missing reports, or denominator changes could alter the claim.

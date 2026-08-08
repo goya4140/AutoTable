@@ -27,7 +27,7 @@ PaperBench records the strongest available `x`:
 | `canonical_table` | de-styled cells and semantic metadata | content selection, structure, and design |
 | `recovered_table` | cells recovered from a paper and manually verified | layout/design only; no claim about experiment aggregation |
 
-The committed mini set contains three `recovered_table` pairs and two `canonical_table` pairs from NeurIPS 2024. RankUp is built from a pinned author aggregate experiment log. AgentBoard is built from a separately pinned author-site JSON and an exact contiguous excerpt of the published table; its final-paper/source version mismatch is recorded instead of silently filling missing rows. This is an executable seed set, not yet a statistically representative leaderboard. Every case contains provenance, an `x.json`, a published `y_reference.png`, and an aesthetic rating record.
+The committed mini set contains six NeurIPS 2024 pairs: three `recovered_table`, two `canonical_table`, and one genuine per-example `raw_runs` case. SWT-Bench reconstructs all 24 cells of published Table 4 from 1,656 model-instance records over a fixed 276-instance universe, with 273 countable gold-coverage instances. RankUp is built from a pinned author aggregate experiment log. AgentBoard is built from a separately pinned author-site JSON and an exact contiguous excerpt of the published table; its final-paper/source version mismatch is recorded instead of silently filling missing rows. This is an executable seed set, not yet a statistically representative leaderboard. Every case contains provenance, an `x.json`, a published `y_reference.png`, and an aesthetic rating record.
 
 ## Reproduce the benchmark
 
@@ -35,6 +35,7 @@ The committed mini set contains three `recovered_table` pairs and two `canonical
 python benchmarks/paperbench/build_seed.py
 python benchmarks/paperbench/build_rankup_case.py
 python benchmarks/paperbench/build_agentboard_case.py
+python benchmarks/paperbench/build_swtbench_case.py --artifact-dir /path/to/downloaded/swt-lite-zips
 python benchmarks/paperbench/validate_cases.py
 python benchmarks/paperbench/evaluate_controlled.py
 python benchmarks/paperbench/evaluate_inquiry.py
@@ -42,7 +43,7 @@ python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
-Outputs appear in `output/paperbench/`. The current seed run passes numeric, semantic-contract, and XeLaTeX physical-width gates on all five cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. The extra-wide AgentBoard pair is packed into two panels of adjacent complete task groups and fits at 447.8/469 pt; RankUp fits at 459.2/469 pt. PaperTable-Controlled detects all 38 deterministic scientific/structural perturbations, including invalid panel coverage; InquiryBench contains 40 evaluator-separated missing-information scenarios plus an executable simulated-author runner that verifies answers are reflected in the final table.
+Outputs appear in `output/paperbench/`. The current reference run passes numeric, semantic-contract, provenance, and XeLaTeX physical-width gates on all 6/6 cases, with numeric/cell/header recall and numeric precision all `1.00` and zero hallucinated numeric tokens. SWT-Bench fits a 234.5pt single column at 225.5pt using three semantically named panels. Its raw input is recomputed during validation, and its blind public request contains only per-example observations while private scoring retains canonical `x.json`. PaperTable-Controlled detects all 46/46 deterministic mutations—including an audit-only provenance change—and InquiryBench's gold traces pass all 48/48 evaluator-separated scenarios.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 

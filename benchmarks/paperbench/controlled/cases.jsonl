@@ -36,3 +36,11 @@
 {"id": "neurips24-rl-action-masking--row_omission", "base_case_id": "neurips24-rl-action-masking", "mutation": "row_omission", "expected_violation_category": "structural_fidelity"}
 {"id": "neurips24-rl-action-masking--panel_metric_duplication", "base_case_id": "neurips24-rl-action-masking", "mutation": "panel_metric_duplication", "expected_violation_category": "structural_fidelity"}
 {"id": "neurips24-rl-action-masking--uncertainty_kind", "base_case_id": "neurips24-rl-action-masking", "mutation": "uncertainty_kind", "expected_violation_category": "uncertainty_semantics"}
+{"id": "neurips24-swtbench-models--numeric_value", "base_case_id": "neurips24-swtbench-models", "mutation": "numeric_value", "expected_violation_category": "numeric_fidelity"}
+{"id": "neurips24-swtbench-models--metric_direction", "base_case_id": "neurips24-swtbench-models", "mutation": "metric_direction", "expected_violation_category": "metric_semantics"}
+{"id": "neurips24-swtbench-models--metric_unit", "base_case_id": "neurips24-swtbench-models", "mutation": "metric_unit", "expected_violation_category": "metric_semantics"}
+{"id": "neurips24-swtbench-models--comparison_eligibility", "base_case_id": "neurips24-swtbench-models", "mutation": "comparison_eligibility", "expected_violation_category": "comparison_validity"}
+{"id": "neurips24-swtbench-models--emphasis_policy", "base_case_id": "neurips24-swtbench-models", "mutation": "emphasis_policy", "expected_violation_category": "comparison_validity"}
+{"id": "neurips24-swtbench-models--row_omission", "base_case_id": "neurips24-swtbench-models", "mutation": "row_omission", "expected_violation_category": "structural_fidelity"}
+{"id": "neurips24-swtbench-models--panel_metric_duplication", "base_case_id": "neurips24-swtbench-models", "mutation": "panel_metric_duplication", "expected_violation_category": "structural_fidelity"}
+{"id": "neurips24-swtbench-models--aggregation_audit", "base_case_id": "neurips24-swtbench-models", "mutation": "aggregation_audit", "expected_violation_category": "provenance"}

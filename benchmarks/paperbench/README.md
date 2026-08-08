@@ -10,13 +10,14 @@ Not every paper releases raw runs. PaperBench therefore records the strongest av
 - `canonical_table`: de-styled cells, metric directions, comparison groups, and provenance; supports content selection and table design evaluation.
 - `recovered_table`: cells recovered from a PDF/LaTeX source and manually verified; supports layout generation but not claims about experiment aggregation.
 
-The bundled mini set contains three `recovered_table` cases and two `canonical_table` cases. RankUp is generated from a pinned author-released three-seed aggregate CSV. AgentBoard maps a pinned author-site JSON to the exact Table 3 header and first two contiguous rows; the case is deliberately restricted because the source has 13 models while the final paper has 19. These are real seed cases for end-to-end repository tests, not a statistically representative leaderboard.
+The bundled mini set contains three `recovered_table`, two `canonical_table`, and one `raw_runs` case. SWT-Bench reconstructs published Table 4 from author-released per-instance reports: 6 models × 276 instances produce 1,656 records, while change coverage uses the 273 instances with countable gold coverage. RankUp is generated from a pinned author-released three-seed aggregate CSV. AgentBoard maps a pinned author-site JSON to the exact Table 3 header and first two contiguous rows; the case is deliberately restricted because the source has 13 models while the final paper has 19. These are real seed cases for end-to-end repository tests, not a statistically representative leaderboard.
 
 ## Case layout
 
 ```text
 cases/<case-id>/
 ├── case.json           # provenance, task, input tier, reference location
+├── raw_outcomes.json   # optional public raw input for raw_runs cases
 ├── x.json              # de-styled input to f(.) with metric units/directions
 ├── y_reference.png     # published table crop
 └── ratings.json        # optional human pairwise/rubric ratings
@@ -30,6 +31,7 @@ Generated artifacts are written to `output/paperbench/<case-id>/` and are not so
 python benchmarks/paperbench/build_seed.py
 python benchmarks/paperbench/build_rankup_case.py
 python benchmarks/paperbench/build_agentboard_case.py
+python benchmarks/paperbench/build_swtbench_case.py --artifact-dir /path/to/downloaded/swt-lite-zips
 python benchmarks/paperbench/validate_cases.py
 python benchmarks/paperbench/build_controlled.py
 python benchmarks/paperbench/evaluate_controlled.py
@@ -59,7 +61,7 @@ python benchmarks/paperbench/blind_protocol.py score \
   --report output/blind/report.json
 ```
 
-For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`. Use `--mode inquiry` to prepare the 40 sanitized InquiryBench requests.
+For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. A `raw_runs` public request carries the hashed raw payload named by `case.json`; its canonical `x.json`, reference crop, and recomputed gold stay private. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`; the current six-case set produces 48 sanitized scenarios.
 
 Every prepared episode randomly remaps request IDs so they cannot be enumerated back to public case/field names. The freeze manifest hashes every submission file and the public episode. Scoring fails if a request, manifest, directory, or output changes after freezing. Public and private roots must be non-nested. This is an artifact firewall, not an operating-system sandbox: leaderboard execution should additionally disable network access and mount the private root only for the scorer.
 
@@ -91,6 +93,14 @@ python benchmarks/paperbench/aggregate_runs.py runs.json --out x.json
 ```
 
 It rejects duplicate run identifiers and single-run groups, computes sample standard deviation or standard error, and stores an `aggregation_audit` with every contributing run ID. Do not reconstruct pseudo-runs from published means and error bars.
+
+For per-example observations with fixed dataset denominators, use:
+
+```bash
+python skills/paper-table/scripts/aggregate_observations.py raw_outcomes.json --out x.json
+```
+
+It rejects duplicate observation identities and missing denominator members, then records the formula, denominator, sufficient statistic, and observation-ID hash for every output cell. Examples are not independent seeds and do not justify between-run uncertainty.
 
 ## Evaluation dimensions
 
