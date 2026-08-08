@@ -16,7 +16,7 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
 6. Route by the accepted visual proposal. For a conventional, ablation, leaderboard, or semantic-panel table, run `scripts/optimize_layout.py SPEC --out-dir OUTPUT --target-width-pt WIDTH`. For a recommended one-metric `ranked_table_chart` or `diverging_table_chart`, run `scripts/render_table_chart.py SPEC --out-dir OUTPUT`; retain direct exact-value labels and the generated chart contract. Use `render_table.py` directly only when layout parameters are already fixed.
 7. Verify the artifact with `scripts/verify_table.py OUTPUT/selected-spec.json OUTPUT/table.tex` for tables or `scripts/verify_table.py SPEC OUTPUT/table-chart.svg` for table-charts. Require the relevant physical/layout gate, verify that every claimed-used author answer changed its corresponding contract field or visual encoding, treat numeric and semantic-contract checks as hard gates, then visually inspect the final PDF or PNG for clipping, collisions, scale honesty, and grayscale-safe non-color distinctions.
-8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, freeze `y'` before inspecting `y`, and keep weak discovery annotations separate from PaperBench generation pairs or aesthetic gold.
+8. When a published or earlier canonical snapshot is supplied for reconciliation, run `scripts/compare_snapshot.py CURRENT PUBLISHED --row-key KEY`; treat any displayed-cell or metric-semantic drift as blocking for `verified`. For benchmark work, follow `references/evaluation.md`, preserve the input tier, freeze `y'` before inspecting `y`, and keep weak discovery annotations separate from PaperBench generation pairs or aesthetic gold.
 9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 
 ## Inquiry gate
@@ -37,6 +37,8 @@ If the author asks for plausible variation without repeated runs, label it **sim
 For per-example aggregation, freeze the observation universe before computing values. Record the observation identity key, exclusions, named denominator ID lists, metric formula, scale, precision, and missing-report policy. Preserve the generated cell-level audit—including operation, denominator, sufficient statistic, and observation-ID hash—through every visual transformation. A changed or missing audit is a scientific failure even when the displayed rounded value is unchanged.
 
 For repeated-run aggregation, require the `paper-table-runs-v1` contract. Accept runs only when independence is explicitly supported; a seed-like column name is not evidence. Record what one repeat represents, preserve unique run identifiers, choose either a fixed run set across comparison groups or an explicitly group-specific design, and reject missing runs instead of imputing. Report means alone, mean ± SD, or mean ± SE only when that choice matches the author intent; always retain unrounded mean, sample SD, SE, run count, run-ID list, and run-ID hash in the cell-level audit. Do not silently convert SD to SE or infer confidence intervals.
+
+For multi-method cross-validation summaries, require a complete paired method × dataset × fold grid and use `scripts/aggregate_crossfold.py`. Resolve validation-based hyperparameter selection and its tie-break before aggregation; never choose a trial using test performance. Preserve the exact rank tie policy, Z-score denominator, dispersion definition, and win policy. If a pinned author snapshot does not reproduce the published cells at their displayed precision, label it a version-drift reconstruction and block `verified` status—do not introduce a tolerance merely to make it pass.
 
 ## Visual strategy
 
@@ -64,7 +66,9 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
 - `scripts/aggregate_runs.py`: aggregate genuinely independent repeated runs under an explicit pairing and missing-run contract, retaining unrounded SD/SE and hashed run audits.
+- `scripts/aggregate_crossfold.py`: aggregate complete paired method-by-dataset-fold grids into mean score, average rank, fold-level Z-score summaries, and strict wins.
 - `scripts/aggregate_observations.py`: deterministically aggregate per-example observations with fixed denominators and a cell-level provenance audit.
+- `scripts/compare_snapshot.py`: compare a reconstruction with a publication at declared display precision and block false exact-gold or `verified` claims.
 - `scripts/design_advisor.py`: derive a structured visual form, proposal, alternatives, warnings, and bounded follow-up questions from the table spec and semantic contract.
 - `scripts/optimize_layout.py`: search measured typography, semantic panel, and lossless text-wrap candidates; emit structural feedback when none fit.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.

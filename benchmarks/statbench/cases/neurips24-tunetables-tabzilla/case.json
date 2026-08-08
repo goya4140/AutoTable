@@ -1,0 +1,62 @@
+{
+  "schema_version": "statbench-case-v1",
+  "id": "neurips24-tunetables-tabzilla",
+  "status": "source_snapshot_drift_diagnostic",
+  "published_exact_gold": false,
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_title": "TuneTables: Context Optimization for Scalable Prior-Data Fitted Networks",
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/97dc07f1253ab33ee514f395a82fa7cc-Abstract-Conference.html",
+  "paper_pdf_sha256": "e41c2b3efa740ac602e369d1014370bd79f4bf3916980c5936dca21053270ab7",
+  "published_location": "Table 1, all 20 method rows and six aggregate columns",
+  "source": {
+    "dataset_repository": "https://huggingface.co/datasets/penfever/tunetables-results",
+    "revision": "0e15323407a5526b8aabd3038c60f5c3f7f37d9a",
+    "license": "not specified in the dataset card; source terms control",
+    "files": [
+      {
+        "path": "datasets_used/tabz_table1_datasets.csv",
+        "sha256": "8ea583242394748b87ea5a421cacb178b3b8e683e77f7142585b998417d3d532"
+      },
+      {
+        "path": "05_2024_tabzilla_main_plotting_data/tt-rebuttal-all-algos-old-md-05_16_2024.csv",
+        "sha256": "0102e0b9bd831e9b67b0acb25a6ef231d4741fc6326554436848047b37d99046"
+      },
+      {
+        "path": "excelformer/excelformer-102124-dsnamedsid.csv",
+        "sha256": "6b1e8e26e1d1ce51140459ad3a43c9789cf12fba150890a521bd6615f18b9c78"
+      }
+    ]
+  },
+  "selection": {
+    "datasets": 98,
+    "folds": [0, 1, 2],
+    "methods": 20,
+    "baseline_selection": "Pinned TabZilla result rows for the 98 Table 1 datasets.",
+    "excelformer_selection": "Within each dataset-fold, select the trial with maximum validation accuracy; ties use the lowest trial number.",
+    "excelformer_validation_tie_units": 135,
+    "excelformer_all_available_trials_tied_units": 26,
+    "excelformer_all_30_trials_tied_units": 11,
+    "excelformer_max_tied_trials": 30,
+    "records": 5880
+  },
+  "aggregation": {
+    "schema": "paper-table-crossfold-v1",
+    "rank": "average rank within each dataset-fold",
+    "z_score": "population Z-score across methods within each dataset-fold",
+    "std_z_score": "population standard deviation of fold-level Z-scores for each method",
+    "win_policy": "strict unique best per dataset-fold",
+    "missing_policy": "reject incomplete paired grid"
+  },
+  "raw_input": "raw_fold_scores.json",
+  "current_expected": "current_expected.json",
+  "published_output": "published.json",
+  "drift_report": "drift_report.json",
+  "derived_artifacts": [
+    {"path": "raw_fold_scores.json", "sha256": "133fc4ca54a3672645555ed7df5c8d9bef1ff7ad2ecab9762d74ab72028dff51"},
+    {"path": "current_expected.json", "sha256": "d23910a9ee1f81e53102d596552bb9f55220601e4e6bade9e5f33c382ff5dd80"},
+    {"path": "published.json", "sha256": "1f3d0cb83e6dd1c2a5fc633c9cd8fec1e20296540174a4be71dba0e1af4a1b2c"},
+    {"path": "drift_report.json", "sha256": "c26153a7c2d16606db989de886edb1e0598ffd4bba3a5f300e8425a5631fd2c2"}
+  ],
+  "admission_policy": "The current author snapshot is retained as a version-drift diagnostic. It is not an exact published-cell gold pair and must never count as a verified StatBench reconstruction."
+}

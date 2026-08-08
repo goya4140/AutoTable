@@ -1,0 +1,2074 @@
+{
+  "title": "TuneTables TabZilla aggregate statistics from the current author snapshot",
+  "label": "tab:tunetables-current-snapshot",
+  "caption": "Aggregate classification results over 20 methods, 98 datasets, and three paired OpenML folds.",
+  "columns": [
+    {
+      "key": "method",
+      "label": "Model",
+      "kind": "text"
+    },
+    {
+      "key": "mean_score",
+      "label": "Mean Acc.",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "proportion",
+      "precision": 3
+    },
+    {
+      "key": "mean_rank",
+      "label": "Mean rank",
+      "kind": "metric",
+      "direction": "min",
+      "unit": "dimensionless",
+      "precision": 3
+    },
+    {
+      "key": "mean_z_score",
+      "label": "Mean Z-score",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "dimensionless",
+      "precision": 3
+    },
+    {
+      "key": "std_z_score",
+      "label": "Std Z-score",
+      "kind": "metric",
+      "direction": "min",
+      "unit": "dimensionless",
+      "precision": 3
+    },
+    {
+      "key": "median_z_score",
+      "label": "Median Z-score",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "dimensionless",
+      "precision": 3
+    },
+    {
+      "key": "num_wins",
+      "label": "Num. wins",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "count",
+      "precision": 0
+    }
+  ],
+  "rows": [
+    {
+      "method": "TuneTables",
+      "mean_score": 0.861,
+      "mean_rank": 7.491,
+      "mean_z_score": 0.491,
+      "std_z_score": 0.624,
+      "median_z_score": 0.489,
+      "num_wins": 31
+    },
+    {
+      "method": "CatBoost",
+      "mean_score": 0.857,
+      "mean_rank": 7.587,
+      "mean_z_score": 0.492,
+      "std_z_score": 0.666,
+      "median_z_score": 0.563,
+      "num_wins": 13
+    },
+    {
+      "method": "XGBoost",
+      "mean_score": 0.855,
+      "mean_rank": 7.995,
+      "mean_z_score": 0.411,
+      "std_z_score": 0.783,
+      "median_z_score": 0.536,
+      "num_wins": 16
+    },
+    {
+      "method": "ExcelFormer",
+      "mean_score": 0.848,
+      "mean_rank": 9.318,
+      "mean_z_score": 0.215,
+      "std_z_score": 0.849,
+      "median_z_score": 0.382,
+      "num_wins": 6
+    },
+    {
+      "method": "LightGBM",
+      "mean_score": 0.847,
+      "mean_rank": 9.099,
+      "mean_z_score": 0.286,
+      "std_z_score": 0.891,
+      "median_z_score": 0.434,
+      "num_wins": 20
+    },
+    {
+      "method": "RandomForest",
+      "mean_score": 0.844,
+      "mean_rank": 9.762,
+      "mean_z_score": 0.206,
+      "std_z_score": 0.77,
+      "median_z_score": 0.376,
+      "num_wins": 4
+    },
+    {
+      "method": "SAINT",
+      "mean_score": 0.842,
+      "mean_rank": 9.566,
+      "mean_z_score": 0.137,
+      "std_z_score": 0.977,
+      "median_z_score": 0.357,
+      "num_wins": 11
+    },
+    {
+      "method": "DANet",
+      "mean_score": 0.841,
+      "mean_rank": 9.636,
+      "mean_z_score": 0.212,
+      "std_z_score": 0.759,
+      "median_z_score": 0.351,
+      "num_wins": 3
+    },
+    {
+      "method": "rtdl_ResNet",
+      "mean_score": 0.841,
+      "mean_rank": 9.662,
+      "mean_z_score": 0.178,
+      "std_z_score": 0.794,
+      "median_z_score": 0.362,
+      "num_wins": 5
+    },
+    {
+      "method": "rtdl_FTTransformer",
+      "mean_score": 0.84,
+      "mean_rank": 9.736,
+      "mean_z_score": 0.201,
+      "std_z_score": 0.782,
+      "median_z_score": 0.279,
+      "num_wins": 8
+    },
+    {
+      "method": "NODE",
+      "mean_score": 0.839,
+      "mean_rank": 9.304,
+      "mean_z_score": 0.227,
+      "std_z_score": 0.692,
+      "median_z_score": 0.375,
+      "num_wins": 3
+    },
+    {
+      "method": "SVM",
+      "mean_score": 0.836,
+      "mean_rank": 9.816,
+      "mean_z_score": 0.125,
+      "std_z_score": 0.807,
+      "median_z_score": 0.32,
+      "num_wins": 12
+    },
+    {
+      "method": "DecisionTree",
+      "mean_score": 0.824,
+      "mean_rank": 12.202,
+      "mean_z_score": -0.303,
+      "std_z_score": 1.21,
+      "median_z_score": -0.018,
+      "num_wins": 3
+    },
+    {
+      "method": "rtdl_MLP",
+      "mean_score": 0.815,
+      "mean_rank": 10.782,
+      "mean_z_score": -0.013,
+      "std_z_score": 0.903,
+      "median_z_score": 0.226,
+      "num_wins": 1
+    },
+    {
+      "method": "STG",
+      "mean_score": 0.811,
+      "mean_rank": 12.133,
+      "mean_z_score": -0.281,
+      "std_z_score": 1.048,
+      "median_z_score": -0.043,
+      "num_wins": 5
+    },
+    {
+      "method": "TabNet",
+      "mean_score": 0.806,
+      "mean_rank": 11.585,
+      "mean_z_score": -0.21,
+      "std_z_score": 1.102,
+      "median_z_score": 0.08,
+      "num_wins": 5
+    },
+    {
+      "method": "MLP",
+      "mean_score": 0.803,
+      "mean_rank": 12.286,
+      "mean_z_score": -0.239,
+      "std_z_score": 0.84,
+      "median_z_score": -0.126,
+      "num_wins": 1
+    },
+    {
+      "method": "LinearModel",
+      "mean_score": 0.792,
+      "mean_rank": 13.148,
+      "mean_z_score": -0.544,
+      "std_z_score": 1.245,
+      "median_z_score": -0.351,
+      "num_wins": 5
+    },
+    {
+      "method": "KNN",
+      "mean_score": 0.782,
+      "mean_rank": 14.131,
+      "mean_z_score": -0.722,
+      "std_z_score": 1.181,
+      "median_z_score": -0.585,
+      "num_wins": 0
+    },
+    {
+      "method": "VIME",
+      "mean_score": 0.755,
+      "mean_rank": 14.76,
+      "mean_z_score": -0.868,
+      "std_z_score": 1.197,
+      "median_z_score": -0.696,
+      "num_wins": 5
+    }
+  ],
+  "emphasis": {
+    "best": "bold",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "Ranks use average ranks for ties; wins require a unique best method within an evaluation unit.",
+    "Z-scores use the population standard deviation across methods within each dataset-fold; Std Z-score is the population standard deviation across evaluation units.",
+    "The complete paired grid is required; missing method-fold results are rejected without imputation."
+  ],
+  "provenance": {
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/97dc07f1253ab33ee514f395a82fa7cc-Abstract-Conference.html",
+    "source_repository": "https://huggingface.co/datasets/penfever/tunetables-results",
+    "source_revision": "0e15323407a5526b8aabd3038c60f5c3f7f37d9a",
+    "snapshot_status": "post-publication author snapshot; exact paper-time snapshot unavailable",
+    "observed": true,
+    "input_tier": "raw_runs",
+    "aggregation_schema": "paper-table-crossfold-v1",
+    "pairing_mode": "complete_method_by_dataset_fold_grid",
+    "missing_run_policy": "error",
+    "win_policy": "strict_unique_best"
+  },
+  "grid_audit": {
+    "methods": 20,
+    "datasets": 98,
+    "folds_per_dataset": 3,
+    "evaluation_units": 294,
+    "records": 5880,
+    "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15"
+  },
+  "aggregation_audit": [
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8606659349353741,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 7.491496598639456,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.49076427709316334,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.6242688464845747,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.4893339582070549,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TuneTables"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 31,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8570202001549283,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 7.586734693877551,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.4918512488732664,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.6659133239066931,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.5627187357156404,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "CatBoost"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 13,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8549908187348413,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 7.994897959183674,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.4106081498011288,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7831608778934649,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.5358913196277375,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "XGBoost"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 16,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.847726351991747,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.318027210884354,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.21526863522339793,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8487008775557956,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3819364068211346,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "ExcelFormer"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 6,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8469572613969277,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.098639455782314,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.285848777840285,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.891230940020469,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.4337517415356663,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LightGBM"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 20,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8440729743114668,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.761904761904763,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.20558169093529396,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7704790119968112,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3755598387111049,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "RandomForest"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 4,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8418288447474063,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.566326530612244,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.13654720017617497,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.9769867719341477,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3570533875483034,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SAINT"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 11,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8412515767447167,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.636054421768707,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.21192689323295896,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7586548261995334,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3514582936251599,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DANet"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 3,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8409676005704126,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.66156462585034,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.1784889392985312,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7939219176609437,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3615247470218879,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_ResNet"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 5,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8395031770728565,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.736394557823129,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.2013762812796963,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7821665049315952,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.27945053707319567,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_FTTransformer"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 8,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8392760870700009,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.304421768707483,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.22659046280235556,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.6922604462784893,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.37471221491413315,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "NODE"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 3,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8364316375484566,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 9.816326530612244,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.12516081771588505,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8066329864384058,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.3203541354330869,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "SVM"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 12,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8241258525575219,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 12.202380952380953,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.3028524591068938,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.2098720397633522,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.018234330235829488,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "DecisionTree"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 3,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.814958958859381,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 10.782312925170068,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.012581564940017918,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.9034667557115439,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.2259983641034648,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "rtdl_MLP"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8114571027713654,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 12.13265306122449,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.2811132024010819,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.0479141423714287,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.042663554803802226,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "STG"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 5,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8063735947475112,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 11.585034013605442,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.2103046875289862,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.1016662386969192,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.07997938633358831,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "TabNet"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 5,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8029479771959178,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 12.285714285714286,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.2385070918060796,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.8404150018320942,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.12630377168997664,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "MLP"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7921078863162947,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 13.14795918367347,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.543816726292528,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.2447361059150004,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.3508599450376323,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "LinearModel"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 5,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7822797365814976,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 14.130952380952381,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.7224359525330435,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.1806870291257923,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.5846333087569765,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "KNN"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0,
+      "precision": 0
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "mean_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 0.7550727118126068,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "mean_rank",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 14.760204081632653,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "mean_z_score",
+      "operation": "mean",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.8684016896635077,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "std_z_score",
+      "operation": "population_std",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 1.197195582963109,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "median_z_score",
+      "operation": "median",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": -0.696465094895852,
+      "precision": 3
+    },
+    {
+      "group": {
+        "method": "VIME"
+      },
+      "metric": "num_wins",
+      "operation": "strict_unique_best_count",
+      "n": 294,
+      "evaluation_unit_keys": [
+        "dataset",
+        "fold"
+      ],
+      "evaluation_units_sha256": "ef9064f7f198c76de48fcc18c07dabad2af409a05d8c7111082a03c757ba2b15",
+      "value_unrounded": 5,
+      "precision": 0
+    }
+  ]
+}

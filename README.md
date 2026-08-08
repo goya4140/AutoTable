@@ -12,7 +12,7 @@ PaperTable studies code-first generation of publication-quality academic tables.
 - A reusable Codex Skill in [`skills/paper-table`](skills/paper-table).
 - Deterministic JSON → LaTeX/HTML tables or SVG/PDF/PNG table-charts, with numeric verification.
 - [`PaperBench`](benchmarks/paperbench): a versioned `(x,y)` dataset schema, real NeurIPS seed cases, evaluation scripts, human-rating protocol, and reference-vs-generated dashboard.
-- [`StatBench`](benchmarks/statbench): author-released repeated runs mapped exactly to published NeurIPS cells, without pretending a partial statistical artifact is a full visual-table gold pair.
+- [`StatBench`](benchmarks/statbench): exact author-run reconstructions plus explicitly ineligible source-drift diagnostics, without pretending a partial statistical artifact is a full visual-table gold pair.
 - Candidate discovery manifests from official 2024 proceedings: a legacy 150-table NeurIPS index, a diversity-capped 200-table/30-paper NeurIPS index, and 25-table ICLR/ICML indexes. Discovery cases are explicitly kept separate from paired benchmark cases.
 - External adapters/registry for TableVisBench and TABVERSE rather than silently relicensing their data.
 - A [dataset landscape](docs/dataset-landscape.md) covering TableBank, PubTables-1M, SciTSR, TabLeX, SciGen, TABVERSE, TableVisBench, and TASTE.
@@ -47,7 +47,7 @@ python benchmarks/statbench/validate.py
 
 Outputs appear in `output/paperbench/`. The current reference run passes numeric, semantic-contract, provenance, and XeLaTeX physical-width gates on all 6/6 cases, with numeric/cell/header recall and numeric precision all `1.00` and zero hallucinated numeric tokens. SWT-Bench fits a 234.5pt single column at 225.5pt using three semantically named panels. Its raw input is recomputed during validation, and its blind public request contains only per-example observations while private scoring retains canonical `x.json`. PaperTable-Controlled detects all 46/46 deterministic mutations—including an audit-only provenance change—and InquiryBench's gold traces pass all 48/48 evaluator-separated scenarios.
 
-StatBench currently adds DIAMOND's 130 author-released Atari scores: 26 games × five random training seeds. Deterministic aggregation reproduces all 26 published DIAMOND cells in NeurIPS 2024 Table 1, while the audit retains sample SD and SE even though the paper displays means only.
+StatBench contains two complementary cases. DIAMOND's 130 author-released Atari scores reproduce all 26 published cells exactly. TuneTables contributes a complete 5,880-record grid spanning 20 methods, 98 datasets, and three folds; it executes all six Table 1 aggregation formulas but intentionally fails exact-gold admission because the pinned post-publication author snapshot matches only 20/120 displayed cells. This makes version drift, hyperparameter tie-breaking, and false `verified` claims directly testable instead of hiding them behind numeric tolerance.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 

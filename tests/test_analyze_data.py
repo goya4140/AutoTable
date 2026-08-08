@@ -47,3 +47,16 @@ def test_detected_repeats_ask_for_the_full_repeat_design(tmp_path):
     assert repeat_question["importance"] == "blocking"
     assert "independent" in repeat_question["question"] and "paired" in repeat_question["question"]
     assert report["visual_advice"]["questions"][0]["field_id"] == "uncertainty_source"
+
+
+def test_hyperparameter_trials_require_validation_selection_and_tie_policy(tmp_path):
+    data = tmp_path / "trials.json"
+    data.write_text(json.dumps([
+        {"method": "A", "dataset": "D", "fold": 0, "trial_number": 0, "accuracy_val": 0.8, "accuracy_test": 0.7},
+        {"method": "A", "dataset": "D", "fold": 0, "trial_number": 1, "accuracy_val": 0.8, "accuracy_test": 0.9},
+    ]))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json"], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    question = next(item for item in report["inquiry_plan"] if item["id"] == "selection_policy")
+    assert question["importance"] == "blocking"
+    assert "validation" in question["question"] and "test results are never used" in question["question"]

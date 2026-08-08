@@ -20,6 +20,7 @@ def build_generation_submissions(public_dir, submissions_dir):
     aggregators = {
         "paper-table-observations-v1": load("blind_observation_aggregator", ROOT / "skills/paper-table/scripts/aggregate_observations.py"),
         "paper-table-runs-v1": load("blind_run_aggregator", ROOT / "skills/paper-table/scripts/aggregate_runs.py"),
+        "paper-table-crossfold-v1": load("blind_crossfold_aggregator", ROOT / "skills/paper-table/scripts/aggregate_crossfold.py"),
     }
     manifest = json.loads((public_dir / "manifest.json").read_text())
     for item in manifest["requests"]:

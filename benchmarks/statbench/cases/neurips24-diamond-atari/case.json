@@ -1,6 +1,8 @@
 {
   "schema_version": "statbench-case-v1",
   "id": "neurips24-diamond-atari",
+  "status": "exact_published_reconstruction",
+  "published_exact_gold": true,
   "venue": "NeurIPS",
   "year": 2024,
   "paper_title": "Diffusion for World Modeling: Visual Details Matter in Atari",

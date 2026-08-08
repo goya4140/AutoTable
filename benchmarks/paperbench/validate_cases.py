@@ -40,6 +40,7 @@ def load_raw_aggregator(schema_version: str):
     scripts = {
         "paper-table-observations-v1": "aggregate_observations.py",
         "paper-table-runs-v1": "aggregate_runs.py",
+        "paper-table-crossfold-v1": "aggregate_crossfold.py",
     }
     if schema_version not in scripts:
         raise ValueError(f"unsupported raw input schema: {schema_version}")
