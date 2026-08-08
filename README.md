@@ -10,7 +10,7 @@ PaperTable studies code-first generation of publication-quality academic tables.
 ## What is included
 
 - A reusable Codex Skill in [`skills/paper-table`](skills/paper-table).
-- Deterministic JSON → LaTeX/HTML rendering and numeric verification.
+- Deterministic JSON → LaTeX/HTML tables or SVG/PDF/PNG table-charts, with numeric verification.
 - [`PaperBench`](benchmarks/paperbench): a versioned `(x,y)` dataset schema, real NeurIPS seed cases, evaluation scripts, human-rating protocol, and reference-vs-generated dashboard.
 - Candidate discovery manifests: 150 NeurIPS, 25 ICLR, and 25 ICML tables from official 2024 proceedings. Discovery cases are explicitly kept separate from paired benchmark cases.
 - External adapters/registry for TableVisBench and TABVERSE rather than silently relicensing their data.
@@ -53,7 +53,17 @@ python skills/paper-table/scripts/optimize_layout.py examples/main-results.json 
 python skills/paper-table/scripts/verify_table.py output/example/selected-spec.json output/example/table.tex
 ```
 
-The optimizer compiles bounded typography candidates, measures the real LaTeX box, and produces `selected-spec.json`, editable LaTeX/HTML, PDF/PNG previews, `layout-report.json`, and structural redesign advice when no readable candidate fits. If typography alone fails, it can split metrics at semantic group boundaries, repeat identity columns, or wrap long identity text without abbreviation. It automatically accepts at most three stacked panels and never silently inserts whole-table scaling.
+The optimizer compiles bounded typography candidates, measures the real LaTeX box, and produces `selected-spec.json`, editable LaTeX/HTML, PDF/PNG previews, `design-advice.json`, `layout-report.json`, and structural redesign advice when no readable candidate fits. If typography alone fails, it can split metrics at semantic group boundaries, repeat identity columns, or wrap long identity text without abbreviation. It automatically accepts at most three stacked panels and never silently inserts whole-table scaling.
+
+For a single dominant metric or signed delta, generate a code-first table-chart:
+
+```bash
+python skills/paper-table/scripts/design_advisor.py examples/accuracy-gain.json
+python skills/paper-table/scripts/render_table_chart.py examples/accuracy-gain.json --out-dir output/accuracy-gain
+python skills/paper-table/scripts/verify_table.py examples/accuracy-gain.json output/accuracy-gain/table-chart.svg
+```
+
+This route preserves exact labels while adding honest position encoding. It exports editable SVG, PDF, PNG, and a structured `chart-spec.json`; unresolved metric direction/unit or a multi-metric lookup request is rejected.
 
 The Skill actively asks for missing repeats, units, metric direction, sample size, comparison design, and intended claim. Simulated variation must be labeled and cannot be used as observed evidence.
 

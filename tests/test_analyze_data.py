@@ -19,6 +19,8 @@ def test_analyzer_emits_bounded_structured_inquiry(tmp_path):
     assert 1 <= len(report["inquiry_plan"]) <= 3
     assert report["inquiry_plan"][0]["id"] == "metric_semantics"
     assert all({"id", "importance", "question", "reason"} <= set(item) for item in report["inquiry_plan"])
+    assert report["design_proposal"]["primary_form"]
+    assert report["visual_advice"]["actionable_changes"]
 
 
 def test_context_suppresses_answered_question(tmp_path):
@@ -29,3 +31,17 @@ def test_context_suppresses_answered_question(tmp_path):
     result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json", "--context", str(context)], check=True, capture_output=True, text=True)
     report = json.loads(result.stdout)
     assert "metric_semantics" not in {item["id"] for item in report["inquiry_plan"]}
+
+
+def test_detected_repeats_still_ask_uncertainty_semantics(tmp_path):
+    data = tmp_path / "runs.json"
+    data.write_text(json.dumps([
+        {"method": "A", "seed": 0, "score": 1.0},
+        {"method": "A", "seed": 1, "score": 1.2},
+        {"method": "B", "seed": 0, "score": 2.0},
+        {"method": "B", "seed": 1, "score": 2.2},
+    ]))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json"], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    assert "uncertainty_kind" in {item["id"] for item in report["inquiry_plan"]}
+    assert report["visual_advice"]["questions"][0]["field_id"] == "uncertainty_source"

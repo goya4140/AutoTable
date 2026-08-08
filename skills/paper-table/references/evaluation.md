@@ -2,6 +2,8 @@
 
 Score each artifact from 0 to 2 on six axes: numeric faithfulness, comparison validity, hierarchy, readability at target width, claim salience, and editability/reproducibility. Numeric fidelity, metric semantics, uncertainty semantics, comparison validity, and provenance are hard gates; visual scores cannot compensate for a scientific violation.
 
+Record `design_advisor.py` output as a diagnostic: recommended form, decision basis, warnings, questions, and alternatives. Do not score a system by agreement with its own recommendation. Validate form selection with blinded human comparisons or a separately annotated table-vs-chart benchmark.
+
 Measure the natural tabular box with XeLaTeX and report target width, measured width, tabular body height, utilization, selected typography candidate, and fit status. Physical fit is a publication-readiness hard gate, but it is not a human aesthetic score. Inspect caption/notes in the compiled preview, reject silent whole-table scaling, and report structural redesign when bounded readable candidates all overflow.
 
 For panelized output, require every metric exactly once and in canonical order, repeat identity columns only, and forbid mixing distinct nonempty metric groups. Automatically accept at most three stacked panels; route larger layouts to structural feedback or author review. Adjust rendered-token multiplicity only for the deliberately repeated identity columns; do not relax metric-number precision or hallucination checks.

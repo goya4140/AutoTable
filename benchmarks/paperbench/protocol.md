@@ -24,6 +24,8 @@ Show `y` and `y'` in randomized left/right order without method names. Ask at le
 
 Report majority preference, mean opinion score with bootstrap confidence intervals, Krippendorff's alpha, position-bias rate, and disagreement. Treat an automated VLM or image heuristic as a proxy only; validate it against human ratings before using it as a leaderboard metric.
 
+Report the deterministic design advisor's recommended visual form, warnings, and unresolved questions as diagnostics, not as an aesthetic score. A recommendation is not proof that the chosen form is better; evaluate form selection through blinded human preference or a separately annotated form-selection set.
+
 ## Leakage policy
 
 References, exemplars, and prompts must not contain the target `y`, its LaTeX source, or any table from the target paper. The evaluator may access `y` only after `y'` is frozen.

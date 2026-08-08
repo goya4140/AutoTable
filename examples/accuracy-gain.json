@@ -1,0 +1,18 @@
+{
+  "title": "Accuracy gain by emotion transition",
+  "label": "fig:emotion-transition-gain",
+  "caption": "Accuracy change relative to the comparison baseline for five emotion transitions.",
+  "columns": [
+    {"key": "transition", "label": "Emotion transition", "kind": "text"},
+    {"key": "gain", "label": "Accuracy gain", "kind": "metric", "direction": "max", "unit": "percentage points", "precision": 1}
+  ],
+  "rows": [
+    {"transition": "Neutral–Sad", "gain": 2.0},
+    {"transition": "Sad–Worried", "gain": 10.4},
+    {"transition": "Angry–Sad", "gain": -3.0},
+    {"transition": "Angry–Neutral", "gain": 1.2},
+    {"transition": "Angry–Worried", "gain": 8.6}
+  ],
+  "notes": ["Positive values indicate an accuracy improvement; negative values indicate a decrease."],
+  "provenance": {"observed": true, "source": "author-supplied reference screenshot"}
+}

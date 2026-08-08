@@ -36,3 +36,14 @@ def test_panel_layout_requires_exact_metric_coverage():
     import pytest
     with pytest.raises(ValueError,match="cover every metric exactly once"):
         m.render(spec)
+
+
+def test_render_supports_90_and_95_percent_interval_bounds():
+    m=load("render_intervals",ROOT/"skills/paper-table/scripts/render_table.py")
+    spec={"columns":[
+        {"key":"method","label":"Method","kind":"text"},
+        {"key":"a","label":"A","kind":"metric","direction":"max","precision":2},
+        {"key":"b","label":"B","kind":"metric","direction":"max","precision":2}],
+        "rows":[{"method":"M","a":{"mean":1.0,"ci90":[0.8,1.2]},"b":{"mean":2.0,"ci95":[1.7,2.3]}}]}
+    tex,html=m.render(spec)
+    assert "1.00 [0.80, 1.20]" in tex and "2.00 [1.70, 2.30]" in html

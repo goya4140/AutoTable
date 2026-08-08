@@ -43,7 +43,7 @@ def display(cell, precision):
         for k,label in (("sd"," ± "),("se"," ± "),("ci90"," ± "),("ci95"," ± ")):
             if k in cell:
                 v=cell[k]
-                if k=="ci95" and isinstance(v,list): return f"{m:.{precision}f} [{v[0]:.{precision}f}, {v[1]:.{precision}f}]"
+                if k in {"ci90","ci95"} and isinstance(v,list) and len(v)==2: return f"{m:.{precision}f} [{v[0]:.{precision}f}, {v[1]:.{precision}f}]"
                 return f"{m:.{precision}f}{label}{float(v):.{precision}f}"
         return f"{m:.{precision}f}"
     if isinstance(cell,(int,float)): return f"{cell:.{precision}f}"

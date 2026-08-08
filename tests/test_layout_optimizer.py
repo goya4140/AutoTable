@@ -49,6 +49,8 @@ def test_optimizer_selects_a_measured_fitting_layout(tmp_path):
     assert selected["rows"] == original["rows"]
     assert selected["columns"] == original["columns"]
     assert (tmp_path / "table.tex").exists() and (tmp_path / "table.html").exists()
+    assert (tmp_path / "design-advice.json").exists()
+    assert report["visual_strategy"]["primary_form"]
 
 
 def test_optimizer_requests_structural_redesign_instead_of_silent_scaling(tmp_path):

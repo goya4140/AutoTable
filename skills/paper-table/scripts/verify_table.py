@@ -5,7 +5,7 @@ from pathlib import Path
 def walk(x):
     if isinstance(x,dict):
         for k,v in x.items():
-            if k not in {"precision","ci95"}: yield from walk(v)
+            if k != "precision": yield from walk(v)
     elif isinstance(x,list):
         for v in x: yield from walk(v)
     elif isinstance(x,(int,float)) and not isinstance(x,bool): yield x

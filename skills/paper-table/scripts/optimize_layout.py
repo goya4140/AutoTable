@@ -14,6 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 RENDERER_PATH = HERE / "render_table.py"
+ADVISOR_PATH = HERE / "design_advisor.py"
 FONT_QUALITY = {"small": 1.0, "footnotesize": 0.86, "scriptsize": 0.68}
 CANDIDATES = [
     {"id": "small-comfortable", "font_size": "small", "column_padding_pt": 6.0, "row_stretch": 1.08},
@@ -33,6 +34,13 @@ MAX_AUTOMATIC_PANELS=3
 
 def load_renderer():
     spec = importlib.util.spec_from_file_location("paper_table_layout_renderer", RENDERER_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_advisor():
+    spec = importlib.util.spec_from_file_location("paper_table_design_advisor", ADVISOR_PATH)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -206,7 +214,7 @@ def compile_preview(out_dir, latexmk="latexmk"):
             if (out_dir / "preview.png").exists(): autocrop_png(out_dir / "preview.png")
 
 
-def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=500.0, latexmk="latexmk", compile_artifact=True):
+def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=500.0, latexmk="latexmk", compile_artifact=True, case=None):
     if target_width_pt <= 0 or target_height_pt <= 0:
         raise ValueError("target width and height must be positive")
     renderer = load_renderer()
@@ -258,12 +266,15 @@ def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=500.0, latex
     (out_dir / "selected-spec.json").write_text(json.dumps(selected_spec, indent=2, ensure_ascii=False) + "\n")
     (out_dir / "table.tex").write_text(latex)
     (out_dir / "table.html").write_text(html)
+    visual_strategy = load_advisor().advise(selected_spec, case, target_width_pt)
+    (out_dir / "design-advice.json").write_text(json.dumps(visual_strategy, indent=2, ensure_ascii=False) + "\n")
     report = {
         "status": "selected" if fitting else "needs_structural_redesign",
         "target_width_pt": target_width_pt, "target_tabular_height_pt": target_height_pt,
         "selected_candidate": selected["id"], "selected_fits": selected["fits"],
         "structural_transform": selected["structural_transform"], "panel_count": selected["panel_count"],
         "selection_policy": "Among physically fitting candidates, maximize a declared proxy favoring readable font size, column padding, row spacing, and width utilization; this is not a human aesthetic score.",
+        "visual_strategy": visual_strategy,
         "candidates": results,
         "recommendations": recommendations(selected, bool(fitting), target_width_pt, selected["width_pt"]),
     }
@@ -285,10 +296,10 @@ def main():
     args = parser.parse_args()
     spec = json.loads(args.spec.read_text())
     target_width = args.target_width_pt
+    case = json.loads(args.case.read_text()) if args.case else None
     if target_width is None and args.case:
-        case = json.loads(args.case.read_text())
         target_width = case["semantic_contract"]["rendering_constraints"]["max_width_pt"]
-    report = optimize(spec, args.out_dir, target_width or 469.0, args.target_height_pt, args.latexmk, compile_artifact=not args.no_preview)
+    report = optimize(spec, args.out_dir, target_width or 469.0, args.target_height_pt, args.latexmk, compile_artifact=not args.no_preview, case=case)
     print(json.dumps(report, indent=2, ensure_ascii=False))
     raise SystemExit(0 if report["status"] == "selected" else 2)
 

@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 """Profile experiment data and emit a bounded, scientific inquiry plan."""
 from __future__ import annotations
-import argparse, csv, json, math
+import argparse, csv, importlib.util, json, math
 from collections import Counter
 from pathlib import Path
 
 ID_HINTS = {"method", "model", "variant", "dataset", "task", "split", "seed", "run"}
+
+def load_advisor():
+    path=Path(__file__).resolve().parent/"design_advisor.py"
+    spec=importlib.util.spec_from_file_location("paper_table_analysis_advisor",path)
+    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    return module
 
 def load(path: Path):
     if path.suffix.lower() == ".csv":
@@ -38,11 +44,25 @@ def main():
     add("metric_semantics","blocking","For each numeric metric, is higher or lower better, and what unit should be shown?","Direction determines valid ranking; units prevent semantic mislabeling.",numeric)
     if len([k for k in ids if k != seed]) > 1:
         add("comparison_groups","blocking","Which rows are scientifically comparable for best/second-best emphasis?","Bolding across datasets, protocols, or supervision regimes can create a false claim.",[k for k in ids if k != seed])
-    if not seed or dup == 0:
+    if seed and dup > 0:
+        add("uncertainty_kind","valuable_nonblocking",f"I found repeated rows indexed by {seed}. Are these independent runs, and should the final table report SD, SE, or a confidence interval?","Repeat identifiers support aggregation, but independence and uncertainty type still require author confirmation.",seed)
+    else:
         add("uncertainty_source","valuable_nonblocking","Do you have repeated seeds/runs or sample-level predictions, and should uncertainty be SD, SE, or a confidence interval?","Real repeats support uncertainty; guessed variation must never be presented as observed.")
     add("claim","valuable_nonblocking","What single scientific claim should a reader understand from this table?","The claim guides layout and emphasis without changing data.")
     inquiry_plan=candidates[:3]
     questions=[item["question"] for item in inquiry_plan]
-    out={"rows":len(rows),"columns":keys,"numeric_candidates":numeric,"identifier_candidates":ids,"missing":missing,"repeat_groups":dup,"inquiry_state":"awaiting_author" if any(q["importance"]=="blocking" for q in inquiry_plan) else "draft_ready","inquiry_plan":inquiry_plan,"blocking_questions":questions,"design_proposal":{"layout":"group rows by method/condition and columns by dataset or metric family","precision":"infer per metric, then keep consistent","uncertainty":"mean ± SD only when real repeats and the statistic type are known","emphasis":"best/second-best only within author-confirmed comparison groups","formats":["latex","html"]}}
+    semantics=context.get("metric_semantics",{}) if isinstance(context.get("metric_semantics",{}),dict) else {}
+    draft_columns=[]
+    for key in [*ids,*[item for item in numeric if item not in ids]]:
+        if key in numeric:
+            meta=semantics.get(key,{}) if isinstance(semantics.get(key,{}),dict) else {}
+            draft_columns.append({"key":key,"label":key.replace("_"," ").title(),"kind":"metric","direction":meta.get("direction"),"unit":meta.get("unit")})
+        else: draft_columns.append({"key":key,"label":key.replace("_"," ").title(),"kind":"text"})
+    draft_spec={"columns":draft_columns,"rows":rows}
+    if isinstance(context.get("claim"),str): draft_spec["claim"]=context["claim"]
+    draft_case={"semantic_contract":{"comparison_groups":context.get("comparison_groups",[]),"rendering_constraints":context.get("rendering_constraints",{})}}
+    visual=load_advisor().advise(draft_spec,draft_case)
+    design_proposal={"primary_form":visual["primary_form"],**visual["proposal"],"precision":"infer per metric, then keep consistent","formats":["latex","html"]}
+    out={"rows":len(rows),"columns":keys,"numeric_candidates":numeric,"identifier_candidates":ids,"missing":missing,"repeat_groups":dup,"inquiry_state":"awaiting_author" if any(q["importance"]=="blocking" for q in inquiry_plan) else "draft_ready","inquiry_plan":inquiry_plan,"blocking_questions":questions,"design_proposal":design_proposal,"visual_advice":visual}
     print(json.dumps(out, indent=2, ensure_ascii=False) if a.json else "\n".join([f"Rows: {out['rows']}",f"Numeric metrics: {', '.join(numeric) or 'none detected'}",f"Inquiry state: {out['inquiry_state']}","Questions:"]+[f"- [{q['importance']}] {q['question']}" for q in inquiry_plan]))
 if __name__ == "__main__": main()

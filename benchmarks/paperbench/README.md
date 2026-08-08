@@ -101,6 +101,7 @@ Objective metrics are computed from code and canonical cells:
 - row/column and uncertainty-field preservation;
 - render success.
 - measured tabular width/body-height fit, selected typography candidate, panel count, structural transform, and width utilization.
+- recommended visual form plus unresolved design warnings/questions, reported as diagnostics rather than self-scored aesthetics.
 
 The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. A legal multi-panel candidate repeats identity columns, covers every metric exactly once in canonical order, and never mixes distinct nonempty metric groups. The separate publication-readiness gate also requires the XeLaTeX-measured table to fit its declared width and tabular-body height without whole-table scaling; the reference optimizer automatically accepts no more than three stacked panels. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
 

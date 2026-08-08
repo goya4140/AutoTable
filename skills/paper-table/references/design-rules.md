@@ -7,6 +7,8 @@
 - Use a table-chart for one dominant metric, meaningful deltas, or comparisons against a threshold.
 - Split a table when it requires more than two header levels or mixes unrelated claims.
 
+Run `scripts/design_advisor.py` before committing to a form. A ranked or diverging table-chart requires exactly one resolved metric, 2–16 comparable rows, and direct exact-value labels. Preserve author-defined row order unless the author confirms that ranking order is semantically safe. For signed values, show a zero baseline, explicit +/− labels, and tone or fill differences so color is not the only sign cue. Keep the conventional table when multiple outcomes require exact lookup.
+
 ## Organize
 
 Place independent variables and method identity on the left. Place outcomes on the right. Group columns by dataset, task, or metric family; group rows by model family, supervision, or experimental condition. Put the most important comparison nearest the method names.
@@ -22,6 +24,8 @@ Use the same decimals within a metric. Do not show more decimals than experiment
 ## Accessibility
 
 Require meaningful headers, sufficient contrast, grayscale readability, and no color-only semantics. Keep captions self-contained: metric, direction, split, repeats, and uncertainty meaning.
+
+For static table-charts, export SVG as the editable source plus PDF and PNG. Use a neutral descriptive title, a subtitle/caption containing the comparison baseline and unit, a zero-origin scale for absolute bars, and a visible zero reference for signed deltas. Inspect the exported PNG; code execution alone is not visual QA.
 
 ## Physical fit
 
