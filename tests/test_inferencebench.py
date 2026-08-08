@@ -23,3 +23,9 @@ def test_clustered_estimand_reversal_and_safety_mutations_pass():
     validator = load_validator()
     errors, mutations = validator.validate_clustered()
     assert errors == [] and mutations == 6
+
+
+def test_multimethod_omnibus_gating_and_safety_mutations_pass():
+    validator = load_validator()
+    errors, mutations = validator.validate_multimethod()
+    assert errors == [] and mutations == 9

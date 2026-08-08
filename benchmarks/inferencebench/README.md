@@ -15,6 +15,8 @@ Five TuneTables safety mutations remove a pair, hide independence, skip Holm cor
 
 The second case is deterministic synthetic gold for clustered designs. It contains 28 paired tasks nested in eight independent studies of unequal size. Its v2 contract flips signs and bootstraps intact studies. A deliberately volume-biased method has a negative equal-study effect but a positive unit-weighted effect, so the evaluator can detect silent estimand changes. Six more mutations test missing pairs, unknown cluster independence, missing weighting, missing exchangeability, unit-level randomization, and skipped Holm correction.
 
+The third case reuses the TuneTables current snapshot for five-method inference over the same 98 complete datasets. It computes average ranks with exact-tie handling, obtains the Friedman statistic's null distribution by permuting method labels within blocks, and opens a predeclared TuneTables-versus-all Holm family only after global rejection. Its post-hoc estimates are cross-checked against the standalone paired case. Nine mutations test incomplete blocks, undeclared independence or ties, missing exchangeability, late baseline selection, cherry-picked comparisons, omnibus bypass, skipped correction, and a global-null gate closure.
+
 This is a current-snapshot inferential diagnostic, not a reproduction of the paper's critical-difference figure. The source snapshot itself is already marked version-drifted in StatBench.
 
 Run:
@@ -22,5 +24,6 @@ Run:
 ```bash
 python benchmarks/inferencebench/build_tunetables_case.py
 python benchmarks/inferencebench/build_clustered_case.py
+python benchmarks/inferencebench/build_multimethod_case.py
 python benchmarks/inferencebench/validate.py
 ```

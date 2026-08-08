@@ -10,7 +10,7 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 ## Workflow
 
 1. Inspect the supplied data, manuscript context, venue constraints, and target claim.
-2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON. If the input contains repeated independent runs, declare the repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and displayed uncertainty, then run `scripts/aggregate_runs.py INPUT --out AGGREGATED.json`. If it contains per-example observations, run `scripts/aggregate_observations.py INPUT --out AGGREGATED.json` before design; never treat examples as independent seeds. If significance or confidence claims are requested, read `references/inference.md`, resolve its blocking fields, then run `scripts/analyze_paired.py INPUT --out REPORT.json`.
+2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON. If the input contains repeated independent runs, declare the repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and displayed uncertainty, then run `scripts/aggregate_runs.py INPUT --out AGGREGATED.json`. If it contains per-example observations, run `scripts/aggregate_observations.py INPUT --out AGGREGATED.json` before design; never treat examples as independent seeds. If significance or confidence claims are requested, read `references/inference.md` and resolve its blocking fields. Run `scripts/analyze_multimethod.py` for three or more methods on common complete blocks; otherwise run `scripts/analyze_paired.py`.
 3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, apply them to the next table draft, and never claim `verified` while a blocking field is unresolved.
 4. Run `scripts/design_advisor.py SPEC --case CASE` once a draft spec exists. Offer its evidence-backed form, hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, width target, warnings, and alternatives before rendering.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
@@ -40,7 +40,7 @@ For repeated-run aggregation, require the `paper-table-runs-v1` contract. Accept
 
 For multi-method cross-validation summaries, require a complete paired method × dataset × fold grid and use `scripts/aggregate_crossfold.py`. Resolve validation-based hyperparameter selection and its tie-break before aggregation; never choose a trial using test performance. Preserve the exact rank tie policy, Z-score denominator, dispersion definition, and win policy. If a pinned author snapshot does not reproduce the published cells at their displayed precision, label it a version-drift reconstruction and block `verified` status—do not introduce a tolerance merely to make it pass.
 
-For inference, preserve the true sampling hierarchy. Use v1 for independent paired units and v2 for paired units nested in independent clusters; reject unsupported cross-classified dependence. Never add stars from an unpaired, incomplete, uncorrected, simulated, or post-hoc-selected comparison. Follow `references/inference.md` for exchangeability, estimand weighting, resampling, and provenance rules.
+For inference, preserve the true sampling hierarchy. Use paired v1 for independent units, paired v2 for units nested in independent clusters, and the multi-method route for three or more methods on common complete blocks; reject unsupported cross-classified dependence. Never add stars from an unpaired, incomplete, uncorrected, simulated, post-hoc-selected, or omnibus-bypassing comparison. Follow `references/inference.md` for exchangeability, estimand weighting, resampling, gatekeeping, and provenance rules.
 
 ## Visual strategy
 
@@ -72,6 +72,7 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `scripts/aggregate_observations.py`: deterministically aggregate per-example observations with fixed denominators and a cell-level provenance audit.
 - `scripts/compare_snapshot.py`: compare a reconstruction with a publication at declared display precision and block false exact-gold or `verified` claims.
 - `scripts/analyze_paired.py`: run audited unit- or cluster-level sign-flip comparisons with deterministic bootstrap intervals and Holm family correction; reject incomplete pairs and undeclared dependence.
+- `scripts/analyze_multimethod.py`: run a ties-aware Friedman block-permutation omnibus followed by a predeclared, gated baseline-vs-all sign-flip family.
 - `scripts/design_advisor.py`: derive a structured visual form, proposal, alternatives, warnings, and bounded follow-up questions from the table spec and semantic contract.
 - `scripts/optimize_layout.py`: search measured typography, semantic panel, and lossless text-wrap candidates; emit structural feedback when none fit.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.

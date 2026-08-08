@@ -12,6 +12,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TUNETABLES_DIR = HERE / "cases/tunetables-top5"
 CLUSTERED_DIR = HERE / "cases/clustered-controlled"
+MULTIMETHOD_DIR = HERE / "cases/tunetables-multimethod"
 
 
 def digest(path: Path) -> str:
@@ -141,14 +142,89 @@ def validate_clustered() -> tuple[list[str], int]:
     return errors, len(mutations)
 
 
+def validate_multimethod() -> tuple[list[str], int]:
+    errors = []
+    case = json.loads((MULTIMETHOD_DIR / "case.json").read_text())
+    for descriptor_key in ("input", "expected_report", "table_spec"):
+        descriptor = case[descriptor_key]
+        path = MULTIMETHOD_DIR / descriptor["path"]
+        if not path.is_file() or digest(path) != descriptor["sha256"]:
+            errors.append(f"multi-method artifact hash mismatch: {descriptor['path']}")
+    if errors:
+        return errors, 0
+    builder = load(HERE / "build_multimethod_case.py", "inferencebench_multimethod_builder")
+    analyzer = builder.load_analyzer()
+    payload = json.loads((MULTIMETHOD_DIR / case["input"]["path"]).read_text())
+    expected = json.loads((MULTIMETHOD_DIR / case["expected_report"]["path"]).read_text())
+    table = json.loads((MULTIMETHOD_DIR / case["table_spec"]["path"]).read_text())
+    recomputed = analyzer.analyze(payload)
+    if recomputed != expected:
+        errors.append("multi-method report is not reproducible from complete-block input")
+    if builder.table_spec(recomputed) != table:
+        errors.append("multi-method inference table is not reproducible from the report")
+    if recomputed["design"]["n_blocks"] != 98 or recomputed["design"]["n_methods"] != 5:
+        errors.append("expected five methods across 98 complete dataset blocks")
+    if recomputed["omnibus"]["blocks_with_ties"] != 35:
+        errors.append("tie-aware rank audit changed")
+    if not recomputed["omnibus"]["reject_global_null"]:
+        errors.append("pinned multi-method omnibus no longer rejects")
+
+    paired = json.loads((TUNETABLES_DIR / "expected_report.json").read_text())
+    paired_results = {row["method"]: row for row in paired["results"]}
+    for result in recomputed["posthoc"]["results"]:
+        reference = paired_results[result["method"]]
+        for key in ("mean_improvement", "improvement_ci", "p_raw", "p_adjusted", "reject_null"):
+            if result[key] != reference[key]:
+                errors.append(f"multi-method post-hoc drift for {result['method']} field {key}")
+
+    mutations = []
+    incomplete = copy.deepcopy(payload)
+    incomplete["records"].pop()
+    mutations.append(expects_error(analyzer, incomplete, "incomplete"))
+    dependent = copy.deepcopy(payload)
+    dependent["design"]["block_independence"] = "unknown"
+    mutations.append(expects_error(analyzer, dependent, "complete, independent blocks"))
+    no_tie_policy = copy.deepcopy(payload)
+    no_tie_policy["omnibus"].pop("rank_tie_policy")
+    mutations.append(expects_error(analyzer, no_tie_policy, "rank_tie_policy"))
+    no_global_exchangeability = copy.deepcopy(payload)
+    no_global_exchangeability["omnibus"].pop("exchangeability_rationale")
+    mutations.append(expects_error(analyzer, no_global_exchangeability, "omnibus requires"))
+    late_baseline = copy.deepcopy(payload)
+    late_baseline["posthoc"]["baseline_selection_timing"] = "chosen_after_results"
+    mutations.append(expects_error(analyzer, late_baseline, "predeclared"))
+    cherry_picked = copy.deepcopy(payload)
+    cherry_picked["posthoc"]["candidates"].pop()
+    mutations.append(expects_error(analyzer, cherry_picked, "every other method"))
+    no_gate = copy.deepcopy(payload)
+    no_gate["posthoc"]["gatekeeping"] = "none"
+    mutations.append(expects_error(analyzer, no_gate, "require omnibus rejection"))
+    uncorrected = copy.deepcopy(payload)
+    uncorrected["posthoc"]["multiplicity"]["correction"] = "none"
+    mutations.append(expects_error(analyzer, uncorrected, "Holm correction"))
+    global_null = copy.deepcopy(payload)
+    for record in global_null["records"]:
+        record[global_null["score_key"]] = 1.0
+    null_report = analyzer.analyze(global_null)
+    mutations.append(
+        null_report["omnibus"]["p_value"] == 1.0
+        and not null_report["omnibus"]["reject_global_null"]
+        and all(not row["significance_marker_eligible"] and not row["reject_null"] for row in null_report["posthoc"]["results"])
+    )
+    if not all(mutations):
+        errors.append("one or more multi-method safety mutations were not rejected")
+    return errors, len(mutations)
+
+
 def main() -> None:
     tunetables_errors, tunetables_mutations = validate_tunetables()
     clustered_errors, clustered_mutations = validate_clustered()
-    errors = [*tunetables_errors, *clustered_errors]
+    multimethod_errors, multimethod_mutations = validate_multimethod()
+    errors = [*tunetables_errors, *clustered_errors, *multimethod_errors]
     report = {
         "passed": not errors,
-        "cases": 2,
-        "controlled_safety_mutations": tunetables_mutations + clustered_mutations,
+        "cases": 3,
+        "controlled_safety_mutations": tunetables_mutations + clustered_mutations + multimethod_mutations,
         "failures": errors,
     }
     print(json.dumps(report, indent=2, ensure_ascii=False))

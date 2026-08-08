@@ -8,7 +8,7 @@ Before rendering, represent the scientific meaning that must survive visual tran
 - valid comparison groups and excluded rows;
 - uncertainty type, independent-run count, repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and aggregation source;
 - hyperparameter selection metric, validation tie-break, rank tie policy, Z-score denominator, and win policy when reporting cross-dataset summaries;
-- inferential unit, cluster structure, pairing, exchangeability rationale, baseline, effect orientation, hypothesis family, test, confidence-interval method, correction, alpha, and randomization seeds when significance is requested;
+- inferential unit, cluster/block structure, pairing, exchangeability rationale, predeclared baseline and family, tie policy, omnibus gate, effect orientation, test, confidence-interval method, correction, alpha, and randomization seeds when significance is requested;
 - unit of observation, fixed denominator population, exclusions, and missing-observation policy;
 - allowed transformations and forbidden inferences;
 - target width and accessibility constraints.

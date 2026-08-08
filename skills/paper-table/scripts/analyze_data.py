@@ -55,7 +55,9 @@ def main():
         add("repeat_design","blocking",f"I found repeated rows indexed by {seed}. What does one repeat represent, are repeats independent and paired across rows, how should missing runs be handled, and should the table show SD, SE, a confidence interval, or means only?","Run identifiers alone do not establish independence, pairing, a missing-run policy, or the meaning of displayed uncertainty.",seed)
     else:
         add("uncertainty_source","valuable_nonblocking","Do you have repeated seeds/runs or sample-level predictions, and should uncertainty be SD, SE, or a confidence interval?","Real repeats support uncertainty; guessed variation must never be presented as observed.")
-    if context.get("significance_requested") is True:
+    if context.get("multimethod_comparison_requested") is True:
+        add("multimethod_plan","blocking","For the multi-method comparison, are all methods observed on the same complete independent blocks; how should exact ties be ranked; which baseline and full post-hoc family were fixed before outcome inspection; and should significance markers require an omnibus rejection?","Multi-method stars are invalid when blocks are incomplete, the baseline or family is selected after seeing outcomes, ties are unresolved, or post-hoc claims bypass the global test.")
+    elif context.get("significance_requested") is True:
         add("significance_plan","blocking","For significance claims, what is the independent paired unit; are units nested within independent clusters such as studies, subjects, or sites; should unequal clusters receive equal-cluster or equal-unit weight; and what are the baseline, planned family, test, correction, and alpha?","A p-value or star is invalid without declared pairing, clustering, estimand weighting, hypothesis family, multiplicity policy, and threshold.")
     add("claim","valuable_nonblocking","What single scientific claim should a reader understand from this table?","The claim guides layout and emphasis without changing data.")
     inquiry_plan=candidates[:3]

@@ -83,3 +83,24 @@ def test_requested_significance_requires_a_complete_inference_plan(tmp_path):
     assert question["importance"] == "blocking"
     assert "paired unit" in question["question"] and "independent clusters" in question["question"]
     assert "equal-cluster or equal-unit weight" in question["question"] and "correction" in question["question"]
+
+
+def test_multimethod_comparison_requires_complete_blocks_and_predeclared_family(tmp_path):
+    data = tmp_path / "methods.json"
+    context = tmp_path / "context.json"
+    data.write_text(json.dumps([
+        {"method": method, "dataset": dataset, "score": score}
+        for dataset in ("d1", "d2", "d3")
+        for method, score in (("A", 1.0), ("B", 2.0), ("C", 3.0))
+    ]))
+    context.write_text(json.dumps({
+        "metric_semantics": {"score": {"direction": "max", "unit": "%"}},
+        "comparison_groups": [{"id": "all", "row_values": ["A", "B", "C"], "metric_keys": ["score"]}],
+        "multimethod_comparison_requested": True,
+    }))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json", "--context", str(context)], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    question = next(item for item in report["inquiry_plan"] if item["id"] == "multimethod_plan")
+    assert question["importance"] == "blocking"
+    assert "complete independent blocks" in question["question"]
+    assert "fixed before outcome inspection" in question["question"] and "omnibus rejection" in question["question"]
