@@ -101,11 +101,12 @@
               "minItems": 1,
               "items": {
                 "type": "object",
-                "required": ["id", "importance", "ask_when_missing", "value", "rationale"],
+                "required": ["id", "importance", "ask_when_missing", "answer_status", "value", "rationale"],
                 "properties": {
                   "id": {"type": "string"},
                   "importance": {"enum": ["blocking", "valuable_nonblocking", "cosmetic"]},
                   "ask_when_missing": {"type": "boolean"},
+                  "answer_status": {"enum": ["available", "unavailable"]},
                   "value": {},
                   "acceptable_default": {},
                   "rationale": {"type": "string"},

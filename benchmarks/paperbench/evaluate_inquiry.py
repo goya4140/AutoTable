@@ -16,15 +16,18 @@ def load_scenarios(path: Path):
 
 def gold_trace(scenario):
     required = [field["id"] for field in scenario["hidden_fields"] if field["ask_when_missing"]]
+    answered = [field["id"] for field in scenario["hidden_fields"] if field["ask_when_missing"] and field.get("answer_status", "available") == "available"]
     defaults = [field["id"] for field in scenario["hidden_fields"] if not field["ask_when_missing"] and "acceptable_default" in field]
+    unresolved_blocking = any(field["importance"] == "blocking" and field.get("answer_status") == "unavailable" for field in scenario["hidden_fields"])
+    unresolved_nonblocking = any(field["importance"] != "blocking" and field.get("answer_status") == "unavailable" for field in scenario["hidden_fields"])
     return {
         "scenario_id": scenario["id"],
         "asked_fields": required,
-        "answered_fields": required,
-        "used_answer_fields": required,
+        "answered_fields": answered,
+        "used_answer_fields": answered,
         "assumed_fields": defaults,
         "stopped": True,
-        "final_status": "verified",
+        "final_status": "blocked" if unresolved_blocking else "draft" if unresolved_nonblocking else "verified",
     }
 
 

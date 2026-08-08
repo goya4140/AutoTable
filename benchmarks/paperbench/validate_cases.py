@@ -74,6 +74,9 @@ def validate_case(case_dir: Path) -> list[str]:
     field_ids = [field["id"] for field in contract["inquiry_profile"]["fields"]]
     if len(field_ids) != len(set(field_ids)):
         errors.append("inquiry field ids must be unique")
+    for field in contract["inquiry_profile"]["fields"]:
+        if field.get("answer_status") not in {"available", "unavailable"}:
+            errors.append(f"inquiry field {field.get('id')} lacks a valid answer_status")
     for artifact in case.get("source_artifacts", []):
         if artifact.get("path"):
             path = case_dir / artifact["path"]

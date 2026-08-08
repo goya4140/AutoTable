@@ -28,15 +28,31 @@ def delete_path(node, parts):
             del node[head]
 
 
+def neutralize_uncertainty(spec):
+    for row in spec.get("rows", []):
+        for value in row.values():
+            if isinstance(value, dict):
+                keys = [key for key in ("sd", "se", "ci90", "ci95") if key in value]
+                if len(keys) == 1:
+                    value["uncertainty"] = value.pop(keys[0])
+
+
 def masked_request(case, x, field, request_id):
-    payload = {"case": copy.deepcopy(case), "x": copy.deepcopy(x)}
-    payload["case"]["semantic_contract"].pop("inquiry_profile", None)
+    contract = copy.deepcopy(case["semantic_contract"])
+    contract.pop("inquiry_profile", None)
+    safe_x = copy.deepcopy(x)
+    safe_x.get("provenance", {}).pop("source", None)
+    safe_x.get("provenance", {}).pop("source_commit", None)
+    if field["id"] == "uncertainty_kind":
+        neutralize_uncertainty(safe_x)
+    payload = {"case": {"input_tier": case["input_tier"], "semantic_contract": contract}, "x": safe_x}
     for path in field.get("mask_paths", []):
+        if field["id"] == "uncertainty_kind" and path.startswith("x.rows."):
+            continue
         normalized = f"case.{path}" if path.startswith("semantic_contract.") else path
         delete_path(payload, normalized.split("."))
     return {
         "request_id": request_id,
-        "case_id": case["id"],
         "task": "Inspect the experiment input, ask only scientifically necessary author questions, and then produce a verified table or a clearly labeled draft.",
         "question_budget": 3,
         "input": payload,

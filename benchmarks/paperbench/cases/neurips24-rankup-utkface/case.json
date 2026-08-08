@@ -116,7 +116,8 @@
           "mask_paths": [
             "semantic_contract.claim",
             "x.caption"
-          ]
+          ],
+          "answer_status": "available"
         },
         {
           "id": "metric_directions",
@@ -133,7 +134,8 @@
           "rationale": "Best-value emphasis is invalid without the optimization direction.",
           "mask_paths": [
             "x.columns.*.direction"
-          ]
+          ],
+          "answer_status": "available"
         },
         {
           "id": "metric_units",
@@ -150,7 +152,8 @@
           "rationale": "A numerically correct token can still make a false claim under the wrong unit.",
           "mask_paths": [
             "x.columns.*.unit"
-          ]
+          ],
+          "answer_status": "available"
         },
         {
           "id": "uncertainty_kind",
@@ -167,13 +170,15 @@
             "x.caption",
             "x.notes",
             "x.provenance"
-          ]
+          ],
+          "answer_status": "available"
         },
         {
           "id": "independent_run_count",
           "importance": "blocking",
           "ask_when_missing": true,
           "value": 3,
+          "answer_status": "available",
           "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
           "mask_paths": [
             "semantic_contract.statistics.independent_run_count",
@@ -186,14 +191,38 @@
           "id": "comparison_groups",
           "importance": "blocking",
           "ask_when_missing": true,
-          "value": "Fully-Supervised is an upper bound and must not participate in best-value emphasis.",
+          "value": [
+            {
+              "id": "semi_supervised_methods",
+              "row_values": [
+                "Supervised",
+                "Π-Model",
+                "Mean Teacher",
+                "CLSS",
+                "UCVME",
+                "MixMatch",
+                "RankUp (Ours)",
+                "RankUp + RDA (Ours)"
+              ],
+              "excluded_row_values": [
+                "Fully-Supervised"
+              ],
+              "metric_keys": [
+                "mae_50",
+                "r2_50",
+                "srcc_50",
+                "mae_250",
+                "r2_250",
+                "srcc_250"
+              ]
+            }
+          ],
           "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
           "mask_paths": [
             "semantic_contract.comparison_groups",
-            "x.rows.*.group",
-            "x.rows.*.rank_eligible",
-            "x.emphasis"
-          ]
+            "x.rows.*.rank_eligible"
+          ],
+          "answer_status": "available"
         },
         {
           "id": "target_width",
@@ -205,7 +234,8 @@
           "mask_paths": [
             "semantic_contract.rendering_constraints.target_width",
             "semantic_contract.rendering_constraints.max_width_pt"
-          ]
+          ],
+          "answer_status": "available"
         },
         {
           "id": "color_preference",
@@ -216,7 +246,8 @@
           "rationale": "Personal color preference should not block a scientifically valid draft.",
           "mask_paths": [
             "semantic_contract.rendering_constraints.color_mode"
-          ]
+          ],
+          "answer_status": "available"
         }
       ]
     }

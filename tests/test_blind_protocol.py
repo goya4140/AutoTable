@@ -87,3 +87,17 @@ def test_blind_protocol_rejects_unmanifested_public_file(tmp_path):
     (public_dir / "unexpected.txt").write_text("possible leaked context")
     with pytest.raises(ValueError, match="differ from manifest"):
         blind.validate_public(public_dir)
+
+
+def test_each_blind_episode_randomly_remaps_public_request_ids(tmp_path):
+    blind = load("blind_random_ids", BENCH / "blind_protocol.py")
+    public_a, private_a = tmp_path / "public-a", tmp_path / "private-a"
+    public_b, private_b = tmp_path / "public-b", tmp_path / "private-b"
+    blind.prepare("inquiry", public_a, private_a)
+    blind.prepare("inquiry", public_b, private_b)
+    ids_a = {row["request_id"] for row in json.loads((public_a / "manifest.json").read_text())["requests"]}
+    ids_b = {row["request_id"] for row in json.loads((public_b / "manifest.json").read_text())["requests"]}
+    static_ids = {json.loads(line)["request_id"] for line in (BENCH / "inquiry/requests.jsonl").read_text().splitlines()}
+    assert ids_a.isdisjoint(ids_b)
+    assert ids_a.isdisjoint(static_ids)
+    assert ids_b.isdisjoint(static_ids)

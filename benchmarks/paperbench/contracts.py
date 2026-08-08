@@ -31,7 +31,7 @@ def inquiry_fields(
     target_width: str = "full_width",
 ) -> list[dict]:
     uncertainty_importance = "blocking" if uncertainty_blocking else "valuable_nonblocking"
-    return [
+    fields = [
         {
             "id": "claim",
             "importance": "valuable_nonblocking",
@@ -70,6 +70,7 @@ def inquiry_fields(
             "importance": uncertainty_importance,
             "ask_when_missing": True,
             "value": run_count if run_count is not None else "unavailable",
+            "answer_status": "available" if run_count is not None else "unavailable",
             "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
             "mask_paths": ["semantic_contract.statistics.independent_run_count", "x.provenance.seeds", "x.caption", "x.notes"],
         },
@@ -79,7 +80,7 @@ def inquiry_fields(
             "ask_when_missing": True,
             "value": comparisons,
             "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
-            "mask_paths": ["semantic_contract.comparison_groups", "x.rows.*.group", "x.rows.*.rank_eligible", "x.emphasis"],
+            "mask_paths": ["semantic_contract.comparison_groups", "x.rows.*.rank_eligible"],
         },
         {
             "id": "target_width",
@@ -100,6 +101,9 @@ def inquiry_fields(
             "mask_paths": ["semantic_contract.rendering_constraints.color_mode"],
         },
     ]
+    for field in fields:
+        field.setdefault("answer_status", "available")
+    return fields
 
 
 CONTRACTS = {
@@ -236,7 +240,11 @@ UNITS = {
 
 
 def contract_for(case_id: str) -> dict:
-    return copy.deepcopy(CONTRACTS[case_id])
+    contract = copy.deepcopy(CONTRACTS[case_id])
+    for field in contract["inquiry_profile"]["fields"]:
+        if field["id"] == "comparison_groups":
+            field["value"] = copy.deepcopy(contract["comparison_groups"])
+    return contract
 
 
 def enrich_spec(case_id: str, spec: dict) -> dict:

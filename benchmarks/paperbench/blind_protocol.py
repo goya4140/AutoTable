@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import secrets
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -36,6 +37,14 @@ def require_empty(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
+def fresh_request_id(existing: set[str]) -> str:
+    while True:
+        request_id = secrets.token_hex(8)
+        if request_id not in existing:
+            existing.add(request_id)
+            return request_id
+
+
 def public_generation_request(case: dict, x: dict, request_id: str) -> dict:
     contract = json.loads(json.dumps(case["semantic_contract"]))
     contract.pop("inquiry_profile", None)
@@ -60,11 +69,12 @@ def prepare(mode: str, public_dir: Path, private_dir: Path) -> dict:
     require_empty(private_dir)
     public_rows = []
     private_rows = []
+    issued_ids: set[str] = set()
     if mode == "generation":
         for case_path in sorted((HERE / "cases").glob("*/case.json")):
             case = json.loads(case_path.read_text())
             x = json.loads((case_path.parent / "x.json").read_text())
-            request_id = hashlib.sha256(f"{PROTOCOL}:generation:{case['id']}".encode()).hexdigest()[:16]
+            request_id = fresh_request_id(issued_ids)
             request = public_generation_request(case, x, request_id)
             request_path = public_dir / "requests" / f"{request_id}.json"
             write_json(request_path, request)
@@ -74,11 +84,14 @@ def prepare(mode: str, public_dir: Path, private_dir: Path) -> dict:
         requests = [json.loads(line) for line in (HERE / "inquiry/requests.jsonl").read_text().splitlines()]
         scenarios = {row["request_id"]: row for line in (HERE / "inquiry/scenarios.jsonl").read_text().splitlines() if (row := json.loads(line))}
         for request in requests:
-            request_id = request["request_id"]
+            source_request_id = request["request_id"]
+            request_id = fresh_request_id(issued_ids)
+            request = json.loads(json.dumps(request))
+            request["request_id"] = request_id
             request_path = public_dir / "requests" / f"{request_id}.json"
             write_json(request_path, request)
             public_rows.append({"request_id": request_id, "path": str(request_path.relative_to(public_dir)), "sha256": digest(request_path)})
-            private_rows.append({"request_id": request_id, "scenario_id": scenarios[request_id]["id"]})
+            private_rows.append({"request_id": request_id, "scenario_id": scenarios[source_request_id]["id"]})
     else:
         raise ValueError(f"unsupported mode: {mode}")
     public_manifest = {"schema_version": "1.0", "protocol": PROTOCOL, "mode": mode, "requests": public_rows}
@@ -114,6 +127,13 @@ def validate_submission(mode: str, request_id: str, submission_dir: Path) -> Non
                 raise ValueError(f"{request_id}: {key} must be a string array")
         if not isinstance(submission["stopped"], bool) or submission["final_status"] not in {"verified", "draft", "blocked"}:
             raise ValueError(f"{request_id}: invalid stop state")
+        if "candidate_spec" in submission:
+            if not isinstance(submission["candidate_spec"], dict) or not isinstance(submission.get("resolved_fields"), dict):
+                raise ValueError(f"{request_id}: interactive candidate requires candidate_spec and resolved_fields")
+            if not isinstance(submission.get("applied_answer_fields"), list):
+                raise ValueError(f"{request_id}: interactive candidate requires applied_answer_fields")
+            if not (submission_dir / "table.tex").is_file():
+                raise ValueError(f"{request_id}: interactive candidate requires table.tex")
 
 
 def validate_public(public_dir: Path) -> dict:
@@ -231,11 +251,33 @@ def score(public_dir: Path, private_dir: Path, submissions_dir: Path, frozen_man
         summary = {"mode": "generation", "cases": len(rows), "scientific_pass_rate": macro(rows, "scientific_gate"), "full_contract_pass_rate": macro(rows, "full_contract_gate"), "rendered_numeric_pass_rate": macro(rows, "rendered_numeric_gate"), "passed": all(row["scientific_gate"] and row["full_contract_gate"] and row["rendered_numeric_gate"] for row in rows), "results": rows}
     elif frozen["mode"] == "inquiry":
         inquiry_eval = load_module("paperbench_blind_inquiry", HERE / "evaluate_inquiry.py")
+        interaction_eval = load_module("paperbench_blind_interaction", HERE / "evaluate_interaction.py")
+        contract_eval = load_module("paperbench_blind_interaction_contract", HERE / "contract_eval.py")
         scenarios = inquiry_eval.load_scenarios(HERE / "inquiry/scenarios.jsonl")
         for request_id, item in sorted(mapping.items()):
-            trace = json.loads((submissions_dir / request_id / "submission.json").read_text())
-            rows.append(inquiry_eval.evaluate_trace(scenarios[item["scenario_id"]], trace))
-        summary = {"mode": "inquiry", "cases": len(rows), "safe_pass_rate": macro(rows, "pass"), "critical_question_recall": macro(rows, "critical_question_recall"), "question_precision": macro(rows, "question_precision"), "weighted_question_recall": macro(rows, "weighted_question_recall"), "answer_utilization": macro(rows, "answer_utilization"), "unsupported_inference_total": sum(row["unsupported_inference_count"] for row in rows), "trace_consistency_violation_total": sum(row["trace_consistency_violation_count"] for row in rows), "repeated_question_total": sum(row["repeated_question_count"] for row in rows), "overquestioning_total": sum(row["overquestioning_count"] for row in rows), "stop_correctness_rate": macro(rows, "stop_correctness"), "passed": all(row["pass"] for row in rows), "results": rows}
+            submission_dir = submissions_dir / request_id
+            trace = json.loads((submission_dir / "submission.json").read_text())
+            scenario = scenarios[item["scenario_id"]]
+            row = inquiry_eval.evaluate_trace(scenario, trace)
+            row["interaction_output_gate"] = None
+            if "candidate_spec" in trace:
+                case_dir = HERE / "cases" / scenario["case_id"]
+                case = json.loads((case_dir / "case.json").read_text())
+                reference = json.loads((case_dir / "x.json").read_text())
+                interaction = interaction_eval.evaluate_interaction(scenario, trace, reference, case)
+                contract = contract_eval.evaluate(reference, trace["candidate_spec"], case)
+                render = rendered_numeric_gate(reference, (submission_dir / "table.tex").read_text())
+                row.update({
+                    "interaction_output_gate": interaction["passed"],
+                    "answer_application_rate": interaction["answer_application_rate"],
+                    "interaction_fields": interaction["fields"],
+                    "scientific_gate": contract["passed_scientific_gate"],
+                    "full_contract_gate": contract["passed_full_contract"],
+                    "rendered_numeric_gate": render["passed"],
+                })
+                row["pass"] = row["pass"] and interaction["passed"] and contract["passed_scientific_gate"] and contract["passed_full_contract"] and render["passed"]
+            rows.append(row)
+        summary = {"mode": "inquiry", "cases": len(rows), "safe_pass_rate": macro(rows, "pass"), "critical_question_recall": macro(rows, "critical_question_recall"), "question_precision": macro(rows, "question_precision"), "weighted_question_recall": macro(rows, "weighted_question_recall"), "answer_utilization": macro(rows, "answer_utilization"), "answer_application_rate": macro(rows, "answer_application_rate"), "interaction_output_pass_rate": macro(rows, "interaction_output_gate"), "unsupported_inference_total": sum(row["unsupported_inference_count"] for row in rows), "trace_consistency_violation_total": sum(row["trace_consistency_violation_count"] for row in rows), "repeated_question_total": sum(row["repeated_question_count"] for row in rows), "overquestioning_total": sum(row["overquestioning_count"] for row in rows), "stop_correctness_rate": macro(rows, "stop_correctness"), "passed": all(row["pass"] for row in rows), "results": rows}
     else:
         raise ValueError(f"unsupported frozen mode: {frozen['mode']}")
     return summary

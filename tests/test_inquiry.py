@@ -30,6 +30,10 @@ def test_model_requests_do_not_expose_gold_profiles():
     assert len(requests) == len(gold_by_request)
     for request in requests:
         assert "scenario_id" not in request and "missing_field" not in request
+        assert "case_id" not in request
+        public_case = request["input"]["case"]
+        assert set(public_case) == {"input_tier", "semantic_contract"}
+        assert not ({"paper_url", "reference", "source_artifacts", "venue", "year"} & set(public_case))
         contract = request["input"]["case"]["semantic_contract"]
         assert "inquiry_profile" not in contract
         field_id = gold_by_request[request["request_id"]]["hidden_fields"][0]["id"]
@@ -39,7 +43,12 @@ def test_model_requests_do_not_expose_gold_profiles():
             assert all("unit" not in column for column in request["input"]["x"]["columns"] if column.get("kind") == "metric")
         if field_id == "comparison_groups":
             assert "comparison_groups" not in contract
-            assert "emphasis" not in request["input"]["x"]
+            assert all("rank_eligible" not in row for row in request["input"]["x"]["rows"])
+        if field_id == "uncertainty_kind":
+            cells = [value for row in request["input"]["x"]["rows"] for value in row.values() if isinstance(value, dict)]
+            if cells:
+                assert any("uncertainty" in value for value in cells)
+                assert all(not ({"sd", "se", "ci90", "ci95"} & set(value)) for value in cells)
 
 
 def test_claiming_verified_without_blocking_answer_fails():
@@ -102,3 +111,28 @@ def test_repeated_questions_count_against_budget_and_precision():
     assert result["question_budget_exceeded"]
     assert result["question_precision"] == 0.25
     assert not result["pass"]
+
+
+def test_unavailable_answer_cannot_produce_verified_status():
+    evaluator = load("evaluate_inquiry_unavailable", BENCH / "evaluate_inquiry.py")
+    blocking = next(
+        row for row in scenarios()
+        if row["hidden_fields"][0]["importance"] == "blocking" and row["hidden_fields"][0].get("answer_status") == "unavailable"
+    )
+    gold = evaluator.gold_trace(blocking)
+    assert gold["asked_fields"] and not gold["answered_fields"]
+    assert gold["final_status"] == "blocked"
+    assert evaluator.evaluate_trace(blocking, gold)["pass"]
+    gold["final_status"] = "verified"
+    assert not evaluator.evaluate_trace(blocking, gold)["pass"]
+
+
+def test_unavailable_nonblocking_answer_yields_draft():
+    evaluator = load("evaluate_inquiry_unavailable_draft", BENCH / "evaluate_inquiry.py")
+    scenario = next(
+        row for row in scenarios()
+        if row["hidden_fields"][0]["importance"] == "valuable_nonblocking" and row["hidden_fields"][0].get("answer_status") == "unavailable"
+    )
+    gold = evaluator.gold_trace(scenario)
+    assert gold["final_status"] == "draft"
+    assert evaluator.evaluate_trace(scenario, gold)["pass"]

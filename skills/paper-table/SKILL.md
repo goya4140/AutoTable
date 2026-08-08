@@ -11,11 +11,11 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 
 1. Inspect the supplied data, manuscript context, venue constraints, and target claim.
 2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON.
-3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, and never claim `verified` while a blocking field is unresolved.
+3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, apply them to the next table draft, and never claim `verified` while a blocking field is unresolved.
 4. Offer a concrete visual proposal before rendering: row/column hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, and width target.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
 6. Render with `scripts/render_table.py SPEC --out-dir OUTPUT`.
-7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex`; treat numeric and semantic-contract checks as hard gates, then visually inspect the compiled PDF or HTML screenshot.
+7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex`; verify that every claimed-used author answer changed its corresponding contract field or table encoding, treat numeric and semantic-contract checks as hard gates, then visually inspect the compiled PDF or HTML screenshot.
 8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, and freeze `y'` before inspecting `y`.
 9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 

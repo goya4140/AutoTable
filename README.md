@@ -41,7 +41,7 @@ python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
-Outputs appear in `output/paperbench/`. The current seed run passes both numeric and semantic-contract gates on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. PaperTable-Controlled detects all 27 deterministic scientific/structural perturbations; InquiryBench contains 32 evaluator-separated missing-information scenarios.
+Outputs appear in `output/paperbench/`. The current seed run passes both numeric and semantic-contract gates on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. PaperTable-Controlled detects all 27 deterministic scientific/structural perturbations; InquiryBench contains 32 evaluator-separated missing-information scenarios plus an executable simulated-author runner that verifies answers are reflected in the final table.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 

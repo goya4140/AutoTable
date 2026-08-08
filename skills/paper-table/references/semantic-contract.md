@@ -24,4 +24,6 @@ Ask at most three questions per round. Order blocking questions first, then by e
 
 Stop asking when all blocking fields are resolved and no remaining question would materially change interpretation. If a blocking answer remains unavailable, return a clearly labeled draft or blocked status—never `verified`. Cosmetic uncertainty never blocks rendering.
 
+Record answer availability separately from its value. An author response such as “the run count is unavailable” confirms absence; it does not resolve a blocking run-count requirement. Use `blocked` for unavailable blocking evidence and `draft` for unavailable valuable nonblocking evidence.
+
 Never infer metric direction, units, comparison eligibility, independence of runs, uncertainty type, or statistical significance. Simulated variation is allowed only when explicitly requested, labeled simulated, and excluded from inferential claims.

@@ -60,7 +60,28 @@ python benchmarks/paperbench/blind_protocol.py score \
 
 For generation, each submission directory must contain `submission.json` with `request_id` and `candidate_spec`, plus editable `table.tex`. For inquiry, `submission.json` is the trace schema accepted by `evaluate_inquiry.py`. Use `--mode inquiry` to prepare the 32 sanitized InquiryBench requests.
 
-The freeze manifest hashes every submission file and the public episode. Scoring fails if a request, manifest, directory, or output changes after freezing. Public and private roots must be non-nested. This is an artifact firewall, not an operating-system sandbox: leaderboard execution should additionally disable network access and mount the private root only for the scorer.
+Every prepared episode randomly remaps request IDs so they cannot be enumerated back to public case/field names. The freeze manifest hashes every submission file and the public episode. Scoring fails if a request, manifest, directory, or output changes after freezing. Public and private roots must be non-nested. This is an artifact firewall, not an operating-system sandbox: leaderboard execution should additionally disable network access and mount the private root only for the scorer.
+
+### Executable multi-turn inquiry
+
+Run an adapter against a simulated author instead of submitting a self-reported trace:
+
+```bash
+python benchmarks/paperbench/blind_protocol.py prepare \
+  --mode inquiry --public-dir output/inquiry/public --private-dir output/inquiry/private
+
+python benchmarks/paperbench/run_interaction.py \
+  --public-dir output/inquiry/public --private-dir output/inquiry/private \
+  --output-dir output/inquiry/submissions \
+  --adapter python benchmarks/paperbench/baselines/rule_inquiry_adapter.py
+```
+
+The runner appends `TURN_REQUEST.json TURN_RESPONSE.json` to the adapter command. An adapter returns either:
+
+- `{"action":"ask","questions":[{"field_id":"...","text":"..."}]}`; or
+- `{"action":"submit","candidate_spec":{...},"resolved_fields":{...},"used_answer_fields":[],"assumed_fields":[],"applied_answer_fields":[],"final_status":"verified"}`.
+
+The simulated author answers only fields actually hidden in that scenario and returns `unavailable` for irrelevant questions. Scoring verifies the trace, the resolved value, the final semantic contract, rendered numeric fidelity, and field-specific output evidence. Merely claiming that an answer was used does not pass. The bundled rule adapter is an executable protocol baseline; it detects missing semantics only from the public request and never receives scenario gold.
 
 For true per-run inputs, use the deterministic long-form aggregator:
 
@@ -82,7 +103,7 @@ Objective metrics are computed from code and canonical cells:
 
 The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
 
-`inquiry/requests.jsonl` contains model-visible inputs with one author-provided field removed; it uses opaque request IDs and exposes neither the missing field nor the inquiry-profile answers. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference, repeated/irrelevant questions, and impossible traces such as using an answer it never requested, then stops at the right time.
+`inquiry/requests.jsonl` is a committed development set with one author-provided field removed; it strips paper identity, URLs, source commits, reference metadata, and inquiry-profile answers. Always distribute a freshly prepared blind episode—not these static files—for reported evaluation. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, applied, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference, repeated/irrelevant questions, and impossible traces such as using an answer it never requested, then stops at the right time.
 
 Subjective dimensions use order-randomized human judgments:
 
