@@ -1,0 +1,112 @@
+{
+  "title": "Paired dataset-level comparison against TuneTables",
+  "label": "tab:tunetables-paired-inference-current",
+  "caption": "Candidate-minus-TuneTables accuracy differences on 98 paired datasets in the current author snapshot.",
+  "columns": [
+    {
+      "key": "method",
+      "label": "Candidate",
+      "kind": "text"
+    },
+    {
+      "key": "improvement_pp",
+      "label": "Improvement [95% CI]",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "percentage points",
+      "precision": 2
+    },
+    {
+      "key": "p_raw",
+      "label": "Raw p",
+      "kind": "metric",
+      "direction": "min",
+      "unit": "probability",
+      "precision": 5
+    },
+    {
+      "key": "p_holm",
+      "label": "Holm p",
+      "kind": "metric",
+      "direction": "min",
+      "unit": "probability",
+      "precision": 5
+    },
+    {
+      "key": "significant",
+      "label": "Reject at 0.05",
+      "kind": "text"
+    }
+  ],
+  "rows": [
+    {
+      "method": "CatBoost",
+      "improvement_pp": {
+        "mean": -0.36,
+        "ci95": [
+          -1.21,
+          0.48
+        ]
+      },
+      "p_raw": 0.40498,
+      "p_holm": 0.40498,
+      "significant": "No"
+    },
+    {
+      "method": "XGBoost",
+      "improvement_pp": {
+        "mean": -0.57,
+        "ci95": [
+          -1.41,
+          0.27
+        ]
+      },
+      "p_raw": 0.18218,
+      "p_holm": 0.36436,
+      "significant": "No"
+    },
+    {
+      "method": "ExcelFormer",
+      "improvement_pp": {
+        "mean": -1.29,
+        "ci95": [
+          -2.43,
+          -0.26
+        ]
+      },
+      "p_raw": 0.0143,
+      "p_holm": 0.0429,
+      "significant": "Yes"
+    },
+    {
+      "method": "LightGBM",
+      "improvement_pp": {
+        "mean": -1.37,
+        "ci95": [
+          -2.22,
+          -0.53
+        ]
+      },
+      "p_raw": 0.00146,
+      "p_holm": 0.00584,
+      "significant": "Yes"
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "Positive improvement favors the candidate; negative values favor TuneTables.",
+    "Two-sided paired sign-flip tests use deterministic Monte Carlo; p-values are Holm-adjusted across four planned comparisons.",
+    "Intervals are paired percentile-bootstrap intervals over datasets. This current snapshot is version-drifted and does not reproduce paper-time claims."
+  ],
+  "provenance": {
+    "source_case_id": "neurips24-tunetables-tabzilla",
+    "source_revision": "0e15323407a5526b8aabd3038c60f5c3f7f37d9a",
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/97dc07f1253ab33ee514f395a82fa7cc-Abstract-Conference.html",
+    "snapshot_status": "version-drifted current author snapshot; not paper-time inference",
+    "inference_report_schema": "paper-table-paired-inference-report-v1"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "inferencebench-case-v1",
+  "id": "tunetables-top5-current-snapshot",
+  "status": "current_snapshot_inference_diagnostic",
+  "source_case": "../../../statbench/cases/neurips24-tunetables-tabzilla/raw_fold_scores.json",
+  "source_revision": "0e15323407a5526b8aabd3038c60f5c3f7f37d9a",
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/97dc07f1253ab33ee514f395a82fa7cc-Abstract-Conference.html",
+  "baseline": "TuneTables",
+  "candidates": ["CatBoost", "XGBoost", "ExcelFormer", "LightGBM"],
+  "independent_unit": "OpenML dataset after averaging three folds",
+  "paired_units": 98,
+  "comparison_family": "top-five methods in published Table 1 order",
+  "input": {"path": "paired_input.json", "sha256": "b85d0cc392a59fa2878e31ea73691573d3652de9b256050eaf48baee58b504f6"},
+  "expected_report": {"path": "expected_report.json", "sha256": "59846b852d501988ff2e7e339ff1dc08ced050e18730f6f252352153724d7939"},
+  "table_spec": {"path": "inference_table.json", "sha256": "f646efed33bb7041723f543350a8db8723a2ad72dc1769a151d50807a96adc2f"},
+  "limitations": [
+    "The pinned author snapshot does not exactly reproduce the published Table 1 and therefore cannot validate the paper-time inferential claims.",
+    "The percentile bootstrap interval is approximate and is reported with a fixed seed and resample count.",
+    "Dataset independence is a declared study-design assumption; the script can reject known clustering but cannot discover hidden dependence absent metadata."
+  ]
+}

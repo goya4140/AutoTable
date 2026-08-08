@@ -60,3 +60,25 @@ def test_hyperparameter_trials_require_validation_selection_and_tie_policy(tmp_p
     question = next(item for item in report["inquiry_plan"] if item["id"] == "selection_policy")
     assert question["importance"] == "blocking"
     assert "validation" in question["question"] and "test results are never used" in question["question"]
+
+
+def test_requested_significance_requires_a_complete_inference_plan(tmp_path):
+    data = tmp_path / "runs.json"
+    context = tmp_path / "context.json"
+    data.write_text(json.dumps([
+        {"method": "A", "seed": 0, "score": 1.0},
+        {"method": "A", "seed": 1, "score": 1.1},
+        {"method": "B", "seed": 0, "score": 2.0},
+        {"method": "B", "seed": 1, "score": 2.1},
+    ]))
+    context.write_text(json.dumps({
+        "metric_semantics": {"score": {"direction": "max", "unit": "%"}},
+        "comparison_groups": [{"id": "all", "row_values": ["A", "B"], "metric_keys": ["score"]}],
+        "repeat_design": "paired independent seeds",
+        "significance_requested": True,
+    }))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json", "--context", str(context)], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    question = next(item for item in report["inquiry_plan"] if item["id"] == "significance_plan")
+    assert question["importance"] == "blocking"
+    assert "paired unit" in question["question"] and "correction" in question["question"]

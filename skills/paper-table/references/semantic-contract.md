@@ -8,6 +8,7 @@ Before rendering, represent the scientific meaning that must survive visual tran
 - valid comparison groups and excluded rows;
 - uncertainty type, independent-run count, repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and aggregation source;
 - hyperparameter selection metric, validation tie-break, rank tie policy, Z-score denominator, and win policy when reporting cross-dataset summaries;
+- inferential unit, cluster structure, pairing, exchangeability rationale, baseline, effect orientation, hypothesis family, test, confidence-interval method, correction, alpha, and randomization seeds when significance is requested;
 - unit of observation, fixed denominator population, exclusions, and missing-observation policy;
 - allowed transformations and forbidden inferences;
 - target width and accessibility constraints.
@@ -33,3 +34,7 @@ Never infer metric direction, units, comparison eligibility, independence of run
 Distinguish repeated runs from per-example records. Runs support between-run uncertainty only when they are genuinely independent. A column named `seed` does not establish independence: ask what was independently randomized and whether run IDs are paired across compared rows. Reject duplicates and undeclared missing-run handling. Use `paper-table-runs-v1` and retain unrounded means, sample SD, SE, counts, run IDs, and run-ID hashes even when the paper displays means only. Examples support deterministic dataset metrics but do not become repeated trials. For per-example inputs, bind each reported cell to a declared formula and denominator and retain a cell-level aggregation audit. Ask the author when exclusions, missing reports, or denominator changes could alter the claim.
 
 Treat data-version identity as part of provenance. A current author artifact that nearly reproduces a paper is not interchangeable with the paper-time snapshot. Compare at the published display precision, report every drifted cell, and withhold `verified` status until the exact snapshot or an author-confirmed reconciliation is available. For hyperparameter trials, selection must use a declared validation metric; ties need an explicit deterministic rule, and test-set selection is forbidden.
+
+Significance is a scientific claim, not decoration. Do not infer independent units from row count: folds, frames, prompts, examples, and repeated measurements may be nested within a shared dataset, subject, or run. Aggregate to the independent paired unit or use a predeclared clustered method. A marker is eligible only when the paired unit set is complete, independence/exchangeability is justified, the baseline and planned family are fixed, multiplicity is handled, and the exact test/interval configuration is retained in provenance. A confidence interval must name its target estimand, level, method, resampling unit, resample count, and seed.
+
+Never render a positive p-value as numeric zero. Choose enough decimals for the minimum attainable exact or Monte Carlo p-value, or use a truthful inequality such as `<0.0001` while retaining the unrounded value in the inference audit.

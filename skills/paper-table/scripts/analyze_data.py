@@ -55,6 +55,8 @@ def main():
         add("repeat_design","blocking",f"I found repeated rows indexed by {seed}. What does one repeat represent, are repeats independent and paired across rows, how should missing runs be handled, and should the table show SD, SE, a confidence interval, or means only?","Run identifiers alone do not establish independence, pairing, a missing-run policy, or the meaning of displayed uncertainty.",seed)
     else:
         add("uncertainty_source","valuable_nonblocking","Do you have repeated seeds/runs or sample-level predictions, and should uncertainty be SD, SE, or a confidence interval?","Real repeats support uncertainty; guessed variation must never be presented as observed.")
+    if context.get("significance_requested") is True:
+        add("significance_plan","blocking","For significance claims, what is the independent paired unit, comparison baseline, planned comparison family, test, correction method, and alpha threshold?","A p-value or star is invalid without a declared pairing, hypothesis family, multiplicity policy, and threshold.")
     add("claim","valuable_nonblocking","What single scientific claim should a reader understand from this table?","The claim guides layout and emphasis without changing data.")
     inquiry_plan=candidates[:3]
     questions=[item["question"] for item in inquiry_plan]
