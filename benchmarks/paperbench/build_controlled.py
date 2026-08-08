@@ -63,6 +63,12 @@ def apply_mutation(spec: dict, mutation: str) -> dict:
         candidate.setdefault("emphasis", {})["scope"] = "group" if candidate.get("emphasis", {}).get("scope") != "group" else "all"
     elif mutation == "row_omission":
         candidate["rows"].pop(0)
+    elif mutation == "panel_metric_duplication":
+        keys = [column["key"] for column in candidate["columns"] if column.get("kind") == "metric"]
+        candidate.setdefault("layout", {})["panels"] = [
+            {"label": "(a) First", "metric_keys": [keys[0]]},
+            {"label": "(b) Duplicate", "metric_keys": [keys[0], *keys[2:]]},
+        ]
     else:
         raise ValueError(f"unknown mutation: {mutation}")
     return candidate
@@ -80,6 +86,7 @@ def build() -> list[dict[str, Any]]:
             ("comparison_eligibility", "comparison_validity"),
             ("emphasis_policy", "comparison_validity"),
             ("row_omission", "structural_fidelity"),
+            ("panel_metric_duplication", "structural_fidelity"),
         ]
         try:
             first_uncertain_cell(spec)

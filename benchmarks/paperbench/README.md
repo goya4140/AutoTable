@@ -100,9 +100,9 @@ Objective metrics are computed from code and canonical cells:
 - hallucinated numeric token count;
 - row/column and uncertainty-field preservation;
 - render success.
-- measured tabular width/body-height fit, selected typography candidate, and width utilization.
+- measured tabular width/body-height fit, selected typography candidate, panel count, structural transform, and width utilization.
 
-The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. The separate publication-readiness gate also requires the XeLaTeX-measured table to fit its declared width without whole-table scaling. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
+The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. A legal multi-panel candidate repeats identity columns, covers every metric exactly once in canonical order, and never mixes distinct nonempty metric groups. The separate publication-readiness gate also requires the XeLaTeX-measured table to fit its declared width and tabular-body height without whole-table scaling; the reference optimizer automatically accepts no more than three stacked panels. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
 
 `inquiry/requests.jsonl` is a committed development set with one author-provided field removed; it strips paper identity, URLs, source commits, reference metadata, and inquiry-profile answers. Always distribute a freshly prepared blind episode—not these static files—for reported evaluation. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, applied, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference, repeated/irrelevant questions, and impossible traces such as using an answer it never requested, then stops at the right time.
 

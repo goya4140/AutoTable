@@ -211,14 +211,12 @@ def verify_frozen(public_dir: Path, submissions_dir: Path, frozen_manifest: Path
     return frozen
 
 
-def rendered_numeric_gate(reference: dict, latex: str) -> dict:
+def rendered_numeric_gate(rendered_spec: dict, latex: str) -> dict:
     evaluator = load_module("paperbench_render_eval", HERE / "evaluate.py")
     if "\\midrule" not in latex or "\\bottomrule" not in latex:
         return {"passed": False, "reason": "expected booktabs body boundaries"}
-    expected_cells = [value for value in evaluator.cells(reference) if value is not None]
-    expected = evaluator.numbers(expected_cells) + evaluator.source_body_numbers(reference)
-    body = latex.split("\\midrule", 1)[1].split("\\bottomrule", 1)[0]
-    recall, precision, hallucinated = evaluator.multiset_recall(expected, evaluator.number_tokens(body))
+    expected = evaluator.expected_body_numbers(rendered_spec)
+    recall, precision, hallucinated = evaluator.multiset_recall(expected, evaluator.rendered_body_numbers(latex))
     return {"passed": recall == 1 and precision == 1 and hallucinated == 0, "numeric_recall": recall, "numeric_precision": precision, "hallucinated_numeric_tokens": hallucinated}
 
 
@@ -246,7 +244,7 @@ def score(public_dir: Path, private_dir: Path, submissions_dir: Path, frozen_man
             submission_dir = submissions_dir / request_id
             candidate = json.loads((submission_dir / "submission.json").read_text())["candidate_spec"]
             contract = contract_eval.evaluate(reference, candidate, case)
-            render = rendered_numeric_gate(reference, (submission_dir / "table.tex").read_text())
+            render = rendered_numeric_gate(candidate, (submission_dir / "table.tex").read_text())
             rows.append({"request_id": request_id, "scientific_gate": contract["passed_scientific_gate"], "full_contract_gate": contract["passed_full_contract"], "rendered_numeric_gate": render["passed"], "category_counts": contract["category_counts"], "render_metrics": render})
         summary = {"mode": "generation", "cases": len(rows), "scientific_pass_rate": macro(rows, "scientific_gate"), "full_contract_pass_rate": macro(rows, "full_contract_gate"), "rendered_numeric_pass_rate": macro(rows, "rendered_numeric_gate"), "passed": all(row["scientific_gate"] and row["full_contract_gate"] and row["rendered_numeric_gate"] for row in rows), "results": rows}
     elif frozen["mode"] == "inquiry":
@@ -266,7 +264,7 @@ def score(public_dir: Path, private_dir: Path, submissions_dir: Path, frozen_man
                 reference = json.loads((case_dir / "x.json").read_text())
                 interaction = interaction_eval.evaluate_interaction(scenario, trace, reference, case)
                 contract = contract_eval.evaluate(reference, trace["candidate_spec"], case)
-                render = rendered_numeric_gate(reference, (submission_dir / "table.tex").read_text())
+                render = rendered_numeric_gate(trace["candidate_spec"], (submission_dir / "table.tex").read_text())
                 row.update({
                     "interaction_output_gate": interaction["passed"],
                     "answer_application_rate": interaction["answer_application_rate"],

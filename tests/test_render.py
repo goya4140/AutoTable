@@ -29,3 +29,10 @@ def test_latex_tabular_fragment_excludes_float_wrapper():
     fragment=m.latex_tabular(spec)
     assert "\\begin{tabular}" in fragment and "\\end{tabular}" in fragment
     assert "\\begin{table}" not in fragment and "\\caption" not in fragment
+
+def test_panel_layout_requires_exact_metric_coverage():
+    m=load("render_bad_panels",ROOT/"skills/paper-table/scripts/render_table.py")
+    spec={"columns":[{"key":"method","kind":"text","label":"Method"},{"key":"a","kind":"metric","label":"A","direction":"max"},{"key":"b","kind":"metric","label":"B","direction":"max"}],"rows":[{"method":"M","a":1,"b":2}],"layout":{"panels":[{"label":"A","metric_keys":["a"]},{"label":"Again","metric_keys":["a"]}]}}
+    import pytest
+    with pytest.raises(ValueError,match="cover every metric exactly once"):
+        m.render(spec)

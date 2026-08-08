@@ -9,6 +9,7 @@ COMMON_ALLOWED = [
     "consistent_precision_formatting",
     "whitespace_and_rule_adjustment",
     "row_reordering_within_comparison_group",
+    "split_metric_columns_into_semantic_panels_with_repeated_identity",
 ]
 COMMON_FORBIDDEN = [
     "change_observed_values",

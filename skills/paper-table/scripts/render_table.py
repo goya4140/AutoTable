@@ -12,12 +12,25 @@ def layout(spec):
     if value["font_size"] not in FONT_SIZES: raise ValueError("layout.font_size must be small, footnotesize, or scriptsize")
     if not isinstance(value["column_padding_pt"],(int,float)) or not 1.5<=value["column_padding_pt"]<=10: raise ValueError("layout.column_padding_pt must be between 1.5 and 10")
     if not isinstance(value["row_stretch"],(int,float)) or not .8<=value["row_stretch"]<=1.5: raise ValueError("layout.row_stretch must be between 0.8 and 1.5")
+    text_width=value.get("text_column_width_pt")
+    if text_width is not None and (not isinstance(text_width,(int,float)) or not 45<=text_width<=160): raise ValueError("layout.text_column_width_pt must be between 45 and 160")
+    panels=value.get("panels")
+    if panels is not None:
+        metric_keys=[column["key"] for column in spec.get("columns",[]) if column.get("kind")=="metric"]
+        if not isinstance(panels,list) or len(panels)<2: raise ValueError("layout.panels must contain at least two panels")
+        covered=[]
+        for panel in panels:
+            if not isinstance(panel,dict) or not isinstance(panel.get("label"),str) or not panel["label"].strip(): raise ValueError("each panel requires a non-empty label")
+            if not isinstance(panel.get("metric_keys"),list) or not panel["metric_keys"]: raise ValueError("each panel requires metric_keys")
+            covered.extend(panel["metric_keys"])
+        if covered!=metric_keys or len(covered)!=len(set(covered)): raise ValueError("panel metric_keys must cover every metric exactly once in column order")
     return value
 
 def layout_commands(spec):
     value=layout(spec)
     return [rf"\{value['font_size']}",rf"\setlength{{\tabcolsep}}{{{value['column_padding_pt']:g}pt}}",rf"\renewcommand{{\arraystretch}}{{{value['row_stretch']:g}}}"]
 def tex(s): return "".join(LATEX_ESC.get(c,c) for c in str(s))
+def wrapped_tex(value,width): return rf"\parbox[t]{{{width:g}pt}}{{\raggedright {tex(value)}}}" if width else tex(value)
 def mean(cell):
     if isinstance(cell,(int,float)): return float(cell)
     if isinstance(cell,dict) and isinstance(cell.get("mean"),(int,float)): return float(cell["mean"])
@@ -54,7 +67,8 @@ def ranks(spec):
 
 def header_rows(cols, spec):
     """Return LaTeX/HTML headers, including optional nested column groups."""
-    leaf=[tex(c["label"]+((" ↑" if c.get("direction")=="max" else " ↓") if c.get("kind")=="metric" else "")) for c in cols]
+    text_width=layout(spec).get("text_column_width_pt")
+    leaf=[wrapped_tex(c["label"]+((" ↑" if c.get("direction")=="max" else " ↓") if c.get("kind")=="metric" else ""),text_width if c.get("kind")!="metric" else None) for c in cols]
     html_leaf=[html.escape(c["label"])+(" ↑" if c.get("direction")=="max" else " ↓" if c.get("direction")=="min" else "") for c in cols]
     groups=[]
     for c in cols[1:]:
@@ -94,24 +108,54 @@ def tabular(spec):
             raw=display(row.get(c["key"]),int(c.get("precision",2))); rank=ranking.get((i,c["key"])); t=tex(raw)
             if rank==1 and emph.get("best","bold")=="bold": t=r"\textbf{"+t+"}"
             elif rank==2 and emph.get("second","underline")=="underline": t=r"\underline{"+t+"}"
+            if c.get("kind")!="metric" and layout(spec).get("text_column_width_pt"): t=wrapped_tex(raw,layout(spec)["text_column_width_pt"])
             cells.append(t); hc.append(f'<td class="r{rank or 0}">{html.escape(raw)}</td>')
         lines.append(" & ".join(cells)+r" \\"); html_rows.append("<tr>"+"".join(hc)+"</tr>"); last_group=group
     lines += [r"\bottomrule",r"\end{tabular}"]
     return lines,html_headers,html_rows
 
 def latex_tabular(spec):
+    if spec.get("layout",{}).get("panels"): raise ValueError("latex_tabular requires a single-panel projected spec")
     return "\n".join(tabular(spec)[0])+"\n"
+
+def projected_panels(spec):
+    panels=layout(spec).get("panels")
+    if not panels: return [(None,spec)]
+    text_columns=[column for column in spec["columns"] if column.get("kind")!="metric"]
+    metric_map={column["key"]:column for column in spec["columns"] if column.get("kind")=="metric"}
+    projected=[]
+    for panel in panels:
+        child={key:value for key,value in spec.items()}
+        child["columns"]=[*text_columns,*[dict(metric_map[key]) for key in panel["metric_keys"]]]
+        child["layout"]={key:value for key,value in spec.get("layout",{}).items() if key!="panels"}
+        groups={column.get("group") for column in child["columns"] if column.get("kind")=="metric"}
+        if len(groups)==1 and next(iter(groups)):
+            for column in child["columns"]:
+                if column.get("kind")=="metric": column.pop("group",None)
+            child.pop("column_supergroup",None)
+        projected.append((panel["label"],child))
+    return projected
 
 def render(spec):
     value=layout(spec)
-    tabular_lines,html_headers,html_rows=tabular(spec)
-    lines=[r"\begin{table}[t]",r"\centering",*layout_commands(spec),f"\\caption{{{tex(spec.get('caption',''))}}}",f"\\label{{{tex(spec.get('label','tab:results'))}}}",*tabular_lines]
+    panels=projected_panels(spec)
+    lines=[r"\begin{table}[t]",r"\centering",*layout_commands(spec),f"\\caption{{{tex(spec.get('caption',''))}}}",f"\\label{{{tex(spec.get('label','tab:results'))}}}"]
+    html_sections=[]
+    for index,(panel_label,child) in enumerate(panels):
+        tabular_lines,html_headers,html_rows=tabular(child)
+        if panel_label: lines.extend([rf"\textbf{{{tex(panel_label)}}}\par\smallskip",*tabular_lines])
+        else: lines.extend(tabular_lines)
+        if index<len(panels)-1: lines.append(r"\par\medskip")
+        table_caption=html.escape(panel_label or spec.get("caption",""))
+        html_sections.append(f'<section><table><caption>{table_caption}</caption><thead>{html_headers}</thead><tbody>{"".join(html_rows)}</tbody></table></section>')
     for note in spec.get("notes",[]): lines.append(r"\par\vspace{2pt}\begin{minipage}{0.8\linewidth}\footnotesize "+tex(note)+r"\end{minipage}")
     lines.append(r"\end{table}")
     horizontal=value["column_padding_pt"]*1.333; vertical=3.5*value["row_stretch"]*1.333
-    css=f"body{{font-family:Georgia,serif;margin:32px;color:#171717}}table{{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:{FONT_SIZES[value['font_size']]}px}}th,td{{padding:{vertical:.2f}px {horizontal:.2f}px;text-align:right}}th:first-child,td:first-child{{text-align:left}}thead{{border-top:2px solid;border-bottom:1px solid}}.super th,.groups th{{text-align:center;padding-top:3px;padding-bottom:3px}}.groups th:not(:first-child){{border-bottom:1px solid #777}}tbody{{border-bottom:2px solid}}.r1{{font-weight:700}}.r2{{text-decoration:underline}}caption{{font-weight:600;margin-bottom:10px}}.notes{{font-size:.86rem;margin-top:8px;max-width:900px}}"
+    text_width_css=f"width:{value['text_column_width_pt']*1.333:.1f}px;max-width:{value['text_column_width_pt']*1.333:.1f}px;white-space:normal;" if value.get("text_column_width_pt") else ""
+    css=f"body{{font-family:Georgia,serif;margin:32px;color:#171717}}.caption,caption{{font-weight:600;margin-bottom:10px;text-align:left}}section{{margin-bottom:14px}}table{{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:{FONT_SIZES[value['font_size']]}px}}th,td{{padding:{vertical:.2f}px {horizontal:.2f}px;text-align:right}}th:first-child,td:first-child{{text-align:left;{text_width_css}}}thead{{border-top:2px solid;border-bottom:1px solid}}.super th,.groups th{{text-align:center;padding-top:3px;padding-bottom:3px}}.groups th:not(:first-child){{border-bottom:1px solid #777}}tbody{{border-bottom:2px solid}}.r1{{font-weight:700}}.r2{{text-decoration:underline}}.notes{{font-size:.86rem;margin-top:8px;max-width:900px}}"
     note=" ".join(html.escape(n) for n in spec.get("notes",[]))
-    page=f'<!doctype html><meta charset="utf-8"><style>{css}</style><table><caption>{html.escape(spec.get("caption",""))}</caption><thead>{html_headers}</thead><tbody>{"".join(html_rows)}</tbody></table><div class="notes">{note}</div>'
+    overall=f'<div class="caption">{html.escape(spec.get("caption",""))}</div>' if len(panels)>1 else ""
+    page=f'<!doctype html><meta charset="utf-8"><style>{css}</style>{overall}{"".join(html_sections)}<div class="notes">{note}</div>'
     return "\n".join(lines)+"\n",page
 def main():
     p=argparse.ArgumentParser(); p.add_argument("spec",type=Path); p.add_argument("--out-dir",type=Path,required=True); a=p.parse_args()

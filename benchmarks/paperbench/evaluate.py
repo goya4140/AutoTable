@@ -42,6 +42,23 @@ def source_body_numbers(x):
             if isinstance(v,str): out.extend(number_tokens(v))
     return out
 def number_tokens(text): return re.findall(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?",text.replace("−","-"))
+def expected_body_numbers(x):
+    panel_count=len(x.get("layout",{}).get("panels",[])) or 1; out=[]
+    for row in x["rows"]:
+        for column in x["columns"]:
+            value=row.get(column["key"]); repeat=panel_count if column.get("kind")!="metric" else 1; tokens=[]
+            if isinstance(value,dict):
+                for key in ("mean","sd","se","ci90","ci95"):
+                    item=value.get(key)
+                    if isinstance(item,(int,float)) and not isinstance(item,bool): tokens.append(str(item))
+                    elif isinstance(item,list): tokens.extend(str(part) for part in item if isinstance(part,(int,float)) and not isinstance(part,bool))
+            elif isinstance(value,(int,float)) and not isinstance(value,bool): tokens=[str(value)]
+            elif isinstance(value,str): tokens=number_tokens(value)
+            out.extend(tokens*repeat)
+    return out
+def rendered_body_numbers(code):
+    bodies=re.findall(r"\\midrule(.*?)\\bottomrule",code,re.S)
+    return number_tokens("\n".join(bodies)) if bodies else []
 def num_norm(x):
     try: return f"{float(x):.12g}"
     except ValueError: return norm(x)
@@ -75,8 +92,8 @@ def main():
         if not case_dir.is_dir(): continue
         case=json.loads((case_dir/"case.json").read_text()); x=json.loads((case_dir/"x.json").read_text()); out=OUT/case["id"]
         layout_report=render(case_dir,out); code=(out/"table.tex").read_text()
-        expected_cells=[v for v in cells(x) if v is not None]; expected_nums=numbers(expected_cells)+source_body_numbers(x)
-        body=code.split("\\midrule",1)[1].split("\\bottomrule",1)[0]; actual_nums=number_tokens(body)
+        expected_cells=[v for v in cells(x) if v is not None]; expected_nums=expected_body_numbers(json.loads((out/"selected-spec.json").read_text()))
+        actual_nums=rendered_body_numbers(code)
         nr,np,hall=multiset_recall(expected_nums,actual_nums)
         plain_code=code.replace("\\%","%").replace("\\_","_").replace("\\&","&")
         code_nums={num_norm(v) for v in number_tokens(code)}

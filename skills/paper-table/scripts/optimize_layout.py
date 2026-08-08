@@ -26,6 +26,9 @@ CANDIDATES = [
     {"id": "script-compact", "font_size": "scriptsize", "column_padding_pt": 3.0, "row_stretch": 0.92},
     {"id": "script-tight", "font_size": "scriptsize", "column_padding_pt": 1.5, "row_stretch": 0.85},
 ]
+STRUCTURAL_CANDIDATE_IDS={"small-standard","small-compact","footnote-comfortable","footnote-compact","footnote-tight"}
+WRAP_BASE_IDS={"small-compact","footnote-comfortable","footnote-compact","footnote-tight"}
+MAX_AUTOMATIC_PANELS=3
 
 
 def load_renderer():
@@ -81,6 +84,66 @@ def candidate_score(candidate, width, target_width):
     return 0.55 * FONT_QUALITY[candidate["font_size"]] + 0.25 * padding_quality + 0.15 * row_quality + 0.05 * utilization
 
 
+def panel_partitions(spec, panel_count=2):
+    metrics=[column for column in spec.get("columns",[]) if column.get("kind")=="metric"]
+    if len(metrics)<panel_count: return []
+    runs=[]
+    for column in metrics:
+        group=column.get("group")
+        if not runs or runs[-1][0]!=group: runs.append([group,[]])
+        runs[-1][1].append(column)
+    partitions=[]
+    if all(group for group,_ in runs):
+        def allocations(remaining,index,current):
+            if index==len(runs):
+                if remaining==0: yield current
+                return
+            capacity=len(runs[index][1]); groups_left=len(runs)-index-1
+            for count in range(1,min(capacity,remaining-groups_left)+1):
+                yield from allocations(remaining-count,index+1,[*current,count])
+        for allocation in allocations(panel_count,0,[]):
+            chunks=[]
+            for (group,columns),count in zip(runs,allocation):
+                base,remainder=divmod(len(columns),count); offset=0
+                for part in range(count):
+                    size=base+(1 if part<remainder else 0); chunk=columns[offset:offset+size]; offset+=size
+                    label=group if count==1 else f"{group} ({part+1}/{count})"
+                    chunks.append((label,[column["key"] for column in chunk]))
+            partitions.append((f"group-preserving-{'-'.join(map(str,allocation))}",chunks))
+    else:
+        base,remainder=divmod(len(metrics),panel_count); chunks=[]; offset=0
+        for index in range(panel_count):
+            size=base+(1 if index<remainder else 0); chunk=metrics[offset:offset+size]; offset+=size
+            chunks.append((f"Metrics {offset-size+1}–{offset}",[column["key"] for column in chunk]))
+        partitions.append((f"balanced-{panel_count}",chunks))
+    unique=[]; seen=set()
+    for partition_id,chunks in partitions:
+        signature=tuple(tuple(keys) for _,keys in chunks)
+        if signature in seen: continue
+        seen.add(signature)
+        panels=[{"label":f"({chr(97+index)}) {label}","metric_keys":keys} for index,(label,keys) in enumerate(chunks)]
+        unique.append({"id":partition_id,"panels":panels})
+    return unique
+
+
+def measure_panel_candidate(spec, renderer, partition, candidate, target_width, target_height):
+    trial=copy.deepcopy(spec)
+    trial["layout"]={key:value for key,value in candidate.items() if key!="id"}
+    trial["layout"]["panels"]=copy.deepcopy(partition["panels"])
+    dimensions=[measure(child,renderer) for _,child in renderer.projected_panels(trial)]
+    width=max(item[0] for item in dimensions)
+    height=sum(item[1] for item in dimensions)+18*len(dimensions)
+    fits=width<=target_width+.25 and height<=target_height+.25
+    score=candidate_score(candidate,width,target_width)-.04*(len(dimensions)-1)-(.03 if candidate.get("text_column_width_pt") else 0)
+    return {
+        **candidate,"id":f"{partition['id']}__{candidate['id']}","panels":partition["panels"],
+        "structural_transform":"panels","panel_count":len(dimensions),
+        "width_pt":round(width,3),"tabular_height_pt":round(height,3),
+        "width_utilization":round(width/target_width,4),"fits":fits,
+        "readability_proxy_score":round(score,4),
+    }
+
+
 def recommendations(selected, fits, target_width, width):
     if not fits:
         return [
@@ -90,7 +153,13 @@ def recommendations(selected, fits, target_width, width):
             "Use a full-width table before considering scriptsize or whole-table scaling.",
             "Do not silently resize the table: scaling would reduce legibility and conceal the structural problem.",
         ]
-    messages = [f"Selected {selected['font_size']} text with {selected['column_padding_pt']:g} pt column padding and {selected['row_stretch']:g} row stretch."]
+    messages=[]
+    if selected.get("structural_transform")=="panels":
+        messages.append(f"Split the metrics into {selected['panel_count']} panels because no readable single-panel candidate fit the target width.")
+        messages.append("Repeat the identity columns in every panel and preserve each metric exactly once.")
+    if selected.get("text_column_width_pt"):
+        messages.append(f"Wrap text identity columns at {selected['text_column_width_pt']:g} pt without abbreviating their content.")
+    messages.append(f"Selected {selected['font_size']} text with {selected['column_padding_pt']:g} pt column padding and {selected['row_stretch']:g} row stretch.")
     if selected["font_size"] != "small":
         messages.append("The table needs a smaller font at this width; consider splitting metric families if body-text-sized labels are required.")
     if selected["column_padding_pt"] < 3.5:
@@ -137,7 +206,7 @@ def compile_preview(out_dir, latexmk="latexmk"):
             if (out_dir / "preview.png").exists(): autocrop_png(out_dir / "preview.png")
 
 
-def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=620.0, latexmk="latexmk", compile_artifact=True):
+def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=500.0, latexmk="latexmk", compile_artifact=True):
     if target_width_pt <= 0 or target_height_pt <= 0:
         raise ValueError("target width and height must be positive")
     renderer = load_renderer()
@@ -149,14 +218,42 @@ def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=620.0, latex
         width, height = measure(trial, renderer)
         fits = width <= target_width_pt + 0.25 and height <= target_height_pt + 0.25
         results.append({
-            **candidate, "width_pt": round(width, 3), "tabular_height_pt": round(height, 3),
+            **candidate,"structural_transform":"none","panel_count":1,"width_pt": round(width, 3), "tabular_height_pt": round(height, 3),
             "width_utilization": round(width / target_width_pt, 4), "fits": fits,
             "readability_proxy_score": round(candidate_score(candidate, width, target_width_pt), 4),
         })
     fitting = [result for result in results if result["fits"]]
+    if not fitting:
+        structural_typography=[candidate for candidate in CANDIDATES if candidate["id"] in STRUCTURAL_CANDIDATE_IDS]
+        last_partitions=[]
+        # More than three stacked panels is normally a page-design problem,
+        # not a typography success. Stop and advise the author instead of
+        # accepting a fragmented full-page table merely because it compiles.
+        for panel_count in range(2,MAX_AUTOMATIC_PANELS+1):
+            partitions=panel_partitions(spec,panel_count)
+            if not partitions: continue
+            partitions=sorted(partitions,key=lambda partition:(max(len(panel["metric_keys"]) for panel in partition["panels"]),max(len(panel["metric_keys"]) for panel in partition["panels"])-min(len(panel["metric_keys"]) for panel in partition["panels"]),partition["id"]))[:1]
+            last_partitions=partitions
+            for partition in partitions:
+                for candidate in structural_typography:
+                    results.append(measure_panel_candidate(spec,renderer,partition,candidate,target_width_pt,target_height_pt))
+            fitting=[result for result in results if result["fits"]]
+            if fitting: break
+        if not fitting and last_partitions:
+            wrapped=[]
+            for candidate in CANDIDATES:
+                if candidate["id"] not in WRAP_BASE_IDS: continue
+                for width in (80.0,65.0):
+                    wrapped.append({**candidate,"id":f"{candidate['id']}__wrap-{width:g}","text_column_width_pt":width})
+            for partition in last_partitions:
+                for candidate in wrapped:
+                    results.append(measure_panel_candidate(spec,renderer,partition,candidate,target_width_pt,target_height_pt))
+            fitting=[result for result in results if result["fits"]]
     selected = max(fitting, key=lambda result: result["readability_proxy_score"]) if fitting else min(results, key=lambda result: (max(0, result["width_pt"]-target_width_pt), -result["readability_proxy_score"]))
     selected_spec = copy.deepcopy(spec)
     selected_spec["layout"] = {key: selected[key] for key in ("font_size", "column_padding_pt", "row_stretch")}
+    if selected.get("text_column_width_pt"): selected_spec["layout"]["text_column_width_pt"]=selected["text_column_width_pt"]
+    if selected.get("panels"): selected_spec["layout"]["panels"]=copy.deepcopy(selected["panels"])
     latex, html = renderer.render(selected_spec)
     (out_dir / "selected-spec.json").write_text(json.dumps(selected_spec, indent=2, ensure_ascii=False) + "\n")
     (out_dir / "table.tex").write_text(latex)
@@ -165,6 +262,7 @@ def optimize(spec, out_dir, target_width_pt=469.0, target_height_pt=620.0, latex
         "status": "selected" if fitting else "needs_structural_redesign",
         "target_width_pt": target_width_pt, "target_tabular_height_pt": target_height_pt,
         "selected_candidate": selected["id"], "selected_fits": selected["fits"],
+        "structural_transform": selected["structural_transform"], "panel_count": selected["panel_count"],
         "selection_policy": "Among physically fitting candidates, maximize a declared proxy favoring readable font size, column padding, row spacing, and width utilization; this is not a human aesthetic score.",
         "candidates": results,
         "recommendations": recommendations(selected, bool(fitting), target_width_pt, selected["width_pt"]),
@@ -181,7 +279,7 @@ def main():
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--case", type=Path, help="PaperBench case.json supplying max_width_pt")
     parser.add_argument("--target-width-pt", type=float)
-    parser.add_argument("--target-height-pt", type=float, default=620.0)
+    parser.add_argument("--target-height-pt", type=float, default=500.0, help="maximum tabular-body height; reserves page space for caption and notes")
     parser.add_argument("--latexmk", default="latexmk")
     parser.add_argument("--no-preview", action="store_true")
     args = parser.parse_args()

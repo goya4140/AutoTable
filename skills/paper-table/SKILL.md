@@ -50,7 +50,7 @@ Default to:
 
 Never use bolding to hide an unfavorable comparison, compare across incompatible settings, or calculate uncertainty from guessed sample sizes.
 
-Never silently scale an overflowing table. If every measured candidate fails, return the optimizer's structural feedback and split/reorganize the table before trying smaller text.
+Never silently scale an overflowing table. Let the optimizer split only at coherent metric-family boundaries while repeating identity columns and preserving every metric once. Automatically accept at most three stacked panels; a fourth panel is a page-design decision that requires structural feedback or author review. If bounded typography, semantic panels, and lossless text wrapping all fail, return structural feedback and prefer a wider placement or redesigned claim.
 
 ## Bundled resources
 
@@ -59,6 +59,6 @@ Never silently scale an overflowing table. If every measured candidate fails, re
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
-- `scripts/optimize_layout.py`: search readable typography candidates using real XeLaTeX width/height measurements and emit structural feedback when none fit.
+- `scripts/optimize_layout.py`: search measured typography, semantic panel, and lossless text-wrap candidates; emit structural feedback when none fit.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.
 - `scripts/verify_table.py`: check that rendered numeric tokens match the spec.

@@ -111,6 +111,24 @@ def evaluate(reference: dict, candidate: dict, case: dict) -> dict:
                 if expected_column.get(field) != actual_column.get(field):
                     errors.append(violation("metric_semantics", f"columns.{key}.{field}", f"metric {field} changed", expected_column.get(field), actual_column.get(field)))
 
+    panels = candidate.get("layout", {}).get("panels")
+    if panels is not None:
+        metric_order = [column["key"] for column in candidate.get("columns", []) if column.get("kind") == "metric"]
+        if not isinstance(panels, list) or len(panels) < 2:
+            errors.append(violation("structural_fidelity", "layout.panels", "panel layout requires at least two panels"))
+        else:
+            valid_panels = [panel for panel in panels if isinstance(panel, dict) and isinstance(panel.get("metric_keys"), list)]
+            if len(valid_panels) != len(panels):
+                errors.append(violation("structural_fidelity", "layout.panels", "every panel requires a metric_keys array"))
+            covered = [key for panel in valid_panels for key in panel["metric_keys"]]
+            if covered != metric_order or len(covered) != len(set(covered)):
+                errors.append(violation("structural_fidelity", "layout.panels", "panels must cover every metric exactly once in original order", metric_order, covered))
+            for index, panel in enumerate(valid_panels):
+                groups = {candidate_columns.get(key, {}).get("group") for key in panel["metric_keys"]}
+                groups.discard(None)
+                if len(groups) > 1:
+                    errors.append(violation("comparison_validity", f"layout.panels.{index}", "one panel mixes distinct metric groups", actual=sorted(groups)))
+
     reference_rows, reference_duplicates = row_map(reference, row_key)
     candidate_rows, candidate_duplicates = row_map(candidate, row_key)
     for identity in reference_duplicates:
