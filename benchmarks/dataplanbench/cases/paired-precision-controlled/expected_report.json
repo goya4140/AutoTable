@@ -1,0 +1,268 @@
+{
+  "schema_version": "paper-table-more-data-plan-report-v1",
+  "repeat_unit": "independent training seed",
+  "independence": "independent",
+  "pairing": {
+    "mode": "fixed_across_groups",
+    "expected_group_source": "declared_expected_groups",
+    "expected_run_id_source": "declared_expected_run_ids",
+    "expected_groups": [
+      {
+        "dataset": "Dataset-1",
+        "method": "Baseline"
+      },
+      {
+        "dataset": "Dataset-1",
+        "method": "Method-A"
+      },
+      {
+        "dataset": "Dataset-1",
+        "method": "Method-B"
+      },
+      {
+        "dataset": "Dataset-2",
+        "method": "Baseline"
+      },
+      {
+        "dataset": "Dataset-2",
+        "method": "Method-A"
+      },
+      {
+        "dataset": "Dataset-2",
+        "method": "Method-B"
+      }
+    ],
+    "expected_run_ids": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "expected_run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708"
+  },
+  "completeness": {
+    "repair_requests": [
+      {
+        "group": {
+          "dataset": "Dataset-1",
+          "method": "Method-A"
+        },
+        "run_id": 4,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      },
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Baseline"
+        },
+        "run_id": 3,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      },
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Baseline"
+        },
+        "run_id": 4,
+        "request": "complete_existing_paired_run",
+        "metrics": [
+          "accuracy"
+        ]
+      }
+    ],
+    "invalid_metric_requests": [
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Method-B"
+        },
+        "run_id": 4,
+        "metric": "accuracy",
+        "request": "rerun_or_recover_missing_metric"
+      }
+    ],
+    "repair_count": 4,
+    "requires_replan_after_repair": true
+  },
+  "precision": {
+    "confidence_level": 0.95,
+    "estimand": "group_mean",
+    "minimum_pilot_runs": 5,
+    "maximum_total_runs": 30,
+    "variance_assumption": "pilot_sd_stable_for_planning_only",
+    "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+    "cells": [
+      {
+        "group": {
+          "dataset": "Dataset-1",
+          "method": "Baseline"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 5,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 1.5811388300841898,
+        "current_ci_half_width": 1.9632431614775552,
+        "required_total_runs": 7,
+        "additional_runs": 2,
+        "status": "additional_runs_provisionally_required",
+        "target_met": false
+      },
+      {
+        "group": {
+          "dataset": "Dataset-1",
+          "method": "Method-A"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 4,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 1.8257418583505538,
+        "current_ci_half_width": 2.9051627157547624,
+        "required_total_runs": 5,
+        "additional_runs": 1,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      },
+      {
+        "group": {
+          "dataset": "Dataset-1",
+          "method": "Method-B"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 5,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 0.0,
+        "current_ci_half_width": 0.0,
+        "required_total_runs": null,
+        "additional_runs": null,
+        "status": "zero_pilot_variance_requires_review",
+        "target_met": false
+      },
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Baseline"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 3,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 1.0,
+        "current_ci_half_width": 2.4841377117503263,
+        "required_total_runs": 5,
+        "additional_runs": 2,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      },
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Method-A"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 5,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 2.588435821108957,
+        "current_ci_half_width": 3.2139675707319872,
+        "required_total_runs": 14,
+        "additional_runs": 9,
+        "status": "additional_runs_provisionally_required",
+        "target_met": false
+      },
+      {
+        "group": {
+          "dataset": "Dataset-2",
+          "method": "Method-B"
+        },
+        "metric": "accuracy",
+        "unit": "percentage points",
+        "current_valid_runs": 4,
+        "target_ci_half_width": 1.5,
+        "confidence_level": 0.95,
+        "planning_assumption": "pilot_sd_stable_for_planning_only",
+        "interval_assumption": "t_interval_appropriate_for_repeat_distribution",
+        "sample_sd": 1.2909944487358056,
+        "current_ci_half_width": 2.054260256760519,
+        "required_total_runs": 5,
+        "additional_runs": 1,
+        "status": "collect_minimum_pilot_then_replan",
+        "target_met": false
+      }
+    ],
+    "request": {
+      "mode": "add_new_run_ids_across_every_expected_group",
+      "provisional_common_total_runs": 14,
+      "additional_common_run_ids": 9,
+      "groups": [
+        {
+          "dataset": "Dataset-1",
+          "method": "Baseline"
+        },
+        {
+          "dataset": "Dataset-1",
+          "method": "Method-A"
+        },
+        {
+          "dataset": "Dataset-1",
+          "method": "Method-B"
+        },
+        {
+          "dataset": "Dataset-2",
+          "method": "Baseline"
+        },
+        {
+          "dataset": "Dataset-2",
+          "method": "Method-A"
+        },
+        {
+          "dataset": "Dataset-2",
+          "method": "Method-B"
+        }
+      ]
+    },
+    "unresolved_cells": 1,
+    "provisional": true
+  },
+  "questions_for_author": [
+    "Can you rerun or recover the listed existing run cells first, then return the repaired data so the precision plan can be recomputed?",
+    "Some precision targets are unresolved because pilot variance is zero or the run cap is too low; should the author raise the cap, collect a fresh pilot, or revise the target width?"
+  ],
+  "notes": [
+    "This report requests observations; it never simulates or imputes experimental outcomes.",
+    "The target estimand is each group mean, not a paired method difference.",
+    "Precision projections use the observed pilot sample SD in a two-sided Student-t mean interval and must be recomputed after new runs arrive.",
+    "The author must judge the Student-t mean interval appropriate for the repeat distribution; small, strongly skewed, or heavy-tailed pilots need another plan.",
+    "Complete existing paired run IDs before starting new paired IDs.",
+    "A zero pilot SD is not accepted as proof of zero future variance."
+  ],
+  "provenance": {
+    "source": "deterministic controlled benchmark",
+    "status": "synthetic_gold",
+    "purpose": "test active requests for paired-run repair and precision-driven acquisition"
+  }
+}

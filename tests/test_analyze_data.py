@@ -104,3 +104,25 @@ def test_multimethod_comparison_requires_complete_blocks_and_predeclared_family(
     assert question["importance"] == "blocking"
     assert "complete independent blocks" in question["question"]
     assert "fixed before outcome inspection" in question["question"] and "omnibus rejection" in question["question"]
+
+
+def test_precision_planning_requests_pairing_targets_and_budget(tmp_path):
+    data = tmp_path / "runs.json"
+    context = tmp_path / "context.json"
+    data.write_text(json.dumps([
+        {"method": method, "seed": seed, "score": score + seed}
+        for method, score in (("A", 1.0), ("B", 2.0))
+        for seed in (0, 1, 2)
+    ]))
+    context.write_text(json.dumps({
+        "metric_semantics": {"score": {"direction": "max", "unit": "%"}},
+        "precision_planning_requested": True,
+    }))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json", "--context", str(context)], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    question = next(item for item in report["inquiry_plan"] if item["id"] == "data_acquisition_plan")
+    assert question["importance"] == "blocking"
+    assert "paired grid" in question["question"] and "CI half-width targets" in question["question"]
+    assert "group mean or a paired difference" in question["question"]
+    assert "minimum pilot size" in question["question"] and "maximum run budget" in question["question"]
+    assert "Student-t mean interval appropriate" in question["question"]

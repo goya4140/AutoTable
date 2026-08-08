@@ -14,6 +14,7 @@ PaperTable studies code-first generation of publication-quality academic tables.
 - [`PaperBench`](benchmarks/paperbench): a versioned `(x,y)` dataset schema, real NeurIPS seed cases, evaluation scripts, human-rating protocol, and reference-vs-generated dashboard.
 - [`StatBench`](benchmarks/statbench): exact author-run reconstructions plus explicitly ineligible source-drift diagnostics, without pretending a partial statistical artifact is a full visual-table gold pair.
 - [`InferenceBench`](benchmarks/inferencebench): paired statistical comparisons, confidence intervals, multiplicity correction, and controlled rejection of pseudoreplication or unsafe significance markers.
+- [`DataPlanBench`](benchmarks/dataplanbench): repair-first repeated-run audits and provisional precision-driven requests for additional experiments, without simulated outcomes.
 - Candidate discovery manifests from official 2024 proceedings: a legacy 150-table NeurIPS index, a diversity-capped 200-table/30-paper NeurIPS index, and 25-table ICLR/ICML indexes. Discovery cases are explicitly kept separate from paired benchmark cases.
 - External adapters/registry for TableVisBench and TABVERSE rather than silently relicensing their data.
 - A [dataset landscape](docs/dataset-landscape.md) covering TableBank, PubTables-1M, SciTSR, TabLeX, SciGen, TABVERSE, TableVisBench, and TASTE.
@@ -45,6 +46,7 @@ python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 python benchmarks/statbench/validate.py
 python benchmarks/inferencebench/validate.py
+python benchmarks/dataplanbench/validate.py
 ```
 
 Outputs appear in `output/paperbench/`. The current reference run passes numeric, semantic-contract, provenance, and XeLaTeX physical-width gates on all 6/6 cases, with numeric/cell/header recall and numeric precision all `1.00` and zero hallucinated numeric tokens. SWT-Bench fits a 234.5pt single column at 225.5pt using three semantically named panels. Its raw input is recomputed during validation, and its blind public request contains only per-example observations while private scoring retains canonical `x.json`. PaperTable-Controlled detects all 46/46 deterministic mutations—including an audit-only provenance change—and InquiryBench's gold traces pass all 48/48 evaluator-separated scenarios.
@@ -52,6 +54,8 @@ Outputs appear in `output/paperbench/`. The current reference run passes numeric
 StatBench contains two complementary cases. DIAMOND's 130 author-released Atari scores reproduce all 26 published cells exactly. TuneTables contributes a complete 5,880-record grid spanning 20 methods, 98 datasets, and three folds; it executes all six Table 1 aggregation formulas but intentionally fails exact-gold admission because the pinned post-publication author snapshot matches only 20/120 displayed cells. This makes version drift, hyperparameter tie-breaking, and false `verified` claims directly testable instead of hiding them behind numeric tolerance.
 
 InferenceBench averages TuneTables' three folds before testing, producing 98 dataset-level pairs for four planned comparisons against TuneTables. Its deterministic sign-flip tests, paired bootstrap intervals, and Holm correction generate an editable inference table while controlled mutations reject missing pairs, undeclared independence, and skipped correction. A second controlled case adds 28 tasks nested in eight unequal independent-study clusters; it verifies intact-cluster randomization/bootstrap and an intentional direction reversal between equal-study and unit-weighted estimands. A third case compares five methods across all 98 complete datasets with ties-aware block permutation, a global omnibus gate, and a predeclared TuneTables-versus-all family whose pairwise results must match the standalone route. The TuneTables results remain explicitly tied to the drifted current snapshot rather than being presented as reproductions of paper-time claims.
+
+DataPlanBench turns an incomplete paired repeated-run grid into an executable author request. Its controlled case repairs three missing pairs and one invalid metric first, then reports provisional Student-t precision counts under a declared pilot-variance assumption. It explicitly withholds a run-count conclusion for a zero-variance pilot and requires the plan to be recomputed when repaired or new observations arrive.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 

@@ -1,0 +1,119 @@
+{
+  "title": "Active paired-run acquisition plan",
+  "label": "tab:paired-run-acquisition-plan",
+  "caption": "Observed-run audit and provisional 95% mean-precision plan for six method–dataset groups.",
+  "columns": [
+    {
+      "key": "dataset",
+      "label": "Dataset",
+      "kind": "text"
+    },
+    {
+      "key": "method",
+      "label": "Method",
+      "kind": "text"
+    },
+    {
+      "key": "current_runs",
+      "label": "Valid runs",
+      "kind": "text",
+      "precision": 0
+    },
+    {
+      "key": "current_half_width",
+      "label": "Current 95% CI ±",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "target_half_width",
+      "label": "Target ±",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "suggested_total",
+      "label": "Next checkpoint",
+      "kind": "text",
+      "precision": 0
+    },
+    {
+      "key": "action",
+      "label": "Action",
+      "kind": "text"
+    }
+  ],
+  "rows": [
+    {
+      "dataset": "Dataset-1",
+      "method": "Baseline",
+      "current_runs": 5,
+      "current_half_width": 1.96,
+      "target_half_width": 1.5,
+      "suggested_total": 7,
+      "action": "Add runs"
+    },
+    {
+      "dataset": "Dataset-1",
+      "method": "Method-A",
+      "current_runs": 4,
+      "current_half_width": 2.91,
+      "target_half_width": 1.5,
+      "suggested_total": 5,
+      "action": "Pilot first"
+    },
+    {
+      "dataset": "Dataset-1",
+      "method": "Method-B",
+      "current_runs": 5,
+      "current_half_width": 0.0,
+      "target_half_width": 1.5,
+      "suggested_total": null,
+      "action": "Review zero SD"
+    },
+    {
+      "dataset": "Dataset-2",
+      "method": "Baseline",
+      "current_runs": 3,
+      "current_half_width": 2.48,
+      "target_half_width": 1.5,
+      "suggested_total": 5,
+      "action": "Pilot first"
+    },
+    {
+      "dataset": "Dataset-2",
+      "method": "Method-A",
+      "current_runs": 5,
+      "current_half_width": 3.21,
+      "target_half_width": 1.5,
+      "suggested_total": 14,
+      "action": "Add runs"
+    },
+    {
+      "dataset": "Dataset-2",
+      "method": "Method-B",
+      "current_runs": 4,
+      "current_half_width": 2.05,
+      "target_half_width": 1.5,
+      "suggested_total": 5,
+      "action": "Pilot first"
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "Repair 4 missing or invalid existing run cells before adding new run IDs; then recompute this plan.",
+    "The current pilot provisionally suggests 9 new paired run IDs across every group, up to 14 total runs.",
+    "Suggested totals use the observed pilot SD in a Student-t mean interval; they are planning estimates, not guaranteed final widths.",
+    "Zero pilot SD is sent for review rather than treated as proof that no more data are needed."
+  ],
+  "provenance": {
+    "source": "deterministic controlled benchmark",
+    "status": "synthetic_gold",
+    "purpose": "test active requests for paired-run repair and precision-driven acquisition",
+    "data_plan_schema": "paper-table-more-data-plan-report-v1"
+  }
+}
