@@ -15,7 +15,8 @@
       "kind": "metric",
       "direction": "min",
       "precision": 2,
-      "group": "Labels = 50"
+      "group": "Labels = 50",
+      "unit": "years"
     },
     {
       "key": "r2_50",
@@ -23,7 +24,8 @@
       "kind": "metric",
       "direction": "max",
       "precision": 3,
-      "group": "Labels = 50"
+      "group": "Labels = 50",
+      "unit": "dimensionless"
     },
     {
       "key": "srcc_50",
@@ -31,7 +33,8 @@
       "kind": "metric",
       "direction": "max",
       "precision": 3,
-      "group": "Labels = 50"
+      "group": "Labels = 50",
+      "unit": "dimensionless"
     },
     {
       "key": "mae_250",
@@ -39,7 +42,8 @@
       "kind": "metric",
       "direction": "min",
       "precision": 2,
-      "group": "Labels = 250"
+      "group": "Labels = 250",
+      "unit": "years"
     },
     {
       "key": "r2_250",
@@ -47,7 +51,8 @@
       "kind": "metric",
       "direction": "max",
       "precision": 3,
-      "group": "Labels = 250"
+      "group": "Labels = 250",
+      "unit": "dimensionless"
     },
     {
       "key": "srcc_250",
@@ -55,7 +60,8 @@
       "kind": "metric",
       "direction": "max",
       "precision": 3,
-      "group": "Labels = 250"
+      "group": "Labels = 250",
+      "unit": "dimensionless"
     }
   ],
   "rows": [

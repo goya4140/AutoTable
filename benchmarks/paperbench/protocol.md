@@ -12,7 +12,11 @@ For raw runs, preserve immutable run IDs and reject duplicate seeds. Compute sam
 
 ## Objective scoring
 
-Compute exact normalized token coverage from `x` to editable generated code. Numeric fidelity is a hard gate: a single unexplained changed or hallucinated number fails the case. Report component metrics instead of hiding failures inside one average.
+Compute exact normalized token coverage from `x` to editable generated code. Numeric fidelity is a hard gate: a single unexplained changed or hallucinated number fails the case. Metric semantics, uncertainty semantics, comparison validity, and provenance are also hard gates. Report component metrics instead of hiding failures inside one average, and run the controlled perturbations to test evaluator sensitivity.
+
+## Inquiry scoring
+
+Hide contract fields before generation and log the full question/answer trace. Report critical-question recall, question precision, importance-weighted recall, unsupported inference count, over-questioning count, answer utilization, question-budget violations, and stop correctness. A system may produce a labeled draft when a blocking field is unavailable, but it must not declare the artifact verified.
 
 ## Subjective scoring
 

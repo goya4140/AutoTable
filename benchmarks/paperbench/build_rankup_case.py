@@ -11,6 +11,7 @@ from decimal import Decimal, ROUND_HALF_EVEN
 from pathlib import Path
 
 import pypdfium2 as pdfium
+from contracts import contract_for, enrich_spec
 
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
@@ -79,7 +80,7 @@ def build_x(log_bytes: bytes) -> tuple[dict,list[dict]]:
         "notes":["MAE is lower-is-better; R² and SRCC are higher-is-better.","Values are selected and rounded from the authors' pinned aggregate log; no values are inferred."],
         "provenance":{"observed":True,"input_tier":"canonical_table","source_commit":COMMIT,"uncertainty":"standard deviation","seeds":[0,1,2]},
     }
-    return x,selected
+    return enrich_spec(CASE_ID,x),selected
 
 def render_reference(pdf_bytes: bytes,path: Path) -> None:
     document=pdfium.PdfDocument(pdf_bytes)
@@ -97,7 +98,9 @@ def main() -> None:
     # Preserve the pinned artifact byte-for-byte so its local and remote hashes agree.
     (CASE_DIR/"source_log.csv").write_bytes(log_bytes)
     case={
+        "schema_version":"2.0",
         "id":CASE_ID,
+        "task":"experimental-data-to-publication-table",
         "input_tier":"canonical_table",
         "venue":"NeurIPS",
         "year":2024,
@@ -108,6 +111,7 @@ def main() -> None:
             {"role":"published paper","url":PAPER_URL,"sha256":PAPER_SHA256}],
         "transformation":{"selection":"UTKFace, 50/250 labels, MAE/R²/SRCC","rounding":"decimal ROUND_HALF_EVEN to published precision","uncertainty":"author-described standard deviation over seeds 0, 1, 2"},
         "license":{"code_and_logs":"MIT","paper_excerpt":"source publication terms control","source_terms_control":True},
+        "semantic_contract":contract_for(CASE_ID),
         "limitations":["The author repository releases three-seed aggregates, not the individual per-seed values; this case does not independently test aggregation correctness."],
     }
     ratings={"schema_version":"1.0","status":"unrated","required_raters":3,"dimensions":["typography","visual_hierarchy","readability","claim_salience","overall_aesthetics"],"ratings":[]}

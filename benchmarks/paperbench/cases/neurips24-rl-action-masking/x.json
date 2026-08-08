@@ -13,28 +13,32 @@
       "label": "Seeker",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "episode return"
     },
     {
       "key": "quad2d",
       "label": "2D Quad.",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "episode return"
     },
     {
       "key": "quad3d",
       "label": "3D Quad.",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "episode return"
     },
     {
       "key": "walker2d",
       "label": "Walker2D",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "episode return"
     }
   ],
   "rows": [

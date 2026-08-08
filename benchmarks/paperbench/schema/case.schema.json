@@ -1,10 +1,23 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "PaperBench case",
+  "title": "PaperBench semantic-contract case",
   "type": "object",
-  "required": ["id", "input_tier", "venue", "year", "paper_url", "reference", "license"],
+  "required": [
+    "schema_version",
+    "id",
+    "task",
+    "input_tier",
+    "venue",
+    "year",
+    "paper_url",
+    "reference",
+    "license",
+    "semantic_contract"
+  ],
   "properties": {
+    "schema_version": {"const": "2.0"},
     "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "task": {"const": "experimental-data-to-publication-table"},
     "input_tier": {"enum": ["raw_runs", "canonical_table", "recovered_table"]},
     "venue": {"enum": ["NeurIPS", "ICLR", "ICML", "external"]},
     "year": {"type": "integer"},
@@ -20,6 +33,90 @@
       }
     },
     "license": {"type": "object"},
+    "semantic_contract": {
+      "type": "object",
+      "required": [
+        "claim",
+        "row_identity_key",
+        "comparison_groups",
+        "statistics",
+        "allowed_transformations",
+        "forbidden_inferences",
+        "rendering_constraints",
+        "inquiry_profile"
+      ],
+      "properties": {
+        "claim": {
+          "type": "object",
+          "required": ["text", "priority_metric_keys"],
+          "properties": {
+            "text": {"type": "string", "minLength": 1},
+            "priority_metric_keys": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          }
+        },
+        "row_identity_key": {"type": "string", "minLength": 1},
+        "comparison_groups": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "row_values", "metric_keys"],
+            "properties": {
+              "id": {"type": "string"},
+              "row_values": {"type": "array", "items": {"type": ["string", "number"]}, "minItems": 1},
+              "excluded_row_values": {"type": "array", "items": {"type": ["string", "number"]}},
+              "metric_keys": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+            }
+          }
+        },
+        "statistics": {
+          "type": "object",
+          "required": ["aggregation_status", "uncertainty_kind", "independent_run_count", "source"],
+          "properties": {
+            "aggregation_status": {"enum": ["raw_recomputed", "author_aggregate", "publication_only", "not_applicable"]},
+            "uncertainty_kind": {"enum": ["sd", "se", "ci90", "ci95", "none", "mixed", "unknown"]},
+            "independent_run_count": {"type": ["integer", "null"], "minimum": 2},
+            "source": {"type": "string"}
+          }
+        },
+        "allowed_transformations": {"type": "array", "items": {"type": "string"}},
+        "forbidden_inferences": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "rendering_constraints": {
+          "type": "object",
+          "required": ["target_width", "max_width_pt", "color_mode", "editable", "outputs"],
+          "properties": {
+            "target_width": {"enum": ["single_column", "full_width", "page_width"]},
+            "max_width_pt": {"type": "number", "exclusiveMinimum": 0},
+            "color_mode": {"enum": ["grayscale", "grayscale_safe", "color"]},
+            "editable": {"const": true},
+            "outputs": {"type": "array", "items": {"enum": ["latex", "html", "svg", "pdf", "png"]}, "minItems": 1}
+          }
+        },
+        "inquiry_profile": {
+          "type": "object",
+          "required": ["fields"],
+          "properties": {
+            "fields": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["id", "importance", "ask_when_missing", "value", "rationale"],
+                "properties": {
+                  "id": {"type": "string"},
+                  "importance": {"enum": ["blocking", "valuable_nonblocking", "cosmetic"]},
+                  "ask_when_missing": {"type": "boolean"},
+                  "value": {},
+                  "acceptable_default": {},
+                  "rationale": {"type": "string"},
+                  "mask_paths": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "source_artifacts": {
       "type": "array",
       "items": {

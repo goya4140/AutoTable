@@ -17,7 +17,7 @@ The bundled mini set contains three `recovered_table` cases and one `canonical_t
 ```text
 cases/<case-id>/
 ├── case.json           # provenance, task, input tier, reference location
-├── x.json              # de-styled input to f(.)
+├── x.json              # de-styled input to f(.) with metric units/directions
 ├── y_reference.png     # published table crop
 └── ratings.json        # optional human pairwise/rubric ratings
 ```
@@ -29,6 +29,11 @@ Generated artifacts are written to `output/paperbench/<case-id>/` and are not so
 ```bash
 python benchmarks/paperbench/build_seed.py
 python benchmarks/paperbench/build_rankup_case.py
+python benchmarks/paperbench/validate_cases.py
+python benchmarks/paperbench/build_controlled.py
+python benchmarks/paperbench/evaluate_controlled.py
+python benchmarks/paperbench/build_inquiry.py
+python benchmarks/paperbench/evaluate_inquiry.py
 python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
@@ -50,6 +55,10 @@ Objective metrics are computed from code and canonical cells:
 - hallucinated numeric token count;
 - row/column and uncertainty-field preservation;
 - render success.
+
+The scientific gate additionally requires the semantic contract to preserve metric units/directions, uncertainty type, comparison eligibility, emphasis scope, provenance, and (for raw runs) aggregation audit. `controlled/cases.jsonl` contains deterministic negative cases that prove each failure class is detectable.
+
+`inquiry/requests.jsonl` contains model-visible inputs with one author-provided field removed; it uses opaque request IDs and exposes neither the missing field nor the inquiry-profile answers. `inquiry/scenarios.jsonl` is evaluator-only gold. An interaction trace records asked, answered, used, and assumed fields plus its final status. The scorer measures whether the generator asks high-value questions, avoids unsupported inference and over-questioning, uses the answer, and stops at the right time.
 
 Subjective dimensions use order-randomized human judgments:
 

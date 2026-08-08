@@ -13,21 +13,24 @@
       "label": "Precision",
       "kind": "metric",
       "direction": "max",
-      "precision": 1
+      "precision": 1,
+      "unit": "%"
     },
     {
       "key": "recall",
       "label": "Recall",
       "kind": "metric",
       "direction": "max",
-      "precision": 1
+      "precision": 1,
+      "unit": "%"
     },
     {
       "key": "f1",
       "label": "F1",
       "kind": "metric",
       "direction": "max",
-      "precision": 1
+      "precision": 1,
+      "unit": "%"
     }
   ],
   "rows": [

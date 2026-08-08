@@ -13,42 +13,48 @@
       "label": "PSNR",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "dB"
     },
     {
       "key": "ssim",
       "label": "SSIM",
       "kind": "metric",
       "direction": "max",
-      "precision": 4
+      "precision": 4,
+      "unit": "dimensionless"
     },
     {
       "key": "lpips",
       "label": "LPIPS",
       "kind": "metric",
       "direction": "min",
-      "precision": 4
+      "precision": 4,
+      "unit": "dimensionless"
     },
     {
       "key": "dists",
       "label": "DISTS",
       "kind": "metric",
       "direction": "min",
-      "precision": 4
+      "precision": 4,
+      "unit": "dimensionless"
     },
     {
       "key": "balanced",
       "label": "Balanced",
       "kind": "metric",
       "direction": "max",
-      "precision": 2
+      "precision": 2,
+      "unit": "score"
     },
     {
       "key": "ranking",
       "label": "Ranking (%)",
       "kind": "metric",
       "direction": "min",
-      "precision": 1
+      "precision": 1,
+      "unit": "%"
     }
   ],
   "rows": [

@@ -1,0 +1,67 @@
+import importlib.util
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).parents[1]
+BENCH = ROOT / "benchmarks/paperbench"
+
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def scenarios():
+    return [json.loads(line) for line in (BENCH / "inquiry/scenarios.jsonl").read_text().splitlines()]
+
+
+def test_gold_traces_pass_all_scenarios():
+    evaluator = load("evaluate_inquiry", BENCH / "evaluate_inquiry.py")
+    rows = scenarios()
+    assert len(rows) >= 32
+    assert all(evaluator.evaluate_trace(row, evaluator.gold_trace(row))["pass"] for row in rows)
+
+
+def test_model_requests_do_not_expose_gold_profiles():
+    requests = [json.loads(line) for line in (BENCH / "inquiry/requests.jsonl").read_text().splitlines()]
+    gold_by_request = {row["request_id"]: row for row in scenarios()}
+    assert len(requests) == len(gold_by_request)
+    for request in requests:
+        assert "scenario_id" not in request and "missing_field" not in request
+        contract = request["input"]["case"]["semantic_contract"]
+        assert "inquiry_profile" not in contract
+        field_id = gold_by_request[request["request_id"]]["hidden_fields"][0]["id"]
+        if field_id == "metric_directions":
+            assert all("direction" not in column for column in request["input"]["x"]["columns"] if column.get("kind") == "metric")
+        if field_id == "metric_units":
+            assert all("unit" not in column for column in request["input"]["x"]["columns"] if column.get("kind") == "metric")
+        if field_id == "comparison_groups":
+            assert "comparison_groups" not in contract
+            assert "emphasis" not in request["input"]["x"]
+
+
+def test_claiming_verified_without_blocking_answer_fails():
+    evaluator = load("evaluate_inquiry_bad", BENCH / "evaluate_inquiry.py")
+    scenario = next(row for row in scenarios() if row["hidden_fields"][0]["importance"] == "blocking")
+    trace = {
+        "scenario_id": scenario["id"], "asked_fields": [], "answered_fields": [],
+        "used_answer_fields": [], "assumed_fields": [scenario["hidden_fields"][0]["id"]],
+        "stopped": True, "final_status": "verified",
+    }
+    result = evaluator.evaluate_trace(scenario, trace)
+    assert not result["pass"]
+    assert not result["stop_correctness"]
+    assert result["unsupported_inference_count"] == 1
+
+
+def test_irrelevant_questions_are_penalized():
+    evaluator = load("evaluate_inquiry_noise", BENCH / "evaluate_inquiry.py")
+    scenario = scenarios()[0]
+    trace = evaluator.gold_trace(scenario)
+    trace["asked_fields"] += ["favorite_color", "font_preference", "unrelated"]
+    result = evaluator.evaluate_trace(scenario, trace)
+    assert result["overquestioning_count"] == 3
+    assert result["question_budget_exceeded"]
+    assert not result["pass"]

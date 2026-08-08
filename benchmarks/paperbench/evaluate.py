@@ -12,6 +12,11 @@ OUT=ROOT/"output/paperbench"
 RENDER=ROOT/"skills/paper-table/scripts/render_table.py"
 PDFTOPPM=Path("/Users/wlh/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override/pdftoppm")
 
+def load_contract_evaluator():
+    spec=importlib.util.spec_from_file_location("paperbench_contract_eval",HERE/"contract_eval.py")
+    module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    return module.evaluate
+
 def norm(v): return re.sub(r"\s+"," ",str(v).replace("−","-").replace("–","-")).strip().lower()
 def cells(x):
     for c in x["columns"]: yield c["label"]
@@ -61,6 +66,7 @@ def render(case_dir: Path,out: Path):
     subprocess.run([str(PDFTOPPM),"-png","-r","180","-singlefile","preview.pdf","y_prime"],cwd=out,check=True,capture_output=True,text=True)
     autocrop(out/"y_prime.png")
 def main():
+    evaluate_contract=load_contract_evaluator()
     rows=[]
     for case_dir in sorted((HERE/"cases").iterdir()):
         if not case_dir.is_dir(): continue
@@ -75,7 +81,9 @@ def main():
         text_hits=sum((num_norm(v) in code_nums) if isinstance(v,(int,float)) else (norm(v) in norm(plain_code)) for v in flat_expected); cr=text_hits/max(1,len(flat_expected))
         headers=[c["label"] for c in x["columns"]]; hr=sum(norm(h) in norm(plain_code) for h in headers)/len(headers)
         ref=Image.open(case_dir/case["reference"]["image"]); ref_aspect=ref.width/ref.height
-        metrics={"id":case["id"],"input_tier":case["input_tier"],"numeric_recall":round(nr,4),"numeric_precision":round(np,4),"hallucinated_numeric_tokens":hall,"cell_recall":round(cr,4),"header_recall":round(hr,4),"render_success":True,"numeric_fidelity_gate":nr==1 and hall==0,"reference_visual_proxy":visual_proxy(case_dir/case["reference"]["image"]),"generated_visual_proxy":visual_proxy(out/"y_prime.png",ref_aspect)}
+        contract_result=evaluate_contract(x,x,case)
+        semantic_gate=contract_result["passed_scientific_gate"]
+        metrics={"id":case["id"],"input_tier":case["input_tier"],"numeric_recall":round(nr,4),"numeric_precision":round(np,4),"hallucinated_numeric_tokens":hall,"cell_recall":round(cr,4),"header_recall":round(hr,4),"render_success":True,"numeric_fidelity_gate":nr==1 and np==1 and hall==0,"semantic_contract_gate":semantic_gate,"full_contract_gate":contract_result["passed_full_contract"],"scientific_gate":nr==1 and np==1 and hall==0 and semantic_gate,"semantic_contract_categories":contract_result["category_counts"],"reference_visual_proxy":visual_proxy(case_dir/case["reference"]["image"]),"generated_visual_proxy":visual_proxy(out/"y_prime.png",ref_aspect)}
         ratings=json.loads((case_dir/"ratings.json").read_text()); metrics["aesthetic_rating_status"]=ratings["status"]
         if ratings.get("ratings"):
             dims=ratings["dimensions"]
@@ -83,7 +91,7 @@ def main():
         (out/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n"); rows.append(metrics)
     OUT.mkdir(parents=True,exist_ok=True); (OUT/"summary.json").write_text(json.dumps(rows,indent=2)+"\n")
     with (OUT/"summary.csv").open("w",newline="") as f:
-        fields=["id","input_tier","numeric_recall","numeric_precision","hallucinated_numeric_tokens","cell_recall","header_recall","render_success","numeric_fidelity_gate","aesthetic_rating_status"]
+        fields=["id","input_tier","numeric_recall","numeric_precision","hallucinated_numeric_tokens","cell_recall","header_recall","render_success","numeric_fidelity_gate","semantic_contract_gate","scientific_gate","aesthetic_rating_status"]
         w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore"); w.writeheader(); w.writerows(rows)
     print(json.dumps(rows,indent=2))
 if __name__=="__main__": main()

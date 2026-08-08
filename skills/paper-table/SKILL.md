@@ -10,12 +10,12 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 ## Workflow
 
 1. Inspect the supplied data, manuscript context, venue constraints, and target claim.
-2. Run `scripts/analyze_data.py INPUT` when input is CSV or JSON.
-3. Pause for author input when a blocking item in the analysis is missing. Ask at most three compact questions per round, ordered by scientific value.
+2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON.
+3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, and never claim `verified` while a blocking field is unresolved.
 4. Offer a concrete visual proposal before rendering: row/column hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, and width target.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
 6. Render with `scripts/render_table.py SPEC --out-dir OUTPUT`.
-7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex` and visually inspect the compiled PDF or HTML screenshot.
+7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex`; treat numeric and semantic-contract checks as hard gates, then visually inspect the compiled PDF or HTML screenshot.
 8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, and freeze `y'` before inspecting `y`.
 9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 
@@ -30,7 +30,7 @@ Ask for missing data when it could change the scientific interpretation:
 - statistical test, correction method, and significance threshold;
 - the single claim the table should make.
 
-Do not block on cosmetic preferences. Choose conservative defaults and state them.
+Do not block on cosmetic preferences. Choose conservative defaults and state them. Stop asking once all blocking fields are resolved and further answers would not change scientific interpretation.
 
 If the author asks for plausible variation without repeated runs, label it **simulated**, keep it separate from observed results, record the assumed distribution and seed, and never use it for significance claims. Prefer requesting real repeats.
 
@@ -53,6 +53,7 @@ Never use bolding to hide an unfavorable comparison, compare across incompatible
 ## Bundled resources
 
 - `references/spec-schema.md`: read when authoring or debugging a table spec.
+- `references/semantic-contract.md`: read before asking questions or declaring a table scientifically verified.
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.

@@ -1,5 +1,7 @@
 {
+  "schema_version": "2.0",
   "id": "neurips24-rankup-utkface",
+  "task": "experimental-data-to-publication-table",
   "input_tier": "canonical_table",
   "venue": "NeurIPS",
   "year": 2024,
@@ -33,6 +35,191 @@
     "code_and_logs": "MIT",
     "paper_excerpt": "source publication terms control",
     "source_terms_control": true
+  },
+  "semantic_contract": {
+    "claim": {
+      "text": "RankUp + RDA is strongest among comparable semi-supervised methods for both label budgets and all reported metrics.",
+      "priority_metric_keys": [
+        "mae_50",
+        "r2_50",
+        "srcc_50",
+        "mae_250",
+        "r2_250",
+        "srcc_250"
+      ]
+    },
+    "row_identity_key": "method",
+    "comparison_groups": [
+      {
+        "id": "semi_supervised_methods",
+        "row_values": [
+          "Supervised",
+          "Π-Model",
+          "Mean Teacher",
+          "CLSS",
+          "UCVME",
+          "MixMatch",
+          "RankUp (Ours)",
+          "RankUp + RDA (Ours)"
+        ],
+        "excluded_row_values": [
+          "Fully-Supervised"
+        ],
+        "metric_keys": [
+          "mae_50",
+          "r2_50",
+          "srcc_50",
+          "mae_250",
+          "r2_250",
+          "srcc_250"
+        ]
+      }
+    ],
+    "statistics": {
+      "aggregation_status": "author_aggregate",
+      "uncertainty_kind": "sd",
+      "independent_run_count": 3,
+      "source": "Pinned author log reports mean ± SD over seeds 0, 1, and 2; individual runs are not released."
+    },
+    "allowed_transformations": [
+      "equivalent_latex_or_html",
+      "consistent_precision_formatting",
+      "whitespace_and_rule_adjustment",
+      "row_reordering_within_comparison_group"
+    ],
+    "forbidden_inferences": [
+      "change_observed_values",
+      "invent_runs_or_sample_counts",
+      "reinterpret_uncertainty_without_evidence",
+      "compare_rows_outside_declared_groups",
+      "mark_significance_without_a_declared_test"
+    ],
+    "rendering_constraints": {
+      "target_width": "full_width",
+      "max_width_pt": 469,
+      "color_mode": "grayscale_safe",
+      "editable": true,
+      "outputs": [
+        "latex",
+        "html"
+      ]
+    },
+    "inquiry_profile": {
+      "fields": [
+        {
+          "id": "claim",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "RankUp + RDA is strongest among comparable semi-supervised methods for both label budgets and all reported metrics.",
+          "acceptable_default": "produce a conservative lookup-first table",
+          "rationale": "The intended claim changes hierarchy and emphasis, but a conservative draft remains possible.",
+          "mask_paths": [
+            "semantic_contract.claim",
+            "x.caption"
+          ]
+        },
+        {
+          "id": "metric_directions",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "mae_50": "min",
+            "r2_50": "max",
+            "srcc_50": "max",
+            "mae_250": "min",
+            "r2_250": "max",
+            "srcc_250": "max"
+          },
+          "rationale": "Best-value emphasis is invalid without the optimization direction.",
+          "mask_paths": [
+            "x.columns.*.direction"
+          ]
+        },
+        {
+          "id": "metric_units",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": {
+            "mae_50": "years",
+            "r2_50": "dimensionless",
+            "srcc_50": "dimensionless",
+            "mae_250": "years",
+            "r2_250": "dimensionless",
+            "srcc_250": "dimensionless"
+          },
+          "rationale": "A numerically correct token can still make a false claim under the wrong unit.",
+          "mask_paths": [
+            "x.columns.*.unit"
+          ]
+        },
+        {
+          "id": "uncertainty_kind",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": "sd",
+          "rationale": "SD, SE, and confidence intervals are not interchangeable.",
+          "mask_paths": [
+            "semantic_contract.statistics.uncertainty_kind",
+            "x.rows.*.*.sd",
+            "x.rows.*.*.se",
+            "x.rows.*.*.ci90",
+            "x.rows.*.*.ci95",
+            "x.caption",
+            "x.notes",
+            "x.provenance"
+          ]
+        },
+        {
+          "id": "independent_run_count",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": 3,
+          "rationale": "The run count is needed to interpret uncertainty and must never be guessed.",
+          "mask_paths": [
+            "semantic_contract.statistics.independent_run_count",
+            "x.provenance.seeds",
+            "x.caption",
+            "x.notes"
+          ]
+        },
+        {
+          "id": "comparison_groups",
+          "importance": "blocking",
+          "ask_when_missing": true,
+          "value": "Fully-Supervised is an upper bound and must not participate in best-value emphasis.",
+          "rationale": "Ranking or bolding across incompatible settings is scientifically misleading.",
+          "mask_paths": [
+            "semantic_contract.comparison_groups",
+            "x.rows.*.group",
+            "x.rows.*.rank_eligible",
+            "x.emphasis"
+          ]
+        },
+        {
+          "id": "target_width",
+          "importance": "valuable_nonblocking",
+          "ask_when_missing": true,
+          "value": "full_width",
+          "acceptable_default": "full_width",
+          "rationale": "The target width affects column hierarchy and legibility, but a documented default is safe.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.target_width",
+            "semantic_contract.rendering_constraints.max_width_pt"
+          ]
+        },
+        {
+          "id": "color_preference",
+          "importance": "cosmetic",
+          "ask_when_missing": false,
+          "value": "no author preference; use restrained grayscale-safe styling",
+          "acceptable_default": "grayscale_safe",
+          "rationale": "Personal color preference should not block a scientifically valid draft.",
+          "mask_paths": [
+            "semantic_contract.rendering_constraints.color_mode"
+          ]
+        }
+      ]
+    }
   },
   "limitations": [
     "The author repository releases three-seed aggregates, not the individual per-seed values; this case does not independently test aggregation correctness."

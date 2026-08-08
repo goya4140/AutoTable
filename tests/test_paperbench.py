@@ -8,9 +8,14 @@ def test_seed_cases_are_true_pairs():
     assert len(cases)>=3
     for path in cases:
         case=json.loads(path.read_text()); folder=path.parent; x=json.loads((folder/"x.json").read_text())
+        assert case["schema_version"] == "2.0"
+        assert case["task"] == "experimental-data-to-publication-table"
+        assert case["semantic_contract"]["comparison_groups"]
+        assert case["semantic_contract"]["inquiry_profile"]["fields"]
         assert case["input_tier"] in {"raw_runs","canonical_table","recovered_table"}
         assert (folder/case["reference"]["image"]).exists()
         assert x["columns"] and x["rows"] and case["reference"]["sha256"] != "PENDING"
+        assert all("unit" in column and "direction" in column for column in x["columns"] if column.get("kind")=="metric")
         if case["input_tier"]=="canonical_table":
             assert case.get("source_artifacts")
             assert case.get("transformation")
