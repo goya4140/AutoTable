@@ -32,7 +32,7 @@ Ask for missing data when it could change the scientific interpretation:
 
 Do not block on cosmetic preferences. Choose conservative defaults and state them. Stop asking once all blocking fields are resolved and further answers would not change scientific interpretation.
 
-If the author asks for plausible variation without repeated runs, label it **simulated**, keep it separate from observed results, record the assumed distribution and seed, and never use it for significance claims. Prefer requesting real repeats.
+If the author explicitly asks for plausible variation without repeated runs, read `references/simulation-scenarios.md` and collect its blocking assumptions. Run `scripts/simulate_variation.py` only after the author supplies distribution family, correctly parameterized scale and source, scientific bounds, future target/run count, interval mass, draws, and seed. Label every result **SIMULATED — not evidence**, keep it separate from observed results, disable ranking/emphasis/verification/inference, and never blend it with later observations. Prefer requesting real repeats.
 
 For per-example aggregation, freeze the observation universe before computing values. Record the observation identity key, exclusions, named denominator ID lists, metric formula, scale, precision, and missing-report policy. Preserve the generated cell-level audit—including operation, denominator, sufficient statistic, and observation-ID hash—through every visual transformation. A changed or missing audit is a scientific failure even when the displayed rounded value is unchanged.
 
@@ -67,6 +67,7 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `references/spec-schema.md`: read when authoring or debugging a table spec.
 - `references/semantic-contract.md`: read before asking questions or declaring a table scientifically verified.
 - `references/data-acquisition.md`: read when requesting missing runs or planning additional repeats for a precision target.
+- `references/simulation-scenarios.md`: read only for an explicitly author-requested, assumption-only illustration of possible variation without repeated-run evidence.
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
@@ -74,6 +75,7 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `scripts/plan_more_data.py`: audit repeated-run grids and emit repair-first, Student-t precision acquisition requests without simulating outcomes.
 - `scripts/plan_paired_difference.py`: align baseline and candidate observations by fixed run ID, then emit repair-first Student-t precision requests for mean paired improvements.
 - `scripts/pilot_stability.py`: compute descriptive skewness, modified-Z potential-extreme labels, and leave-one-run-out planning sensitivity without declaring normality or deleting observations.
+- `scripts/simulate_variation.py`: generate deterministic, order-invariant normal or truncated-normal future-run scenarios under explicit assumptions and permanent non-evidence guards.
 - `scripts/aggregate_crossfold.py`: aggregate complete paired method-by-dataset-fold grids into mean score, average rank, fold-level Z-score summaries, and strict wins.
 - `scripts/aggregate_observations.py`: deterministically aggregate per-example observations with fixed denominators and a cell-level provenance audit.
 - `scripts/compare_snapshot.py`: compare a reconstruction with a publication at declared display precision and block false exact-gold or `verified` claims.

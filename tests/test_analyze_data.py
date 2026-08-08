@@ -126,3 +126,26 @@ def test_precision_planning_requests_pairing_targets_and_budget(tmp_path):
     assert "group mean or a within-run candidate-minus-baseline mean difference" in question["question"]
     assert "minimum pilot size" in question["question"] and "maximum run budget" in question["question"]
     assert "Student-t interval appropriate" in question["question"]
+
+
+def test_simulated_variation_request_collects_assumptions_and_isolation_contract(tmp_path):
+    data = tmp_path / "points.json"
+    context = tmp_path / "context.json"
+    data.write_text(json.dumps([
+        {"method": "A", "dataset": "D1", "score": 70.0},
+        {"method": "B", "dataset": "D1", "score": 72.0},
+    ]))
+    context.write_text(json.dumps({
+        "metric_semantics": {"score": {"direction": "max", "unit": "%"}},
+        "comparison_groups": [{"dataset": "D1"}],
+        "simulated_variation_requested": True,
+    }))
+    result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json", "--context", str(context)], check=True, capture_output=True, text=True)
+    report = json.loads(result.stdout)
+    question = next(item for item in report["inquiry_plan"] if item["id"] == "simulation_plan")
+    assert question["importance"] == "blocking"
+    assert "distribution SD" in question["question"] and "parent-normal SD before truncation" in question["question"]
+    assert "evidence source" in question["question"]
+    assert "one future run or the mean" in question["question"]
+    assert "draw count" in question["question"] and "random seed" in question["question"]
+    assert "non-inferential" in question["question"] and "separate from observed" in question["question"]

@@ -1,0 +1,200 @@
+{
+  "schema_version": "paper-table-simulated-variation-report-v1",
+  "scenario": {
+    "label": "SIMULATED SCENARIO — Assumption-only accuracy fluctuation illustration",
+    "request_source": "author_requested",
+    "purpose": "illustrative_possible_variation_only",
+    "draws": 10000,
+    "seed": 20260808,
+    "interval_mass": 0.9
+  },
+  "cells": [
+    {
+      "identity": {
+        "dataset": "Dataset-1",
+        "method": "Baseline"
+      },
+      "metric": "accuracy",
+      "direction": "max",
+      "unit": "%",
+      "observed_anchor": 70.0,
+      "simulation_model": {
+        "family": "truncated_normal",
+        "location": 70.0,
+        "location_source": "observed_point_estimate_anchor",
+        "scale_parameter": 3.0,
+        "scale_parameterization": "parent_normal_sd_before_truncation",
+        "scale_source": "author_assumption",
+        "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+        "lower_bound": 0.0,
+        "upper_bound": 100.0,
+        "future_target": "future_single_run",
+        "future_run_count": 1
+      },
+      "simulated_summary": {
+        "draws": 10000,
+        "mean": 69.9839164059353,
+        "sd": 3.0193011990734453,
+        "interval_mass": 0.9,
+        "lower_quantile_probability": 0.04999999999999999,
+        "upper_quantile_probability": 0.95,
+        "lower": 65.00840841779873,
+        "median": 69.99264986896699,
+        "upper": 74.97126364782319,
+        "monte_carlo_se_of_simulated_mean": 0.03019301199073445,
+        "draw_order_sha256": "c73c3542d2c9cd176d09ade45260a936868f27d2ee143dd68119d52e548151fb"
+      },
+      "observed": false,
+      "status": "simulated_scenario_only",
+      "eligible_for_verified_table": false,
+      "eligible_for_inference": false,
+      "eligible_for_ranking": false
+    },
+    {
+      "identity": {
+        "dataset": "Dataset-1",
+        "method": "Proposed"
+      },
+      "metric": "accuracy",
+      "direction": "max",
+      "unit": "%",
+      "observed_anchor": 75.0,
+      "simulation_model": {
+        "family": "truncated_normal",
+        "location": 75.0,
+        "location_source": "observed_point_estimate_anchor",
+        "scale_parameter": 4.0,
+        "scale_parameterization": "parent_normal_sd_before_truncation",
+        "scale_source": "author_assumption",
+        "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+        "lower_bound": 0.0,
+        "upper_bound": 100.0,
+        "future_target": "future_single_run",
+        "future_run_count": 1
+      },
+      "simulated_summary": {
+        "draws": 10000,
+        "mean": 75.00468561689652,
+        "sd": 4.007746241270758,
+        "interval_mass": 0.9,
+        "lower_quantile_probability": 0.04999999999999999,
+        "upper_quantile_probability": 0.95,
+        "lower": 68.4218389487114,
+        "median": 74.96692954436935,
+        "upper": 81.64882760482,
+        "monte_carlo_se_of_simulated_mean": 0.04007746241270758,
+        "draw_order_sha256": "ef34161a9e39900ddea081b8d2059249fdf9a9761e08a2732a9957857a735476"
+      },
+      "observed": false,
+      "status": "simulated_scenario_only",
+      "eligible_for_verified_table": false,
+      "eligible_for_inference": false,
+      "eligible_for_ranking": false
+    },
+    {
+      "identity": {
+        "dataset": "Dataset-2",
+        "method": "Baseline"
+      },
+      "metric": "accuracy",
+      "direction": "max",
+      "unit": "%",
+      "observed_anchor": 80.0,
+      "simulation_model": {
+        "family": "truncated_normal",
+        "location": 80.0,
+        "location_source": "observed_point_estimate_anchor",
+        "scale_parameter": 5.0,
+        "scale_parameterization": "parent_normal_sd_before_truncation",
+        "scale_source": "author_assumption",
+        "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+        "lower_bound": 0.0,
+        "upper_bound": 100.0,
+        "future_target": "future_mean_of_independent_runs",
+        "future_run_count": 4
+      },
+      "simulated_summary": {
+        "draws": 10000,
+        "mean": 80.01949630517365,
+        "sd": 2.5145899286796496,
+        "interval_mass": 0.9,
+        "lower_quantile_probability": 0.04999999999999999,
+        "upper_quantile_probability": 0.95,
+        "lower": 75.95132852973953,
+        "median": 80.00934521201333,
+        "upper": 84.16691294782095,
+        "monte_carlo_se_of_simulated_mean": 0.025145899286796496,
+        "draw_order_sha256": "86590cf5c7230299fdf75979da4c2b25712d4444b11a533a286d29b5488d4a4f"
+      },
+      "observed": false,
+      "status": "simulated_scenario_only",
+      "eligible_for_verified_table": false,
+      "eligible_for_inference": false,
+      "eligible_for_ranking": false
+    },
+    {
+      "identity": {
+        "dataset": "Dataset-2",
+        "method": "Proposed"
+      },
+      "metric": "accuracy",
+      "direction": "max",
+      "unit": "%",
+      "observed_anchor": 82.0,
+      "simulation_model": {
+        "family": "truncated_normal",
+        "location": 82.0,
+        "location_source": "observed_point_estimate_anchor",
+        "scale_parameter": 5.0,
+        "scale_parameterization": "parent_normal_sd_before_truncation",
+        "scale_source": "author_assumption",
+        "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+        "lower_bound": 0.0,
+        "upper_bound": 100.0,
+        "future_target": "future_mean_of_independent_runs",
+        "future_run_count": 4
+      },
+      "simulated_summary": {
+        "draws": 10000,
+        "mean": 82.025092895372,
+        "sd": 2.492414200462579,
+        "interval_mass": 0.9,
+        "lower_quantile_probability": 0.04999999999999999,
+        "upper_quantile_probability": 0.95,
+        "lower": 77.95909287313421,
+        "median": 81.98449387690036,
+        "upper": 86.15441722837593,
+        "monte_carlo_se_of_simulated_mean": 0.024924142004625793,
+        "draw_order_sha256": "6552c9ba1cc56601a58c7962404c91e6377902ef52d793ef72cba9b95d0188b4"
+      },
+      "observed": false,
+      "status": "simulated_scenario_only",
+      "eligible_for_verified_table": false,
+      "eligible_for_inference": false,
+      "eligible_for_ranking": false
+    }
+  ],
+  "global_contract": {
+    "observed": false,
+    "status": "simulated_scenario_only",
+    "eligible_for_verified_table": false,
+    "eligible_for_inference": false,
+    "eligible_for_significance_markers": false,
+    "eligible_for_best_second_emphasis": false,
+    "must_remain_separate_from_observed_results": true
+  },
+  "notes": [
+    "All ranges are generated from author-requested assumptions, not repeated experimental observations.",
+    "The observed point value is only the scenario location anchor and does not make simulated draws observed data.",
+    "Do not use these scenarios for p-values, confidence claims, significance markers, rankings, or verified paper results.",
+    "Prefer collecting real independent repeats; replace this scenario rather than blending it with later observations."
+  ],
+  "provenance": {
+    "status": "synthetic_gold",
+    "observed_anchor_source": "deterministic controlled benchmark",
+    "assumption_source": "controlled author-assumption fixture",
+    "simulation_status": "assumption_only",
+    "observed": false,
+    "verified": false
+  }
+}

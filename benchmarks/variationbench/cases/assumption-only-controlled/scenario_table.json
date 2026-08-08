@@ -1,0 +1,172 @@
+{
+  "title": "SIMULATED SCENARIO — possible accuracy fluctuation",
+  "label": "tab:simulated-variation-scenario",
+  "caption": "SIMULATED SCENARIO — assumption-only Monte Carlo illustration. Ranges are not observed uncertainty or confidence intervals.",
+  "columns": [
+    {
+      "key": "cell",
+      "label": "Dataset · method",
+      "kind": "text"
+    },
+    {
+      "key": "observed_anchor",
+      "label": "Anchor",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "assumed_scale",
+      "label": "Assumed scale",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "future_target",
+      "label": "Future target",
+      "kind": "text"
+    },
+    {
+      "key": "simulated_lower",
+      "label": "Sim. p05",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "simulated_upper",
+      "label": "Sim. p95",
+      "kind": "text",
+      "precision": 2
+    },
+    {
+      "key": "status",
+      "label": "Status",
+      "kind": "text"
+    }
+  ],
+  "rows": [
+    {
+      "cell": "Dataset-1 · Baseline",
+      "observed_anchor": 70.0,
+      "assumed_scale": 3.0,
+      "future_target": "Single future run",
+      "simulated_lower": 65.01,
+      "simulated_upper": 74.97,
+      "status": "SIMULATED",
+      "rank_eligible": false
+    },
+    {
+      "cell": "Dataset-1 · Proposed",
+      "observed_anchor": 75.0,
+      "assumed_scale": 4.0,
+      "future_target": "Single future run",
+      "simulated_lower": 68.42,
+      "simulated_upper": 81.65,
+      "status": "SIMULATED",
+      "rank_eligible": false
+    },
+    {
+      "cell": "Dataset-2 · Baseline",
+      "observed_anchor": 80.0,
+      "assumed_scale": 5.0,
+      "future_target": "Mean of 4 future runs",
+      "simulated_lower": 75.95,
+      "simulated_upper": 84.17,
+      "status": "SIMULATED",
+      "rank_eligible": false
+    },
+    {
+      "cell": "Dataset-2 · Proposed",
+      "observed_anchor": 82.0,
+      "assumed_scale": 5.0,
+      "future_target": "Mean of 4 future runs",
+      "simulated_lower": 77.96,
+      "simulated_upper": 86.15,
+      "status": "SIMULATED",
+      "rank_eligible": false
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "Author-requested 10,000-draw scenario with seed 20260808; every scale is an explicit assumption.",
+    "Anchor is the observed location point; Assumed scale is the parent-normal SD before truncation and is not observed uncertainty or the bounded distribution's realized SD.",
+    "Do not use these ranges for significance, confidence claims, rankings, best/second emphasis, or verified results.",
+    "Replace this scenario with real independent repeated runs when available; never blend simulated draws into observed aggregates."
+  ],
+  "observed": false,
+  "simulation_assumptions": [
+    {
+      "family": "truncated_normal",
+      "location": 70.0,
+      "location_source": "observed_point_estimate_anchor",
+      "scale_parameter": 3.0,
+      "scale_parameterization": "parent_normal_sd_before_truncation",
+      "scale_source": "author_assumption",
+      "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+      "lower_bound": 0.0,
+      "upper_bound": 100.0,
+      "future_target": "future_single_run",
+      "future_run_count": 1
+    },
+    {
+      "family": "truncated_normal",
+      "location": 75.0,
+      "location_source": "observed_point_estimate_anchor",
+      "scale_parameter": 4.0,
+      "scale_parameterization": "parent_normal_sd_before_truncation",
+      "scale_source": "author_assumption",
+      "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+      "lower_bound": 0.0,
+      "upper_bound": 100.0,
+      "future_target": "future_single_run",
+      "future_run_count": 1
+    },
+    {
+      "family": "truncated_normal",
+      "location": 80.0,
+      "location_source": "observed_point_estimate_anchor",
+      "scale_parameter": 5.0,
+      "scale_parameterization": "parent_normal_sd_before_truncation",
+      "scale_source": "author_assumption",
+      "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+      "lower_bound": 0.0,
+      "upper_bound": 100.0,
+      "future_target": "future_mean_of_independent_runs",
+      "future_run_count": 4
+    },
+    {
+      "family": "truncated_normal",
+      "location": 82.0,
+      "location_source": "observed_point_estimate_anchor",
+      "scale_parameter": 5.0,
+      "scale_parameterization": "parent_normal_sd_before_truncation",
+      "scale_source": "author_assumption",
+      "scale_source_detail": "Controlled benchmark assumption; no repeated-run evidence is claimed.",
+      "lower_bound": 0.0,
+      "upper_bound": 100.0,
+      "future_target": "future_mean_of_independent_runs",
+      "future_run_count": 4
+    }
+  ],
+  "simulation_contract": {
+    "observed": false,
+    "status": "simulated_scenario_only",
+    "eligible_for_verified_table": false,
+    "eligible_for_inference": false,
+    "eligible_for_significance_markers": false,
+    "eligible_for_best_second_emphasis": false,
+    "must_remain_separate_from_observed_results": true
+  },
+  "provenance": {
+    "status": "synthetic_gold",
+    "observed_anchor_source": "deterministic controlled benchmark",
+    "assumption_source": "controlled author-assumption fixture",
+    "simulation_status": "assumption_only",
+    "observed": false,
+    "verified": false,
+    "variation_report_schema": "paper-table-simulated-variation-report-v1"
+  }
+}
