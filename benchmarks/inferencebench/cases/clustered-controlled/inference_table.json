@@ -1,0 +1,86 @@
+{
+  "title": "Cluster-level inference with an explicit estimand sensitivity",
+  "label": "tab:clustered-controlled-inference",
+  "caption": "Candidate-minus-baseline accuracy differences across 28 tasks nested in eight independent studies.",
+  "columns": [
+    {
+      "key": "method",
+      "label": "Candidate",
+      "kind": "text"
+    },
+    {
+      "key": "equal_study_improvement",
+      "label": "Equal-study improvement [95% CI]",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "percentage points",
+      "precision": 2
+    },
+    {
+      "key": "unit_weighted_sensitivity",
+      "label": "Unit-weighted sensitivity",
+      "kind": "metric",
+      "direction": "max",
+      "unit": "percentage points",
+      "precision": 2
+    },
+    {
+      "key": "p_holm",
+      "label": "Primary Holm p",
+      "kind": "metric",
+      "direction": "min",
+      "unit": "probability",
+      "precision": 5
+    },
+    {
+      "key": "significant",
+      "label": "Reject at 0.05",
+      "kind": "text"
+    }
+  ],
+  "rows": [
+    {
+      "method": "Steady",
+      "equal_study_improvement": {
+        "mean": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ]
+      },
+      "unit_weighted_sensitivity": 1.0,
+      "p_holm": 0.01562,
+      "significant": "Yes"
+    },
+    {
+      "method": "Volume-biased",
+      "equal_study_improvement": {
+        "mean": -0.2,
+        "ci95": [
+          -0.8,
+          0.4
+        ]
+      },
+      "unit_weighted_sensitivity": 0.14,
+      "p_holm": 0.51562,
+      "significant": "No"
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "Primary effects give each independent study equal weight; sign flips and bootstrap resampling operate on intact studies.",
+    "The unit-weighted column is a labeled sensitivity analysis, not the estimand used for its neighboring p-value.",
+    "Unequal cluster sizes make the Volume-biased effect reverse sign across the two declared estimands."
+  ],
+  "provenance": {
+    "source": "deterministic controlled benchmark",
+    "status": "synthetic_gold",
+    "purpose": "detect nested-unit randomization and silent cluster-weighting changes",
+    "inference_report_schema": "paper-table-paired-inference-report-v2",
+    "sensitivity_report_schema": "paper-table-paired-inference-report-v2"
+  }
+}

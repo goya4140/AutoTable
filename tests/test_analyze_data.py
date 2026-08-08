@@ -81,4 +81,5 @@ def test_requested_significance_requires_a_complete_inference_plan(tmp_path):
     report = json.loads(result.stdout)
     question = next(item for item in report["inquiry_plan"] if item["id"] == "significance_plan")
     assert question["importance"] == "blocking"
-    assert "paired unit" in question["question"] and "correction" in question["question"]
+    assert "paired unit" in question["question"] and "independent clusters" in question["question"]
+    assert "equal-cluster or equal-unit weight" in question["question"] and "correction" in question["question"]

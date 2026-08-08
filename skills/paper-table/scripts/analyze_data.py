@@ -5,7 +5,7 @@ import argparse, csv, importlib.util, json, math
 from collections import Counter
 from pathlib import Path
 
-ID_HINTS = {"method", "model", "variant", "dataset", "dataset_name", "task", "game", "split", "fold", "seed", "seed_index", "run", "trial", "trial_number"}
+ID_HINTS = {"method", "model", "variant", "dataset", "dataset_name", "task", "game", "split", "fold", "seed", "seed_index", "run", "trial", "trial_number", "cluster", "study", "site", "subject", "participant"}
 
 def load_advisor():
     path=Path(__file__).resolve().parent/"design_advisor.py"
@@ -56,7 +56,7 @@ def main():
     else:
         add("uncertainty_source","valuable_nonblocking","Do you have repeated seeds/runs or sample-level predictions, and should uncertainty be SD, SE, or a confidence interval?","Real repeats support uncertainty; guessed variation must never be presented as observed.")
     if context.get("significance_requested") is True:
-        add("significance_plan","blocking","For significance claims, what is the independent paired unit, comparison baseline, planned comparison family, test, correction method, and alpha threshold?","A p-value or star is invalid without a declared pairing, hypothesis family, multiplicity policy, and threshold.")
+        add("significance_plan","blocking","For significance claims, what is the independent paired unit; are units nested within independent clusters such as studies, subjects, or sites; should unequal clusters receive equal-cluster or equal-unit weight; and what are the baseline, planned family, test, correction, and alpha?","A p-value or star is invalid without declared pairing, clustering, estimand weighting, hypothesis family, multiplicity policy, and threshold.")
     add("claim","valuable_nonblocking","What single scientific claim should a reader understand from this table?","The claim guides layout and emphasis without changing data.")
     inquiry_plan=candidates[:3]
     questions=[item["question"] for item in inquiry_plan]

@@ -1,0 +1,19 @@
+{
+  "schema_version": "inferencebench-case-v1",
+  "id": "clustered-controlled-estimand-reversal",
+  "status": "synthetic_gold",
+  "paired_units": 28,
+  "independent_clusters": 8,
+  "primary_estimand": "equal_cluster_mean",
+  "sensitivity_estimand": "unit_weighted_mean",
+  "input": {"path": "clustered_input.json", "sha256": "ef493ad4f09c7ffdd8311deeee60b80289eaadc0cab3ff2c168064e35994236c"},
+  "expected_report": {"path": "expected_report.json", "sha256": "7d89c9f1e4197e7c666e88d52071f213203bb08992f0d1a07e79bf5290a75389"},
+  "sensitivity_report": {"path": "unit_weighted_report.json", "sha256": "493f1ca91ab238f74041211d4d028a22f99b81589e46d6f94b90c51490146fde"},
+  "table_spec": {"path": "inference_table.json", "sha256": "df415593754e46a33071129d0f4320d448c4fee0ee9f5d90f45f0c4b84cf85e4"},
+  "gold_properties": [
+    "all randomization signs are assigned at the independent-study level",
+    "bootstrap resampling uses intact studies",
+    "the Volume-biased effect reverses direction between equal-study and unit-weighted estimands",
+    "the primary Holm p-value is never attached to the sensitivity estimand"
+  ]
+}

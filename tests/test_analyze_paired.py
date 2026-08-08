@@ -53,7 +53,9 @@ def payload():
 
 
 def test_exact_sign_flip_bootstrap_and_holm_are_auditable():
-    report = load().analyze(payload())
+    analyzer = load()
+    assert analyzer.SCHEMA_VERSION == "paper-table-paired-inference-v1"
+    report = analyzer.analyze(payload())
     results = {row["method"]: row for row in report["results"]}
     better = results["always_better"]
     assert better["mean_improvement"] == 1.0

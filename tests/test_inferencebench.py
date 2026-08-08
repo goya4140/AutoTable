@@ -14,4 +14,12 @@ def load_validator():
 
 
 def test_real_tunetables_inference_case_and_safety_mutations_pass():
-    assert load_validator().validate_case() == []
+    validator = load_validator()
+    errors, mutations = validator.validate_tunetables()
+    assert errors == [] and mutations == 5
+
+
+def test_clustered_estimand_reversal_and_safety_mutations_pass():
+    validator = load_validator()
+    errors, mutations = validator.validate_clustered()
+    assert errors == [] and mutations == 6
