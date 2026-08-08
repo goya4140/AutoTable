@@ -36,9 +36,15 @@ def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def load_observation_aggregator():
-    path = HERE.parents[1] / "skills/paper-table/scripts/aggregate_observations.py"
-    spec = importlib.util.spec_from_file_location("paperbench_aggregate_observations", path)
+def load_raw_aggregator(schema_version: str):
+    scripts = {
+        "paper-table-observations-v1": "aggregate_observations.py",
+        "paper-table-runs-v1": "aggregate_runs.py",
+    }
+    if schema_version not in scripts:
+        raise ValueError(f"unsupported raw input schema: {schema_version}")
+    path = HERE.parents[1] / "skills/paper-table/scripts" / scripts[schema_version]
+    spec = importlib.util.spec_from_file_location(f"paperbench_{path.stem}", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -69,7 +75,7 @@ def validate_case(case_dir: Path) -> list[str]:
                     payload = json.loads(input_path.read_text())
                     if payload.get("schema_version") != descriptor.get("schema"):
                         errors.append("raw input schema mismatch")
-                    recomputed = load_observation_aggregator().aggregate(payload)
+                    recomputed = load_raw_aggregator(payload.get("schema_version")).aggregate(payload)
                     for key in ("columns", "rows", "aggregation_audit"):
                         if recomputed.get(key) != spec.get(key):
                             errors.append(f"raw input does not reproduce x.json {key}")

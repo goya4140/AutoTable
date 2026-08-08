@@ -1,0 +1,828 @@
+{
+  "title": "DIAMOND Atari 100k returns",
+  "label": "tab:diamond-atari-raw-runs",
+  "caption": "DIAMOND return on the 26 Atari 100k games, averaged over five independent training seeds.",
+  "columns": [
+    {
+      "key": "game",
+      "label": "Game",
+      "kind": "text"
+    },
+    {
+      "key": "return",
+      "label": "DIAMOND (ours)",
+      "direction": "max",
+      "unit": "score",
+      "precision": 1,
+      "kind": "metric"
+    }
+  ],
+  "rows": [
+    {
+      "game": "Alien",
+      "return": 744.1
+    },
+    {
+      "game": "Amidar",
+      "return": 225.8
+    },
+    {
+      "game": "Assault",
+      "return": 1526.4
+    },
+    {
+      "game": "Asterix",
+      "return": 3698.5
+    },
+    {
+      "game": "BankHeist",
+      "return": 19.7
+    },
+    {
+      "game": "BattleZone",
+      "return": 4702.0
+    },
+    {
+      "game": "Boxing",
+      "return": 86.9
+    },
+    {
+      "game": "Breakout",
+      "return": 132.5
+    },
+    {
+      "game": "ChopperCommand",
+      "return": 1369.8
+    },
+    {
+      "game": "CrazyClimber",
+      "return": 99167.8
+    },
+    {
+      "game": "DemonAttack",
+      "return": 288.1
+    },
+    {
+      "game": "Freeway",
+      "return": 33.3
+    },
+    {
+      "game": "Frostbite",
+      "return": 274.1
+    },
+    {
+      "game": "Gopher",
+      "return": 5897.9
+    },
+    {
+      "game": "Hero",
+      "return": 5621.8
+    },
+    {
+      "game": "Jamesbond",
+      "return": 427.4
+    },
+    {
+      "game": "Kangaroo",
+      "return": 5382.2
+    },
+    {
+      "game": "Krull",
+      "return": 8610.1
+    },
+    {
+      "game": "KungFuMaster",
+      "return": 18713.6
+    },
+    {
+      "game": "MsPacman",
+      "return": 1958.2
+    },
+    {
+      "game": "Pong",
+      "return": 20.4
+    },
+    {
+      "game": "PrivateEye",
+      "return": 114.3
+    },
+    {
+      "game": "Qbert",
+      "return": 4499.3
+    },
+    {
+      "game": "RoadRunner",
+      "return": 20673.2
+    },
+    {
+      "game": "Seaquest",
+      "return": 551.2
+    },
+    {
+      "game": "UpNDown",
+      "return": 3856.3
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "seed_index records array position in the author artifact; it is not an inferred internal seed value.",
+    "Only means are displayed; sample SD and SE remain in the aggregation audit.",
+    "Missing runs are rejected; no imputation is performed."
+  ],
+  "provenance": {
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/6bdde0373d53d4a501249547084bed43-Abstract-Conference.html",
+    "source_repository": "https://github.com/eloialonso/diamond",
+    "source_commit": "5bcd1599755b4f2fae8e5e079e02f0728e174965",
+    "source_path": "results/data/DIAMOND.json",
+    "source_sha256": "1e23cb468204ed5a7076e94ac11c68011660dc84603875500e42ded74d970c22",
+    "observed": true,
+    "input_tier": "raw_runs",
+    "unit_of_observation": "training seed",
+    "independence": "independent",
+    "pairing_mode": "fixed_across_groups",
+    "missing_run_policy": "error",
+    "reported_uncertainty": "none"
+  },
+  "aggregation_audit": [
+    {
+      "group": {
+        "game": "Alien"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 3720.6,
+      "mean_unrounded": 744.12,
+      "sample_sd": 123.86983894394955,
+      "se": 55.396276048124385,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Amidar"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 1128.8,
+      "mean_unrounded": 225.76,
+      "sample_sd": 33.860936194972524,
+      "se": 15.143071022748327,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Assault"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 7631.83,
+      "mean_unrounded": 1526.366,
+      "sample_sd": 208.35341677063997,
+      "se": 93.17848064869914,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Asterix"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 18492.5,
+      "mean_unrounded": 3698.5,
+      "sample_sd": 2040.830774464164,
+      "se": 912.6872684550825,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "BankHeist"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 98.7,
+      "mean_unrounded": 19.740000000000002,
+      "sample_sd": 6.202660719400989,
+      "se": 2.773914201989672,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "BattleZone"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 23510.0,
+      "mean_unrounded": 4702.0,
+      "sample_sd": 3712.5220538065496,
+      "se": 1660.2903360557152,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Boxing"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 434.5,
+      "mean_unrounded": 86.9,
+      "sample_sd": 11.612062693595828,
+      "se": 5.1930723083739165,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Breakout"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 662.4,
+      "mean_unrounded": 132.48,
+      "sample_sd": 45.35429417376044,
+      "se": 20.283056968810197,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "ChopperCommand"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 6849.0,
+      "mean_unrounded": 1369.8,
+      "sample_sd": 398.6272695137652,
+      "se": 178.2715344635817,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "CrazyClimber"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 495839.0,
+      "mean_unrounded": 99167.8,
+      "sample_sd": 12564.311648474819,
+      "se": 5618.930987296427,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "DemonAttack"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 1440.6,
+      "mean_unrounded": 288.12,
+      "sample_sd": 129.09547629564716,
+      "se": 57.73325211695595,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Freeway"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 166.6,
+      "mean_unrounded": 33.32,
+      "sample_sd": 0.6058052492344392,
+      "se": 0.2709243436828817,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Frostbite"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 1370.3,
+      "mean_unrounded": 274.06,
+      "sample_sd": 15.908896881933696,
+      "se": 7.114674975007638,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Gopher"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 29489.6,
+      "mean_unrounded": 5897.92,
+      "sample_sd": 5120.187091503591,
+      "se": 2289.817278823793,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Hero"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 28108.9,
+      "mean_unrounded": 5621.780000000001,
+      "sample_sd": 2251.8142834168184,
+      "se": 1007.0419620849966,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Jamesbond"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 2136.9,
+      "mean_unrounded": 427.38,
+      "sample_sd": 50.14825021872648,
+      "se": 22.42697928834822,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Kangaroo"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 26911.0,
+      "mean_unrounded": 5382.2,
+      "sample_sd": 2960.0199661488773,
+      "se": 1323.7611718131031,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Krull"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 43050.7,
+      "mean_unrounded": 8610.14,
+      "sample_sd": 897.8642787192283,
+      "se": 401.53711235700246,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "KungFuMaster"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 93568.0,
+      "mean_unrounded": 18713.6,
+      "sample_sd": 7069.625364897351,
+      "se": 3161.632578273446,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "MsPacman"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 9790.9,
+      "mean_unrounded": 1958.1799999999998,
+      "sample_sd": 299.63246152578336,
+      "se": 133.9997104474484,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Pong"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 101.8,
+      "mean_unrounded": 20.36,
+      "sample_sd": 0.6985699678629184,
+      "se": 0.31240998703626577,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "PrivateEye"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 571.5,
+      "mean_unrounded": 114.3,
+      "sample_sd": 54.77846292111526,
+      "se": 24.497673358913083,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Qbert"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 22496.5,
+      "mean_unrounded": 4499.3,
+      "sample_sd": 427.2246364618969,
+      "se": 191.06066575828734,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "RoadRunner"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 103366.0,
+      "mean_unrounded": 20673.2,
+      "sample_sd": 6920.794585883907,
+      "se": 3095.0734304697844,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "Seaquest"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 2756.2000000000003,
+      "mean_unrounded": 551.24,
+      "sample_sd": 245.34210400989068,
+      "se": 109.72032446178785,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    },
+    {
+      "group": {
+        "game": "UpNDown"
+      },
+      "metric": "return",
+      "operation": "mean",
+      "n": 5,
+      "repeat_unit": "training seed",
+      "independence": "independent",
+      "run_id_key": "seed_index",
+      "run_ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "run_ids_sha256": "7f2c5f390b0c7e30e5a644380decea0554bbb62cfc03eff193d13a8c1a117708",
+      "sum": 19281.4,
+      "mean_unrounded": 3856.28,
+      "sample_sd": 1727.3129745358829,
+      "se": 772.4778458959195,
+      "reported_uncertainty": "none",
+      "reported_value_unrounded": null,
+      "precision": 1
+    }
+  ]
+}

@@ -17,7 +17,10 @@ def load(name, path):
 
 def build_generation_submissions(public_dir, submissions_dir):
     renderer = load("blind_renderer", ROOT / "skills/paper-table/scripts/render_table.py")
-    aggregator = load("blind_aggregator", ROOT / "skills/paper-table/scripts/aggregate_observations.py")
+    aggregators = {
+        "paper-table-observations-v1": load("blind_observation_aggregator", ROOT / "skills/paper-table/scripts/aggregate_observations.py"),
+        "paper-table-runs-v1": load("blind_run_aggregator", ROOT / "skills/paper-table/scripts/aggregate_runs.py"),
+    }
     manifest = json.loads((public_dir / "manifest.json").read_text())
     for item in manifest["requests"]:
         request = json.loads((public_dir / item["path"]).read_text())
@@ -25,8 +28,8 @@ def build_generation_submissions(public_dir, submissions_dir):
         destination = submissions_dir / request_id
         destination.mkdir(parents=True)
         candidate = request["x"]
-        if candidate.get("schema_version") == "paper-table-observations-v1":
-            candidate = aggregator.aggregate(candidate)
+        if candidate.get("schema_version") in aggregators:
+            candidate = aggregators[candidate["schema_version"]].aggregate(candidate)
         latex, html = renderer.render(candidate)
         (destination / "table.tex").write_text(latex)
         (destination / "table.html").write_text(html)

@@ -5,7 +5,7 @@ import argparse, csv, importlib.util, json, math
 from collections import Counter
 from pathlib import Path
 
-ID_HINTS = {"method", "model", "variant", "dataset", "task", "split", "seed", "run"}
+ID_HINTS = {"method", "model", "variant", "dataset", "dataset_name", "task", "game", "split", "seed", "seed_index", "run", "trial"}
 
 def load_advisor():
     path=Path(__file__).resolve().parent/"design_advisor.py"
@@ -17,7 +17,10 @@ def load(path: Path):
     if path.suffix.lower() == ".csv":
         with path.open(newline="", encoding="utf-8-sig") as f: return list(csv.DictReader(f))
     data = json.loads(path.read_text(encoding="utf-8"))
-    return data["rows"] if isinstance(data, dict) and "rows" in data else data
+    if isinstance(data, dict):
+        if "rows" in data: return data["rows"]
+        if "runs" in data: return data["runs"]
+    return data
 
 def number(v):
     try:
@@ -32,7 +35,7 @@ def main():
     if not isinstance(rows, list) or not rows: raise SystemExit("input must contain at least one row")
     keys=sorted({k for r in rows for k in r}); ids=[k for k in keys if k.lower() in ID_HINTS]
     numeric=[k for k in keys if k not in ids and sum(number(r.get(k)) is not None for r in rows) >= max(2, len(rows)//2)]
-    seed=next((k for k in keys if k.lower() in {"seed","run","trial"}), None)
+    seed=next((k for k in keys if k.lower() in {"seed","seed_index","run","trial"}), None)
     missing={k:sum(r.get(k) in (None,"") for r in rows) for k in keys}
     dup=0
     if ids:
@@ -45,7 +48,7 @@ def main():
     if len([k for k in ids if k != seed]) > 1:
         add("comparison_groups","blocking","Which rows are scientifically comparable for best/second-best emphasis?","Bolding across datasets, protocols, or supervision regimes can create a false claim.",[k for k in ids if k != seed])
     if seed and dup > 0:
-        add("uncertainty_kind","valuable_nonblocking",f"I found repeated rows indexed by {seed}. Are these independent runs, and should the final table report SD, SE, or a confidence interval?","Repeat identifiers support aggregation, but independence and uncertainty type still require author confirmation.",seed)
+        add("repeat_design","blocking",f"I found repeated rows indexed by {seed}. What does one repeat represent, are repeats independent and paired across rows, how should missing runs be handled, and should the table show SD, SE, a confidence interval, or means only?","Run identifiers alone do not establish independence, pairing, a missing-run policy, or the meaning of displayed uncertainty.",seed)
     else:
         add("uncertainty_source","valuable_nonblocking","Do you have repeated seeds/runs or sample-level predictions, and should uncertainty be SD, SE, or a confidence interval?","Real repeats support uncertainty; guessed variation must never be presented as observed.")
     add("claim","valuable_nonblocking","What single scientific claim should a reader understand from this table?","The claim guides layout and emphasis without changing data.")

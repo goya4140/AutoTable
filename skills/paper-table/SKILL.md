@@ -10,7 +10,7 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 ## Workflow
 
 1. Inspect the supplied data, manuscript context, venue constraints, and target claim.
-2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON. If the input contains repeated independent runs, aggregate with the run-aware path. If it contains per-example observations, run `scripts/aggregate_observations.py INPUT --out AGGREGATED.json` before design; never treat examples as independent seeds.
+2. Read `references/semantic-contract.md`, then run `scripts/analyze_data.py INPUT --json` when input is CSV or JSON. If the input contains repeated independent runs, declare the repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and displayed uncertainty, then run `scripts/aggregate_runs.py INPUT --out AGGREGATED.json`. If it contains per-example observations, run `scripts/aggregate_observations.py INPUT --out AGGREGATED.json` before design; never treat examples as independent seeds.
 3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, apply them to the next table draft, and never claim `verified` while a blocking field is unresolved.
 4. Run `scripts/design_advisor.py SPEC --case CASE` once a draft spec exists. Offer its evidence-backed form, hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, width target, warnings, and alternatives before rendering.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
@@ -35,6 +35,8 @@ Do not block on cosmetic preferences. Choose conservative defaults and state the
 If the author asks for plausible variation without repeated runs, label it **simulated**, keep it separate from observed results, record the assumed distribution and seed, and never use it for significance claims. Prefer requesting real repeats.
 
 For per-example aggregation, freeze the observation universe before computing values. Record the observation identity key, exclusions, named denominator ID lists, metric formula, scale, precision, and missing-report policy. Preserve the generated cell-level audit—including operation, denominator, sufficient statistic, and observation-ID hash—through every visual transformation. A changed or missing audit is a scientific failure even when the displayed rounded value is unchanged.
+
+For repeated-run aggregation, require the `paper-table-runs-v1` contract. Accept runs only when independence is explicitly supported; a seed-like column name is not evidence. Record what one repeat represents, preserve unique run identifiers, choose either a fixed run set across comparison groups or an explicitly group-specific design, and reject missing runs instead of imputing. Report means alone, mean ± SD, or mean ± SE only when that choice matches the author intent; always retain unrounded mean, sample SD, SE, run count, run-ID list, and run-ID hash in the cell-level audit. Do not silently convert SD to SE or infer confidence intervals.
 
 ## Visual strategy
 
@@ -61,6 +63,7 @@ Never silently scale an overflowing table. Let the optimizer split only at coher
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
+- `scripts/aggregate_runs.py`: aggregate genuinely independent repeated runs under an explicit pairing and missing-run contract, retaining unrounded SD/SE and hashed run audits.
 - `scripts/aggregate_observations.py`: deterministically aggregate per-example observations with fixed denominators and a cell-level provenance audit.
 - `scripts/design_advisor.py`: derive a structured visual form, proposal, alternatives, warnings, and bounded follow-up questions from the table spec and semantic contract.
 - `scripts/optimize_layout.py`: search measured typography, semantic panel, and lossless text-wrap candidates; emit structural feedback when none fit.

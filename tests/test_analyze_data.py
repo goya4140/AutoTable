@@ -33,7 +33,7 @@ def test_context_suppresses_answered_question(tmp_path):
     assert "metric_semantics" not in {item["id"] for item in report["inquiry_plan"]}
 
 
-def test_detected_repeats_still_ask_uncertainty_semantics(tmp_path):
+def test_detected_repeats_ask_for_the_full_repeat_design(tmp_path):
     data = tmp_path / "runs.json"
     data.write_text(json.dumps([
         {"method": "A", "seed": 0, "score": 1.0},
@@ -43,5 +43,7 @@ def test_detected_repeats_still_ask_uncertainty_semantics(tmp_path):
     ]))
     result = subprocess.run([sys.executable, str(SCRIPT), str(data), "--json"], check=True, capture_output=True, text=True)
     report = json.loads(result.stdout)
-    assert "uncertainty_kind" in {item["id"] for item in report["inquiry_plan"]}
+    repeat_question = next(item for item in report["inquiry_plan"] if item["id"] == "repeat_design")
+    assert repeat_question["importance"] == "blocking"
+    assert "independent" in repeat_question["question"] and "paired" in repeat_question["question"]
     assert report["visual_advice"]["questions"][0]["field_id"] == "uncertainty_source"

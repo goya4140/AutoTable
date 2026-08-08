@@ -6,7 +6,7 @@ Before rendering, represent the scientific meaning that must survive visual tran
 - a stable row identity key;
 - metric direction and units;
 - valid comparison groups and excluded rows;
-- uncertainty type, independent-run count, and aggregation source;
+- uncertainty type, independent-run count, repeat unit, independence evidence, run-ID key, cross-row pairing, missing-run policy, and aggregation source;
 - unit of observation, fixed denominator population, exclusions, and missing-observation policy;
 - allowed transformations and forbidden inferences;
 - target width and accessibility constraints.
@@ -29,4 +29,4 @@ Record answer availability separately from its value. An author response such as
 
 Never infer metric direction, units, comparison eligibility, independence of runs, uncertainty type, or statistical significance. Simulated variation is allowed only when explicitly requested, labeled simulated, and excluded from inferential claims.
 
-Distinguish repeated runs from per-example records. Runs support between-run uncertainty only when they are genuinely independent. Examples support deterministic dataset metrics but do not become repeated trials. For per-example inputs, bind each reported cell to a declared formula and denominator and retain a cell-level aggregation audit. Ask the author when exclusions, missing reports, or denominator changes could alter the claim.
+Distinguish repeated runs from per-example records. Runs support between-run uncertainty only when they are genuinely independent. A column named `seed` does not establish independence: ask what was independently randomized and whether run IDs are paired across compared rows. Reject duplicates and undeclared missing-run handling. Use `paper-table-runs-v1` and retain unrounded means, sample SD, SE, counts, run IDs, and run-ID hashes even when the paper displays means only. Examples support deterministic dataset metrics but do not become repeated trials. For per-example inputs, bind each reported cell to a declared formula and denominator and retain a cell-level aggregation audit. Ask the author when exclusions, missing reports, or denominator changes could alter the claim.

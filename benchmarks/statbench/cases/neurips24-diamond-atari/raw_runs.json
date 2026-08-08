@@ -1,0 +1,697 @@
+{
+  "schema_version": "paper-table-runs-v1",
+  "title": "DIAMOND Atari 100k returns",
+  "label": "tab:diamond-atari-raw-runs",
+  "caption": "DIAMOND return on the 26 Atari 100k games, averaged over five independent training seeds.",
+  "group_keys": [
+    {
+      "key": "game",
+      "label": "Game"
+    }
+  ],
+  "run_id_key": "seed_index",
+  "repeat_unit": "training seed",
+  "independence": "independent",
+  "reported_uncertainty": "none",
+  "pairing": {
+    "mode": "fixed_across_groups",
+    "missing_policy": "error"
+  },
+  "metrics": [
+    {
+      "key": "return",
+      "field": "return",
+      "label": "DIAMOND (ours)",
+      "direction": "max",
+      "unit": "score",
+      "precision": 1
+    }
+  ],
+  "runs": [
+    {
+      "game": "Alien",
+      "seed_index": 0,
+      "return": 703.1
+    },
+    {
+      "game": "Alien",
+      "seed_index": 1,
+      "return": 683.6
+    },
+    {
+      "game": "Alien",
+      "seed_index": 2,
+      "return": 910.1
+    },
+    {
+      "game": "Alien",
+      "seed_index": 3,
+      "return": 826.8
+    },
+    {
+      "game": "Alien",
+      "seed_index": 4,
+      "return": 597
+    },
+    {
+      "game": "Amidar",
+      "seed_index": 0,
+      "return": 215.4
+    },
+    {
+      "game": "Amidar",
+      "seed_index": 1,
+      "return": 233.5
+    },
+    {
+      "game": "Amidar",
+      "seed_index": 2,
+      "return": 181.9
+    },
+    {
+      "game": "Amidar",
+      "seed_index": 3,
+      "return": 275.6
+    },
+    {
+      "game": "Amidar",
+      "seed_index": 4,
+      "return": 222.4
+    },
+    {
+      "game": "Assault",
+      "seed_index": 0,
+      "return": 1570.93
+    },
+    {
+      "game": "Assault",
+      "seed_index": 1,
+      "return": 1321.8
+    },
+    {
+      "game": "Assault",
+      "seed_index": 2,
+      "return": 1638.1
+    },
+    {
+      "game": "Assault",
+      "seed_index": 3,
+      "return": 1791.5
+    },
+    {
+      "game": "Assault",
+      "seed_index": 4,
+      "return": 1309.5
+    },
+    {
+      "game": "Asterix",
+      "seed_index": 0,
+      "return": 3027.0
+    },
+    {
+      "game": "Asterix",
+      "seed_index": 1,
+      "return": 2453.0
+    },
+    {
+      "game": "Asterix",
+      "seed_index": 2,
+      "return": 7330
+    },
+    {
+      "game": "Asterix",
+      "seed_index": 3,
+      "return": 2830.5
+    },
+    {
+      "game": "Asterix",
+      "seed_index": 4,
+      "return": 2852
+    },
+    {
+      "game": "BankHeist",
+      "seed_index": 0,
+      "return": 19.4
+    },
+    {
+      "game": "BankHeist",
+      "seed_index": 1,
+      "return": 16.3
+    },
+    {
+      "game": "BankHeist",
+      "seed_index": 2,
+      "return": 19.3
+    },
+    {
+      "game": "BankHeist",
+      "seed_index": 3,
+      "return": 13.7
+    },
+    {
+      "game": "BankHeist",
+      "seed_index": 4,
+      "return": 30
+    },
+    {
+      "game": "BattleZone",
+      "seed_index": 0,
+      "return": 6340.0
+    },
+    {
+      "game": "BattleZone",
+      "seed_index": 1,
+      "return": 10520.0
+    },
+    {
+      "game": "BattleZone",
+      "seed_index": 2,
+      "return": 2220
+    },
+    {
+      "game": "BattleZone",
+      "seed_index": 3,
+      "return": 2400
+    },
+    {
+      "game": "BattleZone",
+      "seed_index": 4,
+      "return": 2030
+    },
+    {
+      "game": "Boxing",
+      "seed_index": 0,
+      "return": 99.4
+    },
+    {
+      "game": "Boxing",
+      "seed_index": 1,
+      "return": 84.0
+    },
+    {
+      "game": "Boxing",
+      "seed_index": 2,
+      "return": 97.5
+    },
+    {
+      "game": "Boxing",
+      "seed_index": 3,
+      "return": 71.4
+    },
+    {
+      "game": "Boxing",
+      "seed_index": 4,
+      "return": 82.2
+    },
+    {
+      "game": "Breakout",
+      "seed_index": 0,
+      "return": 124.0
+    },
+    {
+      "game": "Breakout",
+      "seed_index": 1,
+      "return": 148.8
+    },
+    {
+      "game": "Breakout",
+      "seed_index": 2,
+      "return": 81.0
+    },
+    {
+      "game": "Breakout",
+      "seed_index": 3,
+      "return": 108.0
+    },
+    {
+      "game": "Breakout",
+      "seed_index": 4,
+      "return": 200.6
+    },
+    {
+      "game": "ChopperCommand",
+      "seed_index": 0,
+      "return": 1378.0
+    },
+    {
+      "game": "ChopperCommand",
+      "seed_index": 1,
+      "return": 1113.0
+    },
+    {
+      "game": "ChopperCommand",
+      "seed_index": 2,
+      "return": 1789
+    },
+    {
+      "game": "ChopperCommand",
+      "seed_index": 3,
+      "return": 1720
+    },
+    {
+      "game": "ChopperCommand",
+      "seed_index": 4,
+      "return": 849
+    },
+    {
+      "game": "CrazyClimber",
+      "seed_index": 0,
+      "return": 81227.0
+    },
+    {
+      "game": "CrazyClimber",
+      "seed_index": 1,
+      "return": 99253.0
+    },
+    {
+      "game": "CrazyClimber",
+      "seed_index": 2,
+      "return": 96533
+    },
+    {
+      "game": "CrazyClimber",
+      "seed_index": 3,
+      "return": 116221
+    },
+    {
+      "game": "CrazyClimber",
+      "seed_index": 4,
+      "return": 102605
+    },
+    {
+      "game": "DemonAttack",
+      "seed_index": 0,
+      "return": 245.4
+    },
+    {
+      "game": "DemonAttack",
+      "seed_index": 1,
+      "return": 107.3
+    },
+    {
+      "game": "DemonAttack",
+      "seed_index": 2,
+      "return": 295.7
+    },
+    {
+      "game": "DemonAttack",
+      "seed_index": 3,
+      "return": 329.9
+    },
+    {
+      "game": "DemonAttack",
+      "seed_index": 4,
+      "return": 462.3
+    },
+    {
+      "game": "Freeway",
+      "seed_index": 0,
+      "return": 33.8
+    },
+    {
+      "game": "Freeway",
+      "seed_index": 1,
+      "return": 33.7
+    },
+    {
+      "game": "Freeway",
+      "seed_index": 2,
+      "return": 32.4
+    },
+    {
+      "game": "Freeway",
+      "seed_index": 3,
+      "return": 33.0
+    },
+    {
+      "game": "Freeway",
+      "seed_index": 4,
+      "return": 33.7
+    },
+    {
+      "game": "Frostbite",
+      "seed_index": 0,
+      "return": 254.9
+    },
+    {
+      "game": "Frostbite",
+      "seed_index": 1,
+      "return": 297.4
+    },
+    {
+      "game": "Frostbite",
+      "seed_index": 2,
+      "return": 280.5
+    },
+    {
+      "game": "Frostbite",
+      "seed_index": 3,
+      "return": 267.6
+    },
+    {
+      "game": "Frostbite",
+      "seed_index": 4,
+      "return": 269.9
+    },
+    {
+      "game": "Gopher",
+      "seed_index": 0,
+      "return": 980.8
+    },
+    {
+      "game": "Gopher",
+      "seed_index": 1,
+      "return": 4337.0
+    },
+    {
+      "game": "Gopher",
+      "seed_index": 2,
+      "return": 2518
+    },
+    {
+      "game": "Gopher",
+      "seed_index": 3,
+      "return": 13846.6
+    },
+    {
+      "game": "Gopher",
+      "seed_index": 4,
+      "return": 7807.2
+    },
+    {
+      "game": "Hero",
+      "seed_index": 0,
+      "return": 3155.1
+    },
+    {
+      "game": "Hero",
+      "seed_index": 1,
+      "return": 7465.0
+    },
+    {
+      "game": "Hero",
+      "seed_index": 2,
+      "return": 3216.6
+    },
+    {
+      "game": "Hero",
+      "seed_index": 3,
+      "return": 7599.5
+    },
+    {
+      "game": "Hero",
+      "seed_index": 4,
+      "return": 6672.7
+    },
+    {
+      "game": "Jamesbond",
+      "seed_index": 0,
+      "return": 424.0
+    },
+    {
+      "game": "Jamesbond",
+      "seed_index": 1,
+      "return": 383.9
+    },
+    {
+      "game": "Jamesbond",
+      "seed_index": 2,
+      "return": 508.5
+    },
+    {
+      "game": "Jamesbond",
+      "seed_index": 3,
+      "return": 388
+    },
+    {
+      "game": "Jamesbond",
+      "seed_index": 4,
+      "return": 432.5
+    },
+    {
+      "game": "Kangaroo",
+      "seed_index": 0,
+      "return": 9871.0
+    },
+    {
+      "game": "Kangaroo",
+      "seed_index": 1,
+      "return": 5858.0
+    },
+    {
+      "game": "Kangaroo",
+      "seed_index": 2,
+      "return": 5712
+    },
+    {
+      "game": "Kangaroo",
+      "seed_index": 3,
+      "return": 3258
+    },
+    {
+      "game": "Kangaroo",
+      "seed_index": 4,
+      "return": 2212
+    },
+    {
+      "game": "Krull",
+      "seed_index": 0,
+      "return": 9137.3
+    },
+    {
+      "game": "Krull",
+      "seed_index": 1,
+      "return": 7246.9
+    },
+    {
+      "game": "Krull",
+      "seed_index": 2,
+      "return": 8139
+    },
+    {
+      "game": "Krull",
+      "seed_index": 3,
+      "return": 9341
+    },
+    {
+      "game": "Krull",
+      "seed_index": 4,
+      "return": 9186.5
+    },
+    {
+      "game": "KungFuMaster",
+      "seed_index": 0,
+      "return": 14325.0
+    },
+    {
+      "game": "KungFuMaster",
+      "seed_index": 1,
+      "return": 26783.0
+    },
+    {
+      "game": "KungFuMaster",
+      "seed_index": 2,
+      "return": 25959
+    },
+    {
+      "game": "KungFuMaster",
+      "seed_index": 3,
+      "return": 14546
+    },
+    {
+      "game": "KungFuMaster",
+      "seed_index": 4,
+      "return": 11955
+    },
+    {
+      "game": "MsPacman",
+      "seed_index": 0,
+      "return": 1776.4
+    },
+    {
+      "game": "MsPacman",
+      "seed_index": 1,
+      "return": 1896.2
+    },
+    {
+      "game": "MsPacman",
+      "seed_index": 2,
+      "return": 1642.6
+    },
+    {
+      "game": "MsPacman",
+      "seed_index": 3,
+      "return": 2419.8
+    },
+    {
+      "game": "MsPacman",
+      "seed_index": 4,
+      "return": 2055.9
+    },
+    {
+      "game": "Pong",
+      "seed_index": 0,
+      "return": 19.3
+    },
+    {
+      "game": "Pong",
+      "seed_index": 1,
+      "return": 20.9
+    },
+    {
+      "game": "Pong",
+      "seed_index": 2,
+      "return": 20.9
+    },
+    {
+      "game": "Pong",
+      "seed_index": 3,
+      "return": 20.7
+    },
+    {
+      "game": "Pong",
+      "seed_index": 4,
+      "return": 20.0
+    },
+    {
+      "game": "PrivateEye",
+      "seed_index": 0,
+      "return": 100.0
+    },
+    {
+      "game": "PrivateEye",
+      "seed_index": 1,
+      "return": 100.0
+    },
+    {
+      "game": "PrivateEye",
+      "seed_index": 2,
+      "return": 208.1
+    },
+    {
+      "game": "PrivateEye",
+      "seed_index": 3,
+      "return": 63.4
+    },
+    {
+      "game": "PrivateEye",
+      "seed_index": 4,
+      "return": 100
+    },
+    {
+      "game": "Qbert",
+      "seed_index": 0,
+      "return": 4506.5
+    },
+    {
+      "game": "Qbert",
+      "seed_index": 1,
+      "return": 3890.8
+    },
+    {
+      "game": "Qbert",
+      "seed_index": 2,
+      "return": 4707.2
+    },
+    {
+      "game": "Qbert",
+      "seed_index": 3,
+      "return": 5041.8
+    },
+    {
+      "game": "Qbert",
+      "seed_index": 4,
+      "return": 4350.2
+    },
+    {
+      "game": "RoadRunner",
+      "seed_index": 0,
+      "return": 12228.0
+    },
+    {
+      "game": "RoadRunner",
+      "seed_index": 1,
+      "return": 25222.0
+    },
+    {
+      "game": "RoadRunner",
+      "seed_index": 2,
+      "return": 29552
+    },
+    {
+      "game": "RoadRunner",
+      "seed_index": 3,
+      "return": 20223
+    },
+    {
+      "game": "RoadRunner",
+      "seed_index": 4,
+      "return": 16141
+    },
+    {
+      "game": "Seaquest",
+      "seed_index": 0,
+      "return": 307.0
+    },
+    {
+      "game": "Seaquest",
+      "seed_index": 1,
+      "return": 789.2
+    },
+    {
+      "game": "Seaquest",
+      "seed_index": 2,
+      "return": 769.2
+    },
+    {
+      "game": "Seaquest",
+      "seed_index": 3,
+      "return": 280.2
+    },
+    {
+      "game": "Seaquest",
+      "seed_index": 4,
+      "return": 610.6
+    },
+    {
+      "game": "UpNDown",
+      "seed_index": 0,
+      "return": 3737.0
+    },
+    {
+      "game": "UpNDown",
+      "seed_index": 1,
+      "return": 3190.4
+    },
+    {
+      "game": "UpNDown",
+      "seed_index": 2,
+      "return": 5494
+    },
+    {
+      "game": "UpNDown",
+      "seed_index": 3,
+      "return": 1376.8
+    },
+    {
+      "game": "UpNDown",
+      "seed_index": 4,
+      "return": 5483.2
+    }
+  ],
+  "emphasis": {
+    "best": "none",
+    "second": "none",
+    "scope": "all"
+  },
+  "notes": [
+    "seed_index records array position in the author artifact; it is not an inferred internal seed value."
+  ],
+  "provenance": {
+    "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/hash/6bdde0373d53d4a501249547084bed43-Abstract-Conference.html",
+    "source_repository": "https://github.com/eloialonso/diamond",
+    "source_commit": "5bcd1599755b4f2fae8e5e079e02f0728e174965",
+    "source_path": "results/data/DIAMOND.json",
+    "source_sha256": "1e23cb468204ed5a7076e94ac11c68011660dc84603875500e42ded74d970c22"
+  }
+}

@@ -89,7 +89,7 @@ The simulated author answers only fields actually hidden in that scenario and re
 For true per-run inputs, use the deterministic long-form aggregator:
 
 ```bash
-python benchmarks/paperbench/aggregate_runs.py runs.json --out x.json
+python skills/paper-table/scripts/aggregate_runs.py runs.json --out x.json
 ```
 
 It rejects duplicate run identifiers and single-run groups, computes sample standard deviation or standard error, and stores an `aggregation_audit` with every contributing run ID. Do not reconstruct pseudo-runs from published means and error bars.
