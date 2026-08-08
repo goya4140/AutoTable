@@ -1,0 +1,40 @@
+{
+  "id": "neurips24-rankup-utkface",
+  "input_tier": "canonical_table",
+  "venue": "NeurIPS",
+  "year": 2024,
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/c26a8494fe31695db965ae8b7244b7c1-Paper-Conference.pdf",
+  "reference": {
+    "page": 8,
+    "table": "Table 1",
+    "image": "y_reference.png",
+    "sha256": "9d929853ff55742d3a59433a1c17c42e4a9f07d18fb60a82901dec9a340ba2ff"
+  },
+  "source_artifacts": [
+    {
+      "role": "author aggregate log",
+      "url": "https://raw.githubusercontent.com/pm25/semi-supervised-regression/7ed6d267783d9dc8f99ae8188b126d125bf3ab79/results/classic_cv_average_log.csv",
+      "path": "source_log.csv",
+      "sha256": "ddd78c263542108b952c8f1b07b7b7b0ce611c21b2fb6d70284809ba6640ebce",
+      "commit": "7ed6d267783d9dc8f99ae8188b126d125bf3ab79"
+    },
+    {
+      "role": "published paper",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/c26a8494fe31695db965ae8b7244b7c1-Paper-Conference.pdf",
+      "sha256": "98fdb7415c54d8a09e5e7ba46d44bf75e008d596f824db034f07f039f7ed297c"
+    }
+  ],
+  "transformation": {
+    "selection": "UTKFace, 50/250 labels, MAE/R²/SRCC",
+    "rounding": "decimal ROUND_HALF_EVEN to published precision",
+    "uncertainty": "author-described standard deviation over seeds 0, 1, 2"
+  },
+  "license": {
+    "code_and_logs": "MIT",
+    "paper_excerpt": "source publication terms control",
+    "source_terms_control": true
+  },
+  "limitations": [
+    "The author repository releases three-seed aggregates, not the individual per-seed values; this case does not independently test aggregation correctness."
+  ]
+}

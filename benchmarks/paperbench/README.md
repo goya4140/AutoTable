@@ -10,7 +10,7 @@ Not every paper releases raw runs. PaperBench therefore records the strongest av
 - `canonical_table`: de-styled cells, metric directions, comparison groups, and provenance; supports content selection and table design evaluation.
 - `recovered_table`: cells recovered from a PDF/LaTeX source and manually verified; supports layout generation but not claims about experiment aggregation.
 
-The bundled mini set uses `recovered_table`. It is a real NeurIPS seed set for end-to-end repository tests, not a statistically representative leaderboard.
+The bundled mini set contains three `recovered_table` cases and one `canonical_table` case. The latter is generated from RankUp's pinned author-released three-seed aggregate CSV and aligned with its published NeurIPS Table 1. It is a real seed set for end-to-end repository tests, not a statistically representative leaderboard.
 
 ## Case layout
 
@@ -28,9 +28,18 @@ Generated artifacts are written to `output/paperbench/<case-id>/` and are not so
 
 ```bash
 python benchmarks/paperbench/build_seed.py
+python benchmarks/paperbench/build_rankup_case.py
 python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
+
+For true per-run inputs, use the deterministic long-form aggregator:
+
+```bash
+python benchmarks/paperbench/aggregate_runs.py runs.json --out x.json
+```
+
+It rejects duplicate run identifiers and single-run groups, computes sample standard deviation or standard error, and stores an `aggregation_audit` with every contributing run ID. Do not reconstruct pseudo-runs from published means and error bars.
 
 ## Evaluation dimensions
 
@@ -51,4 +60,3 @@ Subjective dimensions use order-randomized human judgments:
 - overall aesthetics.
 
 Automated visual proxies are reported separately and must not be called human aesthetics. See `protocol.md`.
-

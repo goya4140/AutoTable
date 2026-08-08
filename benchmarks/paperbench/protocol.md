@@ -8,6 +8,8 @@
 4. Keep `y` as the published table crop. Do not use `y` or same-paper tables as retrieval references while generating `y'`.
 5. Split by paper, not by table.
 
+For raw runs, preserve immutable run IDs and reject duplicate seeds. Compute sample standard deviation with n-1 degrees of freedom; compute standard error as sd/sqrt(n) only when explicitly requested. Store the contributing run IDs and n for every output cell. Never invert a published mean/error pair into invented runs.
+
 ## Objective scoring
 
 Compute exact normalized token coverage from `x` to editable generated code. Numeric fidelity is a hard gate: a single unexplained changed or hallucinated number fails the case. Report component metrics instead of hiding failures inside one average.
@@ -21,4 +23,3 @@ Report majority preference, mean opinion score with bootstrap confidence interva
 ## Leakage policy
 
 References, exemplars, and prompts must not contain the target `y`, its LaTeX source, or any table from the target paper. The evaluator may access `y` only after `y'` is frozen.
-

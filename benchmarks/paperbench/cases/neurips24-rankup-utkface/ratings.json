@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "status": "pilot_model_rubric",
+  "warning": "Single Codex visual audit for pipeline demonstration; not a human-validated aesthetic score.",
+  "required_raters": 3,
+  "dimensions": ["typography", "visual_hierarchy", "readability", "claim_salience", "overall_aesthetics"],
+  "ratings": [{
+    "rater_id": "codex-visual-audit-001",
+    "rater_type": "model_pilot",
+    "reference": {"typography": 4.5, "visual_hierarchy": 4.6, "readability": 4.5, "claim_salience": 4.6, "overall_aesthetics": 4.4},
+    "generated": {"typography": 4.4, "visual_hierarchy": 4.6, "readability": 4.5, "claim_salience": 4.7, "overall_aesthetics": 4.5},
+    "preference": "generated",
+    "reason": "The generated table preserves the two-level comparison structure and improves provenance clarity, while the published reference is slightly more compact."
+  }]
+}

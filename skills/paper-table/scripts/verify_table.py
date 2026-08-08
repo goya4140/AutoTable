@@ -8,7 +8,7 @@ def walk(x):
             if k not in {"precision","ci95"}: yield from walk(v)
     elif isinstance(x,list):
         for v in x: yield from walk(v)
-    elif isinstance(x,(int,float)): yield x
+    elif isinstance(x,(int,float)) and not isinstance(x,bool): yield x
 def main():
     p=argparse.ArgumentParser(); p.add_argument("spec",type=Path); p.add_argument("rendered",type=Path); a=p.parse_args()
     spec=json.loads(a.spec.read_text()); text=a.rendered.read_text(); missing=[]

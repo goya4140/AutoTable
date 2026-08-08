@@ -26,17 +26,18 @@ PaperBench records the strongest available `x`:
 | `canonical_table` | de-styled cells and semantic metadata | content selection, structure, and design |
 | `recovered_table` | cells recovered from a paper and manually verified | layout/design only; no claim about experiment aggregation |
 
-The committed mini set contains three `recovered_table` pairs from NeurIPS 2024. It is an executable seed set, not yet a statistically representative leaderboard. Every case contains provenance, an `x.json`, a published `y_reference.png`, and an aesthetic rating record.
+The committed mini set contains three `recovered_table` pairs and one `canonical_table` pair from NeurIPS 2024. The canonical RankUp case is built from an author-released aggregate experiment log pinned by commit and hash. It is an executable seed set, not yet a statistically representative leaderboard. Every case contains provenance, an `x.json`, a published `y_reference.png`, and an aesthetic rating record.
 
 ## Reproduce the benchmark
 
 ```bash
 python benchmarks/paperbench/build_seed.py
+python benchmarks/paperbench/build_rankup_case.py
 python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
-Outputs appear in `output/paperbench/`. The current seed run passes the numeric-fidelity gate on all three cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens.
+Outputs appear in `output/paperbench/`. The current seed run passes the numeric-fidelity gate on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 

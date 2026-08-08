@@ -20,7 +20,21 @@
       }
     },
     "license": {"type": "object"},
+    "source_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "url", "sha256"],
+        "properties": {
+          "role": {"type": "string"},
+          "url": {"type": "string", "format": "uri"},
+          "path": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "commit": {"type": "string"}
+        }
+      }
+    },
+    "transformation": {"type": "object"},
     "limitations": {"type": "array", "items": {"type": "string"}}
   }
 }
-

@@ -11,6 +11,9 @@ def test_seed_cases_are_true_pairs():
         assert case["input_tier"] in {"raw_runs","canonical_table","recovered_table"}
         assert (folder/case["reference"]["image"]).exists()
         assert x["columns"] and x["rows"] and case["reference"]["sha256"] != "PENDING"
+        if case["input_tier"]=="canonical_table":
+            assert case.get("source_artifacts")
+            assert case.get("transformation")
 def test_numeric_multiset_normalizes_precision():
     m=load("evaluate",ROOT/"benchmarks/paperbench/evaluate.py")
     recall,precision,hall=m.multiset_recall(["-0.8","12"],["-0.80","12.0"])

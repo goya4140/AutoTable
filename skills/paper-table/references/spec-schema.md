@@ -7,9 +7,10 @@ Use JSON with this shape:
   "title": "Main results",
   "label": "tab:main",
   "caption": "Test performance. Higher is better.",
+  "column_supergroup": "Benchmark",
   "columns": [
     {"key": "method", "label": "Method", "kind": "text"},
-    {"key": "accuracy", "label": "Accuracy", "kind": "metric", "direction": "max", "precision": 1}
+    {"key": "accuracy", "label": "Accuracy", "kind": "metric", "direction": "max", "precision": 1, "group": "Test split"}
   ],
   "rows": [
     {"group": "Prior work", "method": "Baseline", "accuracy": 82.1},
@@ -21,5 +22,4 @@ Use JSON with this shape:
 }
 ```
 
-Required keys are `columns` and `rows`. Column `kind` is `text` or `metric`. Metric cells may be numbers, strings, null, or objects containing `mean` and one of `sd`, `se`, `ci95`, or `values`. Use `scope: all` to rank across all rows, or `group` to rank within each row group. Set `observed: false` and add simulation assumptions whenever values are synthetic.
-
+Required keys are `columns` and `rows`. Column `kind` is `text` or `metric`. Metric cells may be numbers, strings, null, or objects containing `mean` and one of `sd`, `se`, `ci95`, or `values`. Consecutive metric columns with the same optional `group` receive a shared header; `column_supergroup` adds one level above all metric columns. Use `scope: all` to rank across all rows, or `group` to rank within each row group. Set `rank_eligible: false` on an upper bound or oracle row that must not participate in emphasis. Set `observed: false` and add simulation assumptions whenever values are synthetic.
