@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate y' from x and compute objective fidelity plus clearly labeled visual proxies."""
 from __future__ import annotations
-import csv, hashlib, importlib.util, json, math, re, subprocess, sys
+import csv, importlib.util, json, math, re, subprocess, sys
 from collections import Counter
 from pathlib import Path
 from PIL import Image, ImageChops, ImageStat
@@ -9,7 +9,7 @@ from PIL import Image, ImageChops, ImageStat
 ROOT=Path(__file__).resolve().parents[2]
 HERE=Path(__file__).resolve().parent
 OUT=ROOT/"output/paperbench"
-RENDER=ROOT/"skills/paper-table/scripts/render_table.py"
+OPTIMIZE=ROOT/"skills/paper-table/scripts/optimize_layout.py"
 PDFTOPPM=Path("/Users/wlh/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override/pdftoppm")
 
 def load_contract_evaluator():
@@ -59,19 +59,22 @@ def visual_proxy(path: Path,reference_aspect=None):
     return {"contrast_proxy":round(contrast,4),"density_proxy":round(density,4),"aspect_match_proxy":round(aspect_match,4),"aspect_ratio":round(aspect,4)}
 def render(case_dir: Path,out: Path):
     out.mkdir(parents=True,exist_ok=True)
-    subprocess.run([sys.executable,str(RENDER),str(case_dir/"x.json"),"--out-dir",str(out)],check=True,capture_output=True,text=True)
+    optimized=subprocess.run([sys.executable,str(OPTIMIZE),str(case_dir/"x.json"),"--case",str(case_dir/"case.json"),"--out-dir",str(out),"--no-preview"],capture_output=True,text=True)
+    if optimized.returncode not in {0,2}: raise RuntimeError(optimized.stderr or optimized.stdout)
+    layout_report=json.loads((out/"layout-report.json").read_text())
     wrapper="\\documentclass{article}\n\\usepackage[margin=0.5in]{geometry}\n\\usepackage{booktabs}\n\\usepackage{fontspec}\n\\pagestyle{empty}\n\\begin{document}\n\\input{table.tex}\n\\end{document}\n"
     (out/"preview.tex").write_text(wrapper)
     subprocess.run(["latexmk","-xelatex","-interaction=nonstopmode","-halt-on-error","preview.tex"],cwd=out,check=True,capture_output=True,text=True)
     subprocess.run([str(PDFTOPPM),"-png","-r","180","-singlefile","preview.pdf","y_prime"],cwd=out,check=True,capture_output=True,text=True)
     autocrop(out/"y_prime.png")
+    return layout_report
 def main():
     evaluate_contract=load_contract_evaluator()
     rows=[]
     for case_dir in sorted((HERE/"cases").iterdir()):
         if not case_dir.is_dir(): continue
         case=json.loads((case_dir/"case.json").read_text()); x=json.loads((case_dir/"x.json").read_text()); out=OUT/case["id"]
-        render(case_dir,out); code=(out/"table.tex").read_text()
+        layout_report=render(case_dir,out); code=(out/"table.tex").read_text()
         expected_cells=[v for v in cells(x) if v is not None]; expected_nums=numbers(expected_cells)+source_body_numbers(x)
         body=code.split("\\midrule",1)[1].split("\\bottomrule",1)[0]; actual_nums=number_tokens(body)
         nr,np,hall=multiset_recall(expected_nums,actual_nums)
@@ -83,7 +86,9 @@ def main():
         ref=Image.open(case_dir/case["reference"]["image"]); ref_aspect=ref.width/ref.height
         contract_result=evaluate_contract(x,x,case)
         semantic_gate=contract_result["passed_scientific_gate"]
-        metrics={"id":case["id"],"input_tier":case["input_tier"],"numeric_recall":round(nr,4),"numeric_precision":round(np,4),"hallucinated_numeric_tokens":hall,"cell_recall":round(cr,4),"header_recall":round(hr,4),"render_success":True,"numeric_fidelity_gate":nr==1 and np==1 and hall==0,"semantic_contract_gate":semantic_gate,"full_contract_gate":contract_result["passed_full_contract"],"scientific_gate":nr==1 and np==1 and hall==0 and semantic_gate,"semantic_contract_categories":contract_result["category_counts"],"reference_visual_proxy":visual_proxy(case_dir/case["reference"]["image"]),"generated_visual_proxy":visual_proxy(out/"y_prime.png",ref_aspect)}
+        selected_layout=next(row for row in layout_report["candidates"] if row["id"]==layout_report["selected_candidate"])
+        scientific_gate=nr==1 and np==1 and hall==0 and semantic_gate
+        metrics={"id":case["id"],"input_tier":case["input_tier"],"numeric_recall":round(nr,4),"numeric_precision":round(np,4),"hallucinated_numeric_tokens":hall,"cell_recall":round(cr,4),"header_recall":round(hr,4),"render_success":True,"numeric_fidelity_gate":nr==1 and np==1 and hall==0,"semantic_contract_gate":semantic_gate,"full_contract_gate":contract_result["passed_full_contract"],"scientific_gate":scientific_gate,"layout_fit_gate":layout_report["status"]=="selected" and selected_layout["fits"],"selected_layout":layout_report["selected_candidate"],"table_width_pt":selected_layout["width_pt"],"target_width_pt":layout_report["target_width_pt"],"width_utilization":selected_layout["width_utilization"],"publication_readiness_gate":scientific_gate and layout_report["status"]=="selected" and selected_layout["fits"],"semantic_contract_categories":contract_result["category_counts"],"reference_visual_proxy":visual_proxy(case_dir/case["reference"]["image"]),"generated_visual_proxy":visual_proxy(out/"y_prime.png",ref_aspect)}
         ratings=json.loads((case_dir/"ratings.json").read_text()); metrics["aesthetic_rating_status"]=ratings["status"]
         if ratings.get("ratings"):
             dims=ratings["dimensions"]
@@ -91,7 +96,7 @@ def main():
         (out/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n"); rows.append(metrics)
     OUT.mkdir(parents=True,exist_ok=True); (OUT/"summary.json").write_text(json.dumps(rows,indent=2)+"\n")
     with (OUT/"summary.csv").open("w",newline="") as f:
-        fields=["id","input_tier","numeric_recall","numeric_precision","hallucinated_numeric_tokens","cell_recall","header_recall","render_success","numeric_fidelity_gate","semantic_contract_gate","scientific_gate","aesthetic_rating_status"]
+        fields=["id","input_tier","numeric_recall","numeric_precision","hallucinated_numeric_tokens","cell_recall","header_recall","render_success","numeric_fidelity_gate","semantic_contract_gate","scientific_gate","layout_fit_gate","selected_layout","table_width_pt","target_width_pt","width_utilization","publication_readiness_gate","aesthetic_rating_status"]
         w=csv.DictWriter(f,fieldnames=fields,extrasaction="ignore"); w.writeheader(); w.writerows(rows)
     print(json.dumps(rows,indent=2))
 if __name__=="__main__": main()

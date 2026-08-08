@@ -14,8 +14,8 @@ Build tables through a gated workflow. Preserve every observed value exactly; ne
 3. Resolve the inquiry plan. Ask at most three compact questions per round, store answers in the semantic contract, apply them to the next table draft, and never claim `verified` while a blocking field is unresolved.
 4. Offer a concrete visual proposal before rendering: row/column hierarchy, comparison baseline, emphasis rule, precision, uncertainty encoding, and width target.
 5. Create or revise a declarative table spec following `references/spec-schema.md`.
-6. Render with `scripts/render_table.py SPEC --out-dir OUTPUT`.
-7. Verify the artifact with `scripts/verify_table.py SPEC OUTPUT/table.tex`; verify that every claimed-used author answer changed its corresponding contract field or table encoding, treat numeric and semantic-contract checks as hard gates, then visually inspect the compiled PDF or HTML screenshot.
+6. Run `scripts/optimize_layout.py SPEC --out-dir OUTPUT --target-width-pt WIDTH` to measure typography candidates with XeLaTeX and render the best readable fit. Use `render_table.py` directly only when layout parameters are already fixed.
+7. Verify the artifact with `scripts/verify_table.py OUTPUT/selected-spec.json OUTPUT/table.tex`; require a passing physical-width gate, verify that every claimed-used author answer changed its corresponding contract field or table encoding, treat numeric and semantic-contract checks as hard gates, then visually inspect the PDF or PNG preview.
 8. For benchmark work, follow `references/evaluation.md`, preserve the input tier, and freeze `y'` before inspecting `y`.
 9. Return editable code, the rendered preview, the validation report, and any unresolved limitations.
 
@@ -50,6 +50,8 @@ Default to:
 
 Never use bolding to hide an unfavorable comparison, compare across incompatible settings, or calculate uncertainty from guessed sample sizes.
 
+Never silently scale an overflowing table. If every measured candidate fails, return the optimizer's structural feedback and split/reorganize the table before trying smaller text.
+
 ## Bundled resources
 
 - `references/spec-schema.md`: read when authoring or debugging a table spec.
@@ -57,5 +59,6 @@ Never use bolding to hide an unfavorable comparison, compare across incompatible
 - `references/design-rules.md`: read when choosing layout, emphasis, and table-vs-chart form.
 - `references/evaluation.md`: read when evaluating output quality or running the NeurIPS benchmark.
 - `scripts/analyze_data.py`: profile inputs and produce author questions plus a draft design plan.
+- `scripts/optimize_layout.py`: search readable typography candidates using real XeLaTeX width/height measurements and emit structural feedback when none fit.
 - `scripts/render_table.py`: deterministically render LaTeX and HTML from JSON.
 - `scripts/verify_table.py`: check that rendered numeric tokens match the spec.

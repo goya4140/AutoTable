@@ -2,6 +2,8 @@
 
 Score each artifact from 0 to 2 on six axes: numeric faithfulness, comparison validity, hierarchy, readability at target width, claim salience, and editability/reproducibility. Numeric fidelity, metric semantics, uncertainty semantics, comparison validity, and provenance are hard gates; visual scores cannot compensate for a scientific violation.
 
+Measure the natural tabular box with XeLaTeX and report target width, measured width, tabular body height, utilization, selected typography candidate, and fit status. Physical fit is a publication-readiness hard gate, but it is not a human aesthetic score. Inspect caption/notes in the compiled preview, reject silent whole-table scaling, and report structural redesign when bounded readable candidates all overflow.
+
 Use `benchmarks/paperbench/` for `(x,y)` generation evaluation. Record whether `x` contains raw runs, a canonical table, or cells recovered from the publication; never compare these tiers as if they test the same capability. Use `blind_protocol.py` to separate public inputs from private gold, freeze every output hash before revealing `y`, split by paper, and keep scientific fidelity as a hard gate. Disable network access for leaderboard generators.
 
 For per-run data, use `benchmarks/paperbench/aggregate_runs.py`. Preserve run IDs, reject duplicate seeds and groups with fewer than two independent runs, and retain the generated aggregation audit. Never manufacture per-seed values by inverting a published mean and uncertainty.

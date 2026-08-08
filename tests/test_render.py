@@ -22,3 +22,10 @@ def test_render_supports_nested_column_groups():
     assert "\\multicolumn{2}{c}{Dataset}" in tex
     assert "\\multicolumn{1}{c}{Split A}" in tex
     assert 'colspan="2">Dataset' in html
+
+def test_latex_tabular_fragment_excludes_float_wrapper():
+    m=load("render_fragment",ROOT/"skills/paper-table/scripts/render_table.py")
+    spec=json.loads((ROOT/"examples/main-results.json").read_text())
+    fragment=m.latex_tabular(spec)
+    assert "\\begin{tabular}" in fragment and "\\end{tabular}" in fragment
+    assert "\\begin{table}" not in fragment and "\\caption" not in fragment

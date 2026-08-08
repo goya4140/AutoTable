@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 """Render a Paper Table JSON spec to editable LaTeX and HTML."""
 from __future__ import annotations
-import argparse, html, json, math, re
+import argparse, html, json
 from pathlib import Path
 
 LATEX_ESC={"&":r"\&","%":r"\%","$":r"\$","#":r"\#","_":r"\_","{":r"\{","}":r"\}","~":r"\textasciitilde{}","^":r"\textasciicircum{}"}
+FONT_SIZES={"small":15,"footnotesize":13,"scriptsize":11}
+
+def layout(spec):
+    value={"font_size":"small","column_padding_pt":6.0,"row_stretch":1.0,**spec.get("layout",{})}
+    if value["font_size"] not in FONT_SIZES: raise ValueError("layout.font_size must be small, footnotesize, or scriptsize")
+    if not isinstance(value["column_padding_pt"],(int,float)) or not 1.5<=value["column_padding_pt"]<=10: raise ValueError("layout.column_padding_pt must be between 1.5 and 10")
+    if not isinstance(value["row_stretch"],(int,float)) or not .8<=value["row_stretch"]<=1.5: raise ValueError("layout.row_stretch must be between 0.8 and 1.5")
+    return value
+
+def layout_commands(spec):
+    value=layout(spec)
+    return [rf"\{value['font_size']}",rf"\setlength{{\tabcolsep}}{{{value['column_padding_pt']:g}pt}}",rf"\renewcommand{{\arraystretch}}{{{value['row_stretch']:g}}}"]
 def tex(s): return "".join(LATEX_ESC.get(c,c) for c in str(s))
 def mean(cell):
     if isinstance(cell,(int,float)): return float(cell)
@@ -67,11 +79,11 @@ def header_rows(cols, spec):
     html_rows.append("<tr>"+"".join(f"<th>{h}</th>" for h in html_leaf)+"</tr>")
     return latex,"".join(html_rows)
 
-def render(spec):
+def tabular(spec):
     ranking=ranks(spec); cols=spec["columns"]; rows=spec["rows"]; emph=spec.get("emphasis",{})
     aligns="l"+"r"*(len(cols)-1)
     latex_headers,html_headers=header_rows(cols,spec)
-    lines=[r"\begin{table}[t]",r"\centering",r"\small",f"\\caption{{{tex(spec.get('caption',''))}}}",f"\\label{{{tex(spec.get('label','tab:results'))}}}",f"\\begin{{tabular}}{{{aligns}}}",r"\toprule",*latex_headers,r"\midrule"]
+    lines=[f"\\begin{{tabular}}{{{aligns}}}",r"\toprule",*latex_headers,r"\midrule"]
     last_group=None
     html_rows=[]
     for i,row in enumerate(rows):
@@ -85,9 +97,19 @@ def render(spec):
             cells.append(t); hc.append(f'<td class="r{rank or 0}">{html.escape(raw)}</td>')
         lines.append(" & ".join(cells)+r" \\"); html_rows.append("<tr>"+"".join(hc)+"</tr>"); last_group=group
     lines += [r"\bottomrule",r"\end{tabular}"]
+    return lines,html_headers,html_rows
+
+def latex_tabular(spec):
+    return "\n".join(tabular(spec)[0])+"\n"
+
+def render(spec):
+    value=layout(spec)
+    tabular_lines,html_headers,html_rows=tabular(spec)
+    lines=[r"\begin{table}[t]",r"\centering",*layout_commands(spec),f"\\caption{{{tex(spec.get('caption',''))}}}",f"\\label{{{tex(spec.get('label','tab:results'))}}}",*tabular_lines]
     for note in spec.get("notes",[]): lines.append(r"\par\vspace{2pt}\begin{minipage}{0.8\linewidth}\footnotesize "+tex(note)+r"\end{minipage}")
     lines.append(r"\end{table}")
-    css="body{font-family:Georgia,serif;margin:32px;color:#171717}table{border-collapse:collapse;font-variant-numeric:tabular-nums}th,td{padding:7px 12px;text-align:right}th:first-child,td:first-child{text-align:left}thead{border-top:2px solid;border-bottom:1px solid}.super th,.groups th{text-align:center;padding-top:3px;padding-bottom:3px}.groups th:not(:first-child){border-bottom:1px solid #777}tbody{border-bottom:2px solid}.r1{font-weight:700}.r2{text-decoration:underline}caption{font-weight:600;margin-bottom:10px}.notes{font-size:.86rem;margin-top:8px;max-width:900px}"
+    horizontal=value["column_padding_pt"]*1.333; vertical=3.5*value["row_stretch"]*1.333
+    css=f"body{{font-family:Georgia,serif;margin:32px;color:#171717}}table{{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:{FONT_SIZES[value['font_size']]}px}}th,td{{padding:{vertical:.2f}px {horizontal:.2f}px;text-align:right}}th:first-child,td:first-child{{text-align:left}}thead{{border-top:2px solid;border-bottom:1px solid}}.super th,.groups th{{text-align:center;padding-top:3px;padding-bottom:3px}}.groups th:not(:first-child){{border-bottom:1px solid #777}}tbody{{border-bottom:2px solid}}.r1{{font-weight:700}}.r2{{text-decoration:underline}}caption{{font-weight:600;margin-bottom:10px}}.notes{{font-size:.86rem;margin-top:8px;max-width:900px}}"
     note=" ".join(html.escape(n) for n in spec.get("notes",[]))
     page=f'<!doctype html><meta charset="utf-8"><style>{css}</style><table><caption>{html.escape(spec.get("caption",""))}</caption><thead>{html_headers}</thead><tbody>{"".join(html_rows)}</tbody></table><div class="notes">{note}</div>'
     return "\n".join(lines)+"\n",page

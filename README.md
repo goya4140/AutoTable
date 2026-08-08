@@ -41,7 +41,7 @@ python benchmarks/paperbench/evaluate.py
 python benchmarks/paperbench/visualize.py
 ```
 
-Outputs appear in `output/paperbench/`. The current seed run passes both numeric and semantic-contract gates on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. PaperTable-Controlled detects all 27 deterministic scientific/structural perturbations; InquiryBench contains 32 evaluator-separated missing-information scenarios plus an executable simulated-author runner that verifies answers are reflected in the final table.
+Outputs appear in `output/paperbench/`. The current seed run passes numeric, semantic-contract, and XeLaTeX physical-width gates on all four cases: numeric recall, numeric precision, cell recall, and header recall are all `1.00`, with zero hallucinated numeric tokens. Three cases retain the comfortable `small` layout; the widest RankUp case fits at 459.2/469 pt using the bounded `footnote-tight` candidate. PaperTable-Controlled detects all 27 deterministic scientific/structural perturbations; InquiryBench contains 32 evaluator-separated missing-information scenarios plus an executable simulated-author runner that verifies answers are reflected in the final table.
 
 The dashboard also shows a single model-based pilot visual rubric so the full reporting path is testable. It is labeled as **not human-validated**. Publication-quality aesthetic results require at least three order-randomized human ratings per pair following [`protocol.md`](benchmarks/paperbench/protocol.md).
 
@@ -49,9 +49,11 @@ The dashboard also shows a single model-based pilot visual rubric so the full re
 
 ```bash
 python skills/paper-table/scripts/analyze_data.py examples/main-results.csv --json
-python skills/paper-table/scripts/render_table.py examples/main-results.json --out-dir output/example
-python skills/paper-table/scripts/verify_table.py examples/main-results.json output/example/table.tex
+python skills/paper-table/scripts/optimize_layout.py examples/main-results.json --out-dir output/example --target-width-pt 469
+python skills/paper-table/scripts/verify_table.py output/example/selected-spec.json output/example/table.tex
 ```
+
+The optimizer compiles bounded typography candidates, measures the real LaTeX box, and produces `selected-spec.json`, editable LaTeX/HTML, PDF/PNG previews, `layout-report.json`, and structural redesign advice when no readable candidate fits. It never silently inserts whole-table scaling.
 
 The Skill actively asks for missing repeats, units, metric direction, sample size, comparison design, and intended claim. Simulated variation must be labeled and cannot be used as observed evidence.
 
