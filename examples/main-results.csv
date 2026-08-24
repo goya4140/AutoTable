@@ -1,6 +1,0 @@
-group,method,accuracy,f1,seed
-Prior work,Baseline,82.1,79.8,1
-Prior work,Baseline,82.5,80.1,2
-Ours,PaperTable,85.4,83.2,1
-Ours,PaperTable,85.8,83.5,2
-

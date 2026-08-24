@@ -1,9 +1,9 @@
 __pycache__/
-*.pyc
-.DS_Store
+*.py[cod]
+.pytest_cache/
 .venv/
+dist/
+build/
+*.egg-info/
 output/
 tmp/
-benchmarks/neurips-tables/cache/
-benchmarks/neurips-tables/materialized/
-benchmarks/external/cache/

@@ -1,0 +1,11 @@
+{
+  "title": "Quality and efficiency comparison",
+  "label": "tab:quality-efficiency",
+  "metrics": {
+    "accuracy": {"label": "Acc.", "direction": "max", "unit": "%", "precision": 1, "priority": 1},
+    "latency_ms": {"label": "Latency", "direction": "min", "unit": "ms", "precision": 1, "priority": 2},
+    "memory_gb": {"label": "Memory", "direction": "min", "unit": "GB", "precision": 1, "priority": 3}
+  },
+  "selection": {"metrics": ["accuracy", "latency_ms", "memory_gb"]}
+}
+
