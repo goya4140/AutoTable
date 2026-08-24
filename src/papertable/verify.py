@@ -29,7 +29,14 @@ def verify_spec(spec: dict[str, Any]) -> dict[str, Any]:
             if len(cell.get("values", [])) != cell.get("n"):
                 errors.append(f"cell {row_index},{column_index} loses value lineage")
             column = columns[column_index]
-            if cell.get("method") != row.get("method") or cell.get("metric") != column.get("metric"):
+            if spec.get("orientation") == "datasets_rows":
+                matches = (
+                    cell.get("method") == column.get("method")
+                    and cell.get("metric") == row.get("metric")
+                    and cell.get("dataset") == row.get("dataset")
+                )
+            else:
+                matches = cell.get("method") == row.get("method") and cell.get("metric") == column.get("metric")
+            if not matches:
                 errors.append(f"cell {row_index},{column_index} does not match its row/column")
     return {"valid": not errors, "errors": errors}
-

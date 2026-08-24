@@ -1,145 +1,110 @@
-# PaperTable（精简版）
+# PaperTable — Main Experiment Table Skill
 
 [![Tests](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml)
 
-把各种实验结果稳定地变成**主实验表格 + 对应 caption**。核心原则只有三个：
+把 CSV / TSV / JSON / JSONL 实验数据生成可投稿的 **主实验表 + caption**。这个仓库现在首先是一个 Codex Skill，其次才是 CLI：Agent 负责理解科学比较关系，确定表格布局；确定性流水线负责聚合、排名、渲染和校验，不改写实验数字。
 
-1. 先把 CSV / TSV / JSON / JSONL 统一成 observation；
-2. 聚合与表格设计分离，并保留每个数字的来源；
-3. LaTeX、HTML 和 caption 从同一个 table spec 生成。
+## 真实生成效果
 
-## 生成效果
+下列图片由仓库内的 gallery 数据通过完整流水线生成，再从 `preview.pdf` 渲染得到，不是手工画表。
 
-下面的预览由仓库内的 [`examples/main_results.csv`](examples/main_results.csv) 和
-[`examples/main_table.json`](examples/main_table.json) 通过真实流水线生成，而非手工绘制。
+### 模型 / 方法 / 可训练参数分层
 
-![PaperTable 主实验表格生成效果](docs/assets/example-main-table.png)
+![Hierarchical method and budget table](docs/assets/gallery/hierarchical-method-budget.png)
 
-> **自动生成的 caption：** Main comparison of 3 methods on CIFAR-10, CIFAR-100 using Accuracy, F1, Latency. Values report mean ± sample standard deviation over 2 runs. Arrows indicate whether higher or lower values are better. Best and second-best results in each column are bolded and underlined, respectively.
+### 数据集作为行，系统作为列
 
-当前回归测试覆盖宽表、嵌套 JSON、method/dataset/metric 筛选、主表列预算、宽表 score 指标和重复 run 拒绝。GitHub Actions 会在每次 push 和 pull request 时运行完整测试。
+![Transposed benchmark table](docs/assets/gallery/transposed-benchmark.png)
 
-本仓库刻意不包含论文写作、图表、benchmark 爬取、VLM 美学评分或自动显著性检验。它只解决一条短而可验证的生产链：
+### 质量与训练成本并列表达
+
+![Quality and efficiency table](docs/assets/gallery/quality-efficiency.png)
+
+## 为什么不只有一个“万能表”
+
+我们检查了 [BERT](https://aclanthology.org/N19-1423/)、[LoRA](https://openreview.net/forum?id=nZeVKeeFYf9)、[Vision Transformer](https://openreview.net/forum?id=YicbFdNTTy)、[Transformer](https://papers.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)、[FlashAttention](https://papers.neurips.cc/paper_files/paper/2022/hash/67d57c32e20fd0a7a302cb81d36e40d5-Abstract-Conference.html)、[ResNet](https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html)、[MAE](https://openaccess.thecvf.com/content/CVPR2022/html/He_Masked_Autoencoders_Are_Scalable_Vision_Learners_CVPR_2022_paper.html) 和 [ReAct](https://openreview.net/forum?id=WE_vluYUL-X) 的主表。跨论文稳定出现的不是一套装饰风格，而是一个语义骨架：
 
 ```text
-experiment files
-      ↓ ingest
-canonical observations
-      ↓ aggregate
-auditable mean / sample SD / n
-      ↓ plan
-main-table semantic spec
-      ↓ render
-table.tex + table.html + caption.txt
+[system identity / protocol / budget] | [measured evidence] | [optional cost or aggregate]
 ```
 
-## 30 秒开始
+因此 PaperTable 将 `Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开，并根据证据结构选择方法作为行或数据集作为行。完整观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
 
-Python 3.10+，运行时没有第三方依赖。
+## 六类可复用主表
+
+| Template | 适用的科学比较 | 关键表达 |
+|---|---|---|
+| `benchmark-wide` | 多任务、多指标 | 方法为行，dataset × metric 多级表头 |
+| `hierarchical-method-budget` | PEFT / 微调方法 | model、method、trainable params 分列 |
+| `transposed-benchmark` | 数据集多、焦点系统少 | dataset 为行，system 为列，可按预训练数据分组 |
+| `quality-efficiency` | 质量—成本权衡 | quality、time/FLOPs、speedup 独立呈现 |
+| `scaled-variants` | 模型规模 / 深度消融 | family、variant、depth、params 分列 |
+| `compact-regime-comparison` | 少量任务与多种方法机制 | prompting / acting / combined / oracle 分块 |
+
+选择规则见 [template selection](references/template-selection.md)，每个模板都是可覆盖的 JSON config，没有隐藏的渲染分支。
+
+## 作为 Skill 使用
+
+把仓库放入 Codex skills 目录：
+
+```bash
+git clone https://github.com/goya4140/PaperTable.git \
+  ~/.codex/skills/main-experiment-table
+```
+
+然后在 Codex 中直接说：
+
+```text
+$main-experiment-table 读取 results.csv，以参数效率为核心设计主实验表，并生成 LaTeX 和 caption。
+```
+
+Skill 会先识别比较维度和科学口径，再选择模板。具体行为和不可越过的数据约束定义在 [SKILL.md](SKILL.md)。
+
+## CLI 快速开始
+
+Python 3.10+，运行时无第三方 Python 依赖。
+
+```bash
+python scripts/generate_main_table.py list-templates
+
+python scripts/generate_main_table.py generate \
+  examples/gallery/hierarchical.csv \
+  --template hierarchical-method-budget \
+  --config examples/gallery/hierarchical.json \
+  --out output/main-table
+```
+
+也可以安装 CLI：
 
 ```bash
 python -m pip install -e .
-papertable generate examples/main_results.csv \
-  --config examples/main_table.json \
-  --out output/main-table
+papertable generate results.csv --template benchmark-wide --config table.json --out output/main-table
 ```
 
-也可以不安装：
+`--template` 可以是内置 template ID，也可以是自定义 JSON 路径。配置会深度覆盖模板；输入契约见 [input contract](references/input-contract.md)，布局字段见 [template schema](references/template-schema.md)。
 
-```bash
-PYTHONPATH=src python -m papertable generate examples/main_results.csv \
-  --config examples/main_table.json \
-  --out output/main-table
+## 产物与保证
+
+```text
+experiment files → observations → aggregates → semantic table spec
+                                              ├─ table.tex
+                                              ├─ table.html
+                                              ├─ caption.txt
+                                              └─ manifest.json
 ```
 
-产物包括：
+- `observations.json` 保留标准化后的每个观测和来源。
+- `aggregates.json` 保留 mean、sample SD、`n`、run IDs 和身份维度。
+- `table-spec.json` 是与 LaTeX / HTML 解耦的语义中间层。
+- `manifest.json` 列出警告、被省略列和校验结果；只有 `verification.valid = true` 才是有效生成。
+- 缺失值始终渲染为 `--` 并排除在排名之外；系统不会伪造误差、显著性或未报告实验。
 
-| 文件 | 用途 |
-|---|---|
-| `observations.json` | 所有输入的统一长格式 |
-| `aggregates.json` | mean / sample SD / n / run IDs / sources |
-| `table-spec.json` | 与渲染器解耦的语义表格 |
-| `table.tex` | booktabs 风格、可编辑 LaTeX |
-| `table.html` | 浏览器预览 |
-| `caption.txt` | 与表格内容同步的 caption |
-| `preview.tex` | 可直接编译的最小预览文档 |
-| `manifest.json` | 数量、警告、遗漏列和产物清单 |
-
-LaTeX 只需要在论文导言区加载：
-
-```latex
-\usepackage{booktabs}
-```
-
-本地安装 TeX 时可预览：
+本地有 TeX 时，可编译 `preview.tex`：
 
 ```bash
 cd output/main-table
 latexmk -xelatex preview.tex
 ```
-
-## 支持的输入
-
-### 宽表 CSV / TSV
-
-```csv
-group,method,dataset,seed,accuracy,f1,latency_ms
-Baselines,ERM,CIFAR-10,1,91.2,90.8,12.4
-Baselines,ERM,CIFAR-10,2,91.6,91.0,12.1
-Ours,AutoResearch,CIFAR-10,1,93.1,92.7,10.2
-```
-
-非身份列中的数值会被当作 metric。存在 `epoch`、`step` 或其他数值元数据时，请在 config 中显式写：
-
-```json
-{"input": {"metric_columns": ["accuracy", "f1", "latency_ms"]}}
-```
-
-### 长表 CSV / JSON / JSONL
-
-每行使用 `method, dataset, metric, value`；可选 `run/seed/fold, setting, group`。
-
-### 嵌套 JSON
-
-```json
-{
-  "ERM": {"CIFAR-10": {"accuracy": [91.2, 91.6]}},
-  "AutoResearch": {"CIFAR-10": {"accuracy": [93.1, 93.3]}}
-}
-```
-
-嵌套顺序固定为 `method → dataset → metric → scalar/list-of-runs`。不同输入文件可以在同一次命令中合并。
-
-## 配置的最小语义
-
-```json
-{
-  "title": "Main results",
-  "label": "tab:main",
-  "claim": "Our method improves quality while reducing latency.",
-  "metrics": {
-    "accuracy": {"label": "Accuracy", "direction": "max", "unit": "%", "precision": 1, "priority": 1},
-    "latency_ms": {"label": "Latency", "direction": "min", "unit": "ms", "precision": 1, "priority": 2}
-  },
-  "selection": {
-    "methods": ["ERM", "AutoResearch"],
-    "datasets": ["CIFAR-10"],
-    "metrics": ["accuracy", "latency_ms"],
-    "max_columns": 8
-  }
-}
-```
-
-- `direction` 决定箭头和 best/second；建议显式填写。缺失时系统会保守推断并在 manifest 中报警。
-- `priority` 只在设置 `max_columns` 时用于主表压缩；所有被省略的列都会进入 manifest，绝不静默丢失。
-- 重复实验使用 sample SD；只有一个值时不虚构误差。
-- 本版本不自动产生 p-value、置信区间或显著性星号。
-
-## 模板
-
-主实验常见形态已整理在 [模板库](docs/TEMPLATE_GALLERY.md)：多数据集性能、质量—效率、不同规模/设置、鲁棒性，以及单数据集紧凑表。模板只是 config，不锁死代码路径。
-
-架构与扩展边界见 [ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
 ## 测试
 

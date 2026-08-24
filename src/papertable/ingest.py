@@ -10,11 +10,17 @@ from .model import Observation
 _IDENTITY_KEYS = {
     "method", "model", "system", "approach", "dataset", "benchmark", "task",
     "setting", "split", "seed", "run", "run_id", "fold", "group", "family",
-    "metric", "value", "source", "epoch", "step", "n",
+    "metric", "value", "source", "epoch", "step", "n", "backbone",
+    "pretrain_data", "training_data", "trainable_params", "params", "depth",
+    "regime", "protocol", "source_type", "extra_data",
 }
 _METHOD_KEYS = ("method", "model", "system", "approach")
 _DATASET_KEYS = ("dataset", "benchmark", "task")
 _RUN_KEYS = ("run", "run_id", "seed", "fold")
+_DESCRIPTOR_KEYS = (
+    "model", "backbone", "pretrain_data", "training_data", "trainable_params",
+    "params", "depth", "regime", "protocol", "source_type", "extra_data",
+)
 
 
 class InputError(ValueError):
@@ -52,8 +58,15 @@ def _read(path: Path) -> Any:
 
 
 def _row_observations(
-    rows: list[dict[str, Any]], source: str, metric_keys: list[str] | None
+    rows: list[dict[str, Any]], source: str, config: dict[str, Any]
 ) -> list[Observation]:
+    metric_keys = config.get("input", {}).get("metric_columns")
+    layout = config.get("layout", {})
+    field_defs = list(layout.get("row_fields", [])) + list(layout.get("column_fields", []))
+    field_keys = [item if isinstance(item, str) else item["key"] for item in field_defs]
+    if layout.get("column_group_field"):
+        field_keys.append(layout["column_group_field"])
+    field_keys += list(config.get("input", {}).get("dimensions", []))
     observations: list[Observation] = []
     for index, row in enumerate(rows, 1):
         if not isinstance(row, dict):
@@ -61,6 +74,11 @@ def _row_observations(
         method = _first(row, _METHOD_KEYS)
         if method is None:
             raise InputError(f"{source}: row {index} has no method/model/system field")
+        dimensions = {
+            key: str(row[key]) for key in dict.fromkeys((*_DESCRIPTOR_KEYS, *field_keys))
+            if key != "method" and row.get(key) not in (None, "")
+            and not (key == "model" and "method" not in row)
+        }
         common = {
             "method": str(method),
             "dataset": str(_first(row, _DATASET_KEYS, "Overall")),
@@ -68,6 +86,7 @@ def _row_observations(
             "setting": str(row["setting"]) if row.get("setting") not in (None, "") else None,
             "group": str(_first(row, ("group", "family"))) if _first(row, ("group", "family")) is not None else None,
             "source": source,
+            "dimensions": dimensions,
         }
         # Long format: one metric/value pair per row.
         if row.get("metric") not in (None, "") and _first(row, ("value", "score")) is not None:
@@ -130,7 +149,6 @@ def _nested_observations(data: dict[str, Any], source: str) -> list[Observation]
 
 def load_inputs(paths: list[str | Path], config: dict[str, Any] | None = None) -> list[Observation]:
     config = config or {}
-    metric_keys = config.get("input", {}).get("metric_columns")
     all_observations: list[Observation] = []
     for raw_path in paths:
         path = Path(raw_path)
@@ -141,7 +159,7 @@ def load_inputs(paths: list[str | Path], config: dict[str, Any] | None = None) -
         if isinstance(data, dict) and isinstance(data.get("results"), list):
             data = data["results"]
         if isinstance(data, list):
-            all_observations.extend(_row_observations(data, source, metric_keys))
+            all_observations.extend(_row_observations(data, source, config))
         elif isinstance(data, dict):
             all_observations.extend(_nested_observations(data, source))
         else:
