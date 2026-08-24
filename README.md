@@ -1,10 +1,23 @@
 # PaperTable（精简版）
 
+[![Tests](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml)
+
 把各种实验结果稳定地变成**主实验表格 + 对应 caption**。核心原则只有三个：
 
 1. 先把 CSV / TSV / JSON / JSONL 统一成 observation；
 2. 聚合与表格设计分离，并保留每个数字的来源；
 3. LaTeX、HTML 和 caption 从同一个 table spec 生成。
+
+## 生成效果
+
+下面的预览由仓库内的 [`examples/main_results.csv`](examples/main_results.csv) 和
+[`examples/main_table.json`](examples/main_table.json) 通过真实流水线生成，而非手工绘制。
+
+![PaperTable 主实验表格生成效果](docs/assets/example-main-table.png)
+
+> **自动生成的 caption：** Main comparison of 3 methods on CIFAR-10, CIFAR-100 using Accuracy, F1, Latency. Values report mean ± sample standard deviation over 2 runs. Arrows indicate whether higher or lower values are better. Best and second-best results in each column are bolded and underlined, respectively.
+
+当前回归测试覆盖宽表、嵌套 JSON、method/dataset/metric 筛选、主表列预算、宽表 score 指标和重复 run 拒绝。GitHub Actions 会在每次 push 和 pull request 时运行完整测试。
 
 本仓库刻意不包含论文写作、图表、benchmark 爬取、VLM 美学评分或自动显著性检验。它只解决一条短而可验证的生产链：
 
