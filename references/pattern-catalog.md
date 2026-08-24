@@ -66,6 +66,62 @@ This catalog records reusable structure, not visual imitation. The papers were c
 - Data expression: compact scalar scores, citation markers attached to external systems, and bold emphasis only within the intended comparison.
 - Reusable lesson: use `compact-regime-comparison`; a supervised oracle must not visually blend into prompting baselines.
 
+## 9. Family bands and scoped ranking — ToolArtist
+
+- Paper: [ToolArtist: Tool-Using Unified Multimodal Models for Agentic Image Generation](https://arxiv.org/abs/2608.04436) — arXiv preprint, 2026 (not a conference publication at catalog time).
+- Observed table: Table 1, WISE and WorldGenBench-Humanities.
+- Structure: full-width gray bands divide proprietary, general image-generation, unified multimodal, and agentic systems; two benchmark blocks each end in an average; the proposed row receives a restrained background shade.
+- Data expression: dashes preserve unavailable source values. Bold and underline rank only non-proprietary systems, and ties share the same marker.
+- Reusable lesson: use `family-banded-benchmark`; method-family bands, focal-row shading, and scoped numerical ranking are three separate channels.
+
+## 10. Resource identity beside performance — BLIP-2
+
+- Paper: [BLIP-2](https://proceedings.mlr.press/v202/li23q.html) — ICML 2023.
+- Observed tables: Tables 1–2, zero-shot vision-language results.
+- Structure: trainable parameters, total parameters, and open-source status sit beside benchmark blocks; BLIP-2 variants form a separate proposed-method block.
+- Data expression: point estimates and unavailable cells coexist; resource evidence supports the efficiency claim without replacing task scores.
+- Reusable lesson: resource and openness fields belong to system identity/evidence, not a method-name suffix.
+
+## 11. Published versus reproduced provenance — LLaVA
+
+- Paper: [Visual Instruction Tuning](https://papers.neurips.cc/paper_files/paper/2023/hash/6dcf277ea32ce3288914faf369fe6de0-Abstract-Conference.html) — NeurIPS 2023.
+- Observed table: Table 7, ScienceQA.
+- Structure: a full-width separator distinguishes representative literature values from the authors' own experiment runs; category columns lead to an overall score.
+- Data expression: a dagger marks text-only GPT-4 evaluated by the authors; the caption defines category abbreviations and provenance.
+- Reusable lesson: values with different sources/protocols need visible blocks or fields even when their metric names match.
+
+## 12. Absolute value plus inline gain — ConvNeXt
+
+- Paper: [A ConvNet for the 2020s](https://openaccess.thecvf.com/content/CVPR2022/html/Liu_A_ConvNet_for_the_2020s_CVPR_2022_paper.html) — CVPR 2022.
+- Observed table: supplementary Table 12, paired Swin/ConvNeXt throughput comparisons.
+- Structure: matched model scales appear as adjacent pairs with image size, FLOPs, throughput, and accuracy.
+- Data expression: throughput keeps its absolute value and appends an inline relative gain such as `1943.5 (+47%)`; slash-separated accuracy distinguishes two training-data regimes.
+- Reusable lesson: use `auxiliary.delta` only after selecting an explicit matched baseline, and preserve the absolute measurement.
+
+## 13. Dedicated improvement row and test declaration — BirDRec
+
+- Paper: [BirDRec](https://papers.neurips.cc/paper_files/paper/2023/file/08309150af77fc7c79ade0bf8bb6a562-Abstract-Conference.html) — NeurIPS 2023.
+- Observed table: Table 3, robust sequential recommendation.
+- Structure: dataset blocks contain HR, NDCG, and MRR metrics; a final `Improv.` row reports gain over the runner-up.
+- Data expression: the runner-up is marked separately, and the caption declares the relative-improvement baseline and paired test threshold.
+- Reusable lesson: a delta may deserve its own evidence row when it is central across many columns; baseline and test semantics belong in the caption.
+
+## 14. Repeated-run value grammar — MGM
+
+- Paper: [Generative Modeling for Multi-task Visual Learning](https://proceedings.mlr.press/v162/bao22c.html) — ICML 2022.
+- Observed table: Table 2, NYUv2 and Tiny-Taskonomy.
+- Structure: dataset and labeled-data regimes organize several task metrics with mixed directions.
+- Data expression: mean ± standard deviation is reported from five runs; arrows disambiguate higher/lower-is-better metrics.
+- Reusable lesson: uncertainty type, run count, precision, and direction form one value contract and must be generated together.
+
+## 15. Pairwise preference outcomes — VCB
+
+- Paper: [Don't Forget Your Reward Values](https://aclanthology.org/2024.emnlp-main.976/) — EMNLP 2024.
+- Observed tables: Tables 2–5, automatic, human, and out-of-distribution evaluation.
+- Structure: datasets group `Win`, `Tie`, and `Lose` instead of compressing preference into a single score.
+- Data expression: the evaluation description reports 100 sampled prompts and two annotators for the human study.
+- Reusable lesson: preference evidence is distributional; preserve Win/Tie/Lose and disclose sample/annotator counts rather than inventing a scalar average.
+
 ## Cross-paper synthesis
 
 The recurring grammar is:

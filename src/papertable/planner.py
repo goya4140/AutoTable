@@ -123,6 +123,56 @@ def _apply_column_budget(
     )
 
 
+def _row_matches(row: dict[str, Any], selector: dict[str, Any]) -> bool:
+    values = {"method": row.get("method"), "group": row.get("group"), **row.get("identity", {})}
+    return all(values.get(key) == value for key, value in selector.items())
+
+
+def _apply_auxiliary_values(
+    rows: list[dict[str, Any]], columns: list[dict[str, Any]], config: dict[str, Any],
+    orientation: str,
+) -> None:
+    delta = config.get("auxiliary", {}).get("delta")
+    if not delta:
+        return
+    if orientation != "methods_rows":
+        raise ValueError("auxiliary.delta currently requires layout.orientation='methods_rows'")
+    baseline_selector = delta.get("baseline")
+    target_selectors = delta.get("targets", [])
+    if not isinstance(baseline_selector, dict) or not baseline_selector:
+        raise ValueError("auxiliary.delta.baseline must be a non-empty identity selector")
+    if not target_selectors or not all(isinstance(item, dict) and item for item in target_selectors):
+        raise ValueError("auxiliary.delta.targets must contain identity selectors")
+    baselines = [row for row in rows if _row_matches(row, baseline_selector)]
+    if len(baselines) != 1:
+        raise ValueError(f"auxiliary.delta baseline matched {len(baselines)} rows; expected exactly one")
+    targets = [row for row in rows if any(_row_matches(row, item) for item in target_selectors)]
+    if not targets:
+        raise ValueError("auxiliary.delta targets matched no rows")
+    kind = delta.get("kind", "absolute")
+    if kind not in {"absolute", "relative_percent"}:
+        raise ValueError("auxiliary.delta.kind must be 'absolute' or 'relative_percent'")
+    precision = int(delta.get("precision", 2))
+    baseline = baselines[0]
+    for target in targets:
+        for column_index, _ in enumerate(columns):
+            target_cell = target["cells"][column_index]
+            baseline_cell = baseline["cells"][column_index]
+            if target_cell is None or baseline_cell is None:
+                continue
+            difference = target_cell["mean"] - baseline_cell["mean"]
+            if kind == "relative_percent":
+                if baseline_cell["mean"] == 0:
+                    continue
+                difference = difference / abs(baseline_cell["mean"]) * 100
+            target_cell["auxiliary"] = {
+                "kind": kind,
+                "value": difference,
+                "precision": precision,
+                "baseline": baseline.get("method"),
+            }
+
+
 def _plan_methods_rows(
     aggregates: list[Aggregate], methods: list[str], datasets: list[str], metrics: list[str],
     settings: list[str | None], metric_meta: dict[str, Any], config: dict[str, Any],
@@ -252,18 +302,25 @@ def plan_main_table(aggregates: list[Aggregate], config: dict[str, Any] | None =
         )
     else:
         raise ValueError(f"unsupported layout.orientation: {orientation}")
+    _apply_auxiliary_values(rows, columns, config, orientation)
     if omitted:
         warnings.append(f"{len(omitted)} columns were omitted by selection.max_columns")
-    return {
-        "schema_version": "paper-table-spec-v2", "template_id": config.get("template_id", "custom"),
+    spec = {
+        "schema_version": "paper-table-spec-v3", "template_id": config.get("template_id", "custom"),
         "kind": "main", "orientation": orientation, "title": config.get("title", "Main results"),
         "label": config.get("label", "tab:main-results"), "claim": config.get("claim"),
         "methods": methods, "datasets": datasets, "metrics": metric_meta,
         "identity_columns": identity_columns, "columns": columns, "rows": rows,
         "emphasis": config.get("emphasis", {"best": "bold", "second": "underline"}),
+        "comparison": config.get("comparison", {}), "style": config.get("style", {}),
+        "auxiliary": config.get("auxiliary", {}),
         "caption": config.get("caption"), "notes": list(config.get("notes", [])),
         "omitted_columns": omitted, "warnings": warnings,
     }
+    ranking_entities = rows if orientation == "methods_rows" else columns
+    if spec["emphasis"].get("best") and not any(_rank_eligible(entity, spec) for entity in ranking_entities):
+        raise ValueError("comparison ranking scope selects no displayed systems")
+    return spec
 
 
 def emphasis_map(spec: dict[str, Any]) -> dict[tuple[int, int], str]:
@@ -272,15 +329,36 @@ def emphasis_map(spec: dict[str, Any]) -> dict[tuple[int, int], str]:
         for column_index, column in enumerate(spec["columns"]):
             values = [(row_index, row["cells"][column_index]["mean"])
                       for row_index, row in enumerate(spec["rows"])
-                      if row["cells"][column_index] is not None]
+                      if row["cells"][column_index] is not None and _rank_eligible(row, spec)]
             direction = spec["metrics"][column["metric"]]["direction"]
             _mark_distinct(output, values, direction, spec, lambda index: (index, column_index))
     else:
         for row_index, row in enumerate(spec["rows"]):
-            values = [(column_index, cell["mean"]) for column_index, cell in enumerate(row["cells"]) if cell is not None]
+            values = [
+                (column_index, cell["mean"])
+                for column_index, cell in enumerate(row["cells"])
+                if cell is not None and _rank_eligible(spec["columns"][column_index], spec)
+            ]
             direction = spec["metrics"][row["metric"]]["direction"]
             _mark_distinct(output, values, direction, spec, lambda index: (row_index, index))
     return output
+
+
+def _rank_eligible(entity: dict[str, Any], spec: dict[str, Any]) -> bool:
+    comparison = spec.get("comparison", {})
+    group = entity.get("group") or entity.get("group_label")
+    method = entity.get("method")
+    include_groups = comparison.get("rank_include_groups")
+    exclude_groups = comparison.get("rank_exclude_groups", [])
+    include_methods = comparison.get("rank_include_methods")
+    exclude_methods = comparison.get("rank_exclude_methods", [])
+    if include_groups is not None and group not in include_groups:
+        return False
+    if group in exclude_groups:
+        return False
+    if include_methods is not None and method not in include_methods:
+        return False
+    return method not in exclude_methods
 
 
 def _mark_distinct(

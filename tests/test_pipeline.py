@@ -160,6 +160,8 @@ def test_transposed_columns_keep_groups_contiguous(tmp_path: Path) -> None:
         ("quality_efficiency", "quality-efficiency"),
         ("compact", "compact-regime-comparison"),
         ("scaled", "scaled-variants"),
+        ("family_banded", "family-banded-benchmark"),
+        ("statistical_delta", "benchmark-wide"),
     ],
 )
 def test_gallery_examples_generate_valid_specs(
@@ -178,11 +180,84 @@ def test_all_research_backed_templates_are_discoverable() -> None:
     assert {item["id"] for item in available_templates()} == {
         "benchmark-wide",
         "compact-regime-comparison",
+        "family-banded-benchmark",
         "hierarchical-method-budget",
         "quality-efficiency",
         "scaled-variants",
         "transposed-benchmark",
     }
+
+
+def test_family_bands_scoped_ranking_and_focal_highlight(tmp_path: Path) -> None:
+    gallery = Path(__file__).parents[1] / "examples" / "gallery"
+    config = json.loads((gallery / "family_banded.json").read_text(encoding="utf-8"))
+    manifest = generate(
+        [gallery / "family_banded.csv"], tmp_path / "family-banded", config
+    )
+    latex = (tmp_path / "family-banded/table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / "family-banded/table.html").read_text(encoding="utf-8")
+    caption = (tmp_path / "family-banded/caption.txt").read_text(encoding="utf-8")
+
+    assert manifest["ranking_scope"] == "non-proprietary systems"
+    assert latex.count(r"\rowcolor[HTML]{EFEFEF} \multicolumn") == 4
+    assert r"Aurora-Pro & 0.91" in latex
+    assert r"Aurora-Pro & \textbf{0.91}" not in latex
+    assert r"\rowcolor[HTML]{E8F1FF} PaperTable-Agent & \textbf{0.88}" in latex
+    assert "--" in latex
+    assert 'class="group-band"' in html
+    assert "among non-proprietary systems" in caption
+    assert "Dashes denote unavailable results" in caption
+    assert "Ties share the same marker" in caption
+
+
+def test_auxiliary_delta_preserves_main_value_and_lineage(tmp_path: Path) -> None:
+    gallery = Path(__file__).parents[1] / "examples" / "gallery"
+    config = json.loads((gallery / "statistical_delta.json").read_text(encoding="utf-8"))
+    manifest = generate(
+        [gallery / "statistical_delta.csv"], tmp_path / "statistical-delta", config
+    )
+    spec = json.loads((tmp_path / "statistical-delta/table-spec.json").read_text())
+    latex = (tmp_path / "statistical-delta/table.tex").read_text(encoding="utf-8")
+    target = next(row for row in spec["rows"] if row["method"] == "PaperTable-Ours")
+
+    assert manifest["auxiliary_display"] == ["delta"]
+    assert target["cells"][0]["mean"] == pytest.approx(84.6)
+    assert target["cells"][0]["auxiliary"]["value"] == pytest.approx(2.4)
+    assert target["cells"][0]["n"] == 2
+    assert r"{\scriptsize (+2.4)}" in latex
+    assert r"{\scriptsize (-2.2)}" in latex
+
+
+def test_auxiliary_delta_requires_unique_baseline(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "method,model,dataset,score\n"
+        "Base,A,D,1\n"
+        "Base,B,D,2\n"
+        "Ours,C,D,3\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="baseline matched 2 rows"):
+        generate([source], tmp_path / "out", {
+            "input": {"metric_columns": ["score"]},
+            "layout": {"row_fields": ["model", "method"]},
+            "auxiliary": {
+                "delta": {
+                    "baseline": {"method": "Base"},
+                    "targets": [{"method": "Ours"}],
+                }
+            },
+        })
+
+
+def test_empty_ranking_scope_is_rejected(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text("group,method,dataset,score\nBaseline,A,D,1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="ranking scope selects no displayed systems"):
+        generate([source], tmp_path / "out", {
+            "input": {"metric_columns": ["score"]},
+            "comparison": {"rank_exclude_groups": ["Baseline"]},
+        })
 
 
 def test_unrepresented_identity_dimension_cannot_silently_collapse(tmp_path: Path) -> None:

@@ -5,6 +5,7 @@ Choose the evidence geometry first. Styling comes after the row/column decision.
 | Template | Use when | Identity/field treatment | Evidence axis |
 |---|---|---|---|
 | `benchmark-wide` | Many systems, a moderate number of dataset × metric cells | One Method column; use row groups for prior work vs ours | columns = dataset → metric |
+| `family-banded-benchmark` | A dense leaderboard contains several scientifically meaningful model families | full-width family bands; optional focal-row shade; ranking may exclude reference families | columns = dataset → category/metric |
 | `hierarchical-method-budget` | The same base model has several adaptation methods or budgets | Separate Model, Method, and # Trainable; suppress repeated model labels | columns = task → metric |
 | `transposed-benchmark` | A small set of focal systems is evaluated on many benchmarks | systems become columns; optional pre-train-data group above them | rows = benchmark (and metric if needed) |
 | `quality-efficiency` | The claim joins quality with cost, speed, memory, or parameters | keep Method at left; never collapse quality/cost to one score | columns = metric family → dataset |
@@ -38,3 +39,4 @@ If changing a value could invalidate a direct comparison, display it as an ident
 
 Use group changes for scientifically meaningful regimes: prior work / reproduced baselines / ours; base model family; prompting / finetuning / supervised oracle. Prefer whitespace or a restrained midrule. Avoid repeating the same family label on every row.
 
+Use `family-banded-benchmark` when the group taxonomy is itself one of the first things readers must understand. A band is stronger than whitespace and should not be used for incidental source ordering.

@@ -49,4 +49,5 @@ Use tabular input instead when model/method/budget fields must remain separate.
 - Missing cells remain missing and render as `--`.
 - Metric direction should be explicit. Name-based inference emits a warning and is not equivalent to author confirmation.
 - Published values and newly reproduced values should use a `source_type` or `group` field and an explanatory note.
+- Family-banded layouts read the `group` field directly. Give every displayed system one stable, explicit group; the renderer never infers families from method names.
 - Common descriptor fields are preserved automatically. If two aggregates differ on an identity/protocol field that the chosen layout does not display, generation fails instead of silently overwriting one result; add that field to `layout.row_fields`, `layout.column_fields`, or `column_group_field`.

@@ -55,6 +55,8 @@ def generate(
         "column_count": len(spec["columns"]),
         "template_id": spec["template_id"],
         "orientation": spec["orientation"],
+        "ranking_scope": spec.get("comparison", {}).get("rank_scope_label", "all displayed systems"),
+        "auxiliary_display": list(spec.get("auxiliary", {})),
         "omitted_columns": spec["omitted_columns"],
         "warnings": spec["warnings"],
         "verification": verification,
