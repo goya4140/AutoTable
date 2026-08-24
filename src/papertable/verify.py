@@ -28,6 +28,13 @@ def verify_spec(spec: dict[str, Any]) -> dict[str, Any]:
                     errors.append(f"cell {row_index},{column_index} has non-finite {field}")
             if len(cell.get("values", [])) != cell.get("n"):
                 errors.append(f"cell {row_index},{column_index} loses value lineage")
+            auxiliary = cell.get("auxiliary")
+            if auxiliary:
+                if auxiliary.get("kind") not in {"absolute", "relative_percent"}:
+                    errors.append(f"cell {row_index},{column_index} has invalid auxiliary kind")
+                value = auxiliary.get("value")
+                if not isinstance(value, (int, float)) or not math.isfinite(value):
+                    errors.append(f"cell {row_index},{column_index} has invalid auxiliary value")
             column = columns[column_index]
             if spec.get("orientation") == "datasets_rows":
                 matches = (
