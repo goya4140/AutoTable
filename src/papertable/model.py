@@ -27,6 +27,7 @@ class Aggregate:
     dataset: str
     setting: str | None
     group: str | None
+    dimensions: dict[str, str]
     mean: float
     sd: float | None
     n: int
@@ -40,4 +41,3 @@ class Aggregate:
         data["run_ids"] = list(self.run_ids)
         data["sources"] = list(self.sources)
         return data
-

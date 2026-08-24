@@ -5,6 +5,7 @@ import pytest
 
 from papertable.ingest import load_inputs
 from papertable.pipeline import generate
+from papertable.templates import available_templates
 
 
 def test_wide_csv_end_to_end(tmp_path: Path) -> None:
@@ -70,7 +71,9 @@ def test_selection_filters_instead_of_only_reordering(tmp_path: Path) -> None:
     })
     spec = json.loads((tmp_path / "out/table-spec.json").read_text())
     assert spec["methods"] == ["B"]
-    assert spec["columns"] == [{"dataset": "D2", "setting": None, "metric": "b"}]
+    assert spec["columns"] == [{
+        "dataset": "D2", "setting": None, "metric": "b", "group_label": None, "label": "B"
+    }]
     assert spec["rows"][0]["cells"][0]["mean"] == 4
 
 
@@ -86,3 +89,111 @@ def test_duplicate_run_is_rejected(tmp_path: Path) -> None:
     source.write_text("method,dataset,seed,score\nA,D,1,2\nA,D,1,3\n", encoding="utf-8")
     with pytest.raises(ValueError, match="duplicate run IDs"):
         generate([source], tmp_path / "out", {"input": {"metric_columns": ["score"]}})
+
+
+def test_hierarchical_method_fields_are_separate_columns(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "model,method,trainable_params,dataset,seed,accuracy\n"
+        "RoBERTa,Full FT,125M,MNLI,1,87\n"
+        "RoBERTa,LoRA,0.3M,MNLI,1,88\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "template": "hierarchical-method-budget",
+        "input": {"metric_columns": ["accuracy"]},
+        "metrics": {"accuracy": {"direction": "max"}},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text())
+    assert [field["key"] for field in spec["identity_columns"]] == ["model", "method", "trainable_params"]
+    assert spec["rows"][1]["identity"] == {
+        "model": "RoBERTa", "method": "LoRA", "trainable_params": "0.3M"
+    }
+
+
+def test_transposed_benchmark_ranks_across_method_columns(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "method,pretrain_data,dataset,accuracy\n"
+        "ViT,JFT,ImageNet,88.5\n"
+        "BiT,JFT,ImageNet,87.5\n"
+        "ViT,JFT,CIFAR-10,99.5\n"
+        "BiT,JFT,CIFAR-10,99.3\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "template": "transposed-benchmark",
+        "input": {"metric_columns": ["accuracy"]},
+        "metrics": {"accuracy": {"direction": "max", "precision": 1}},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text())
+    latex = (tmp_path / "out/table.tex").read_text()
+    assert spec["orientation"] == "datasets_rows"
+    assert [column["method"] for column in spec["columns"]] == ["ViT", "BiT"]
+    assert [row["dataset"] for row in spec["rows"]] == ["ImageNet", "CIFAR-10"]
+    assert r"\textbf{88.5}" in latex
+    assert "in each row" in (tmp_path / "out/caption.txt").read_text()
+
+
+def test_transposed_columns_keep_groups_contiguous(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "method,pretrain_data,dataset,accuracy\n"
+        "A,JFT,D,3\n"
+        "A,ImageNet,D,2\n"
+        "B,JFT,D,1\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "template": "transposed-benchmark",
+        "input": {"metric_columns": ["accuracy"]},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text())
+    assert [column["group_label"] for column in spec["columns"]] == ["JFT", "JFT", "ImageNet"]
+
+
+@pytest.mark.parametrize(
+    ("stem", "template_id"),
+    [
+        ("hierarchical", "hierarchical-method-budget"),
+        ("transposed", "transposed-benchmark"),
+        ("quality_efficiency", "quality-efficiency"),
+        ("compact", "compact-regime-comparison"),
+        ("scaled", "scaled-variants"),
+    ],
+)
+def test_gallery_examples_generate_valid_specs(
+    tmp_path: Path, stem: str, template_id: str
+) -> None:
+    gallery = Path(__file__).parents[1] / "examples" / "gallery"
+    config = json.loads((gallery / f"{stem}.json").read_text(encoding="utf-8"))
+    manifest = generate([gallery / f"{stem}.csv"], tmp_path / stem, config)
+
+    assert manifest["template_id"] == template_id
+    assert manifest["verification"] == {"valid": True, "errors": []}
+    assert manifest["displayed_cell_count"] > 0
+
+
+def test_all_research_backed_templates_are_discoverable() -> None:
+    assert {item["id"] for item in available_templates()} == {
+        "benchmark-wide",
+        "compact-regime-comparison",
+        "hierarchical-method-budget",
+        "quality-efficiency",
+        "scaled-variants",
+        "transposed-benchmark",
+    }
+
+
+def test_unrepresented_identity_dimension_cannot_silently_collapse(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "method,protocol,dataset,accuracy\n"
+        "A,zero-shot,D,80\n"
+        "A,fine-tuned,D,90\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="collapse into one table cell"):
+        generate([source], tmp_path / "out", {
+            "input": {"metric_columns": ["accuracy"]},
+        })

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "paper-table"
-version = "0.2.0"
-description = "A small, deterministic pipeline from experimental results to main-paper tables and captions"
+version = "0.3.0"
+description = "A research-backed Codex Skill for main-experiment tables and captions"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -24,4 +24,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-

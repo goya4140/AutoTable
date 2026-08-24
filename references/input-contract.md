@@ -1,0 +1,52 @@
+# Input contract
+
+The generator accepts CSV, TSV, JSON, and JSONL. Multiple files may be passed together.
+
+## Long format
+
+Required fields:
+
+```text
+method, dataset, metric, value
+```
+
+Optional fields:
+
+```text
+seed/run/run_id/fold, setting, group
+```
+
+Template-specific identity fields may include:
+
+```text
+model, family, backbone, trainable_params, params, depth,
+pretrain_data, training_data, regime, protocol, source_type, extra_data
+```
+
+## Wide format
+
+Each row is one run and numeric metric columns are pivoted automatically. If the file also contains numeric metadata such as epoch or parameter count, declare metrics explicitly:
+
+```json
+{"input": {"metric_columns": ["accuracy", "f1", "latency_ms"]}}
+```
+
+## Nested JSON
+
+The supported nesting is:
+
+```text
+method → dataset → metric → scalar or list-of-runs
+```
+
+Use tabular input instead when model/method/budget fields must remain separate.
+
+## Scientific semantics
+
+- Repeated values with distinct run IDs are aggregated with arithmetic mean and sample SD.
+- Duplicate run IDs inside one method/dataset/setting/metric cell are rejected.
+- A singleton stays a scalar; no uncertainty is inferred.
+- Missing cells remain missing and render as `--`.
+- Metric direction should be explicit. Name-based inference emits a warning and is not equivalent to author confirmation.
+- Published values and newly reproduced values should use a `source_type` or `group` field and an explanatory note.
+- Common descriptor fields are preserved automatically. If two aggregates differ on an identity/protocol field that the chosen layout does not display, generation fails instead of silently overwriting one result; add that field to `layout.row_fields`, `layout.column_fields`, or `column_group_field`.

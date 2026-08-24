@@ -9,6 +9,7 @@ from .caption import build_caption
 from .ingest import load_inputs
 from .planner import plan_main_table
 from .render import render_html, render_latex, render_preview_document
+from .templates import resolve_config
 from .verify import verify_spec
 
 
@@ -17,8 +18,10 @@ def _dump(path: Path, data: Any) -> None:
 
 
 def generate(
-    inputs: list[str | Path], output_dir: str | Path, config: dict[str, Any] | None = None
+    inputs: list[str | Path], output_dir: str | Path, config: dict[str, Any] | None = None,
+    template: str | None = None,
 ) -> dict[str, Any]:
+    config = resolve_config(config, template)
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     observations = load_inputs(inputs, config)
@@ -47,8 +50,11 @@ def generate(
         "observation_count": len(observations),
         "aggregate_count": len(aggregates),
         "displayed_cell_count": planned,
-        "method_count": len(spec["rows"]),
+        "method_count": len(spec["methods"]),
+        "displayed_system_count": len(spec["rows"]) if spec["orientation"] == "methods_rows" else len(spec["columns"]),
         "column_count": len(spec["columns"]),
+        "template_id": spec["template_id"],
+        "orientation": spec["orientation"],
         "omitted_columns": spec["omitted_columns"],
         "warnings": spec["warnings"],
         "verification": verification,

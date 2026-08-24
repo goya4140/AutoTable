@@ -6,11 +6,12 @@ from typing import Any
 def build_caption(spec: dict[str, Any]) -> str:
     if spec.get("caption"):
         return str(spec["caption"])
-    datasets = list(dict.fromkeys(c["dataset"] for c in spec["columns"]))
-    metric_keys = list(dict.fromkeys(c["metric"] for c in spec["columns"]))
+    datasets = spec.get("datasets", [])
+    metric_keys = list(spec["metrics"])
     metric_labels = [spec["metrics"][key]["label"] for key in metric_keys]
+    system_count = len(spec["rows"]) if spec["orientation"] == "methods_rows" else len(spec["columns"])
     caption = (
-        f"Main comparison of {len(spec['rows'])} methods on {', '.join(datasets)} "
+        f"Main comparison of {system_count} systems on {', '.join(datasets)} "
         f"using {', '.join(metric_labels)}."
     )
     ns = {cell["n"] for row in spec["rows"] for cell in row["cells"] if cell is not None}
@@ -26,8 +27,12 @@ def build_caption(spec: dict[str, Any]) -> str:
     else:
         caption += " Arrows indicate whether higher or lower values are better."
     emphasis = spec.get("emphasis", {})
+    comparison_axis = "column" if spec["orientation"] == "methods_rows" else "row"
     if emphasis.get("best") == "bold" and emphasis.get("second") == "underline":
-        caption += " Best and second-best results in each column are bolded and underlined, respectively."
+        caption += (
+            f" Best and second-best results in each {comparison_axis} are bolded "
+            "and underlined, respectively."
+        )
     elif emphasis.get("best") == "bold":
-        caption += " Best results in each column are bolded."
+        caption += f" Best results in each {comparison_axis} are bolded."
     return caption

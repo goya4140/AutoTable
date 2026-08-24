@@ -1,21 +1,20 @@
 from __future__ import annotations
 
-from collections import defaultdict
-from typing import Any
+from typing import Any, Iterable
 
 from .model import Aggregate
 
 _LOWER_IS_BETTER = ("loss", "error", "wer", "perplex", "latency", "time", "memory", "flop", "param")
 
 
-def _ordered(values: list[str], preferred: list[str] | None = None) -> list[str]:
+def _ordered(values: Iterable[str], preferred: list[str] | None = None) -> list[str]:
     seen = list(dict.fromkeys(values))
     if not preferred:
         return seen
     return [x for x in preferred if x in seen] + [x for x in seen if x not in preferred]
 
 
-def _select(values: list[str], requested: list[str] | None, name: str, warnings: list[str]) -> list[str]:
+def _select(values: Iterable[str], requested: list[str] | None, name: str, warnings: list[str]) -> list[str]:
     available = list(dict.fromkeys(values))
     if requested is None:
         return available
@@ -41,89 +40,259 @@ def _metric_meta(metric: str, config: dict[str, Any], warnings: list[str]) -> di
     }
 
 
+def _field_defs(raw: list[Any] | None, default: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not raw:
+        return default
+    output = []
+    for item in raw:
+        if isinstance(item, str):
+            output.append({"key": item, "label": item.replace("_", " ").title()})
+        else:
+            output.append({
+                "key": item["key"],
+                "label": item.get("label", item["key"].replace("_", " ").title()),
+                "suppress_repeat": bool(item.get("suppress_repeat", False)),
+                "separator": bool(item.get("separator", False)),
+            })
+    return output
+
+
+def _values(item: Aggregate) -> dict[str, str | None]:
+    return {
+        "method": item.method, "group": item.group, "dataset": item.dataset,
+        "setting": item.setting, "metric": item.metric, **item.dimensions,
+    }
+
+
+def _entity_key(item: Aggregate, field_defs: list[dict[str, Any]]) -> tuple:
+    values = _values(item)
+    return (item.method, *(values.get(field["key"]) for field in field_defs))
+
+
+def _axis_label(axis: str, column: dict[str, Any], metrics: dict[str, Any]) -> str:
+    if axis == "metric":
+        return metrics[column["metric"]]["label"]
+    value = column.get(axis)
+    return "" if value is None else str(value)
+
+
+def _decorate_metric_columns(
+    columns: list[dict[str, Any]], column_order: list[str], metrics: dict[str, Any]
+) -> list[dict[str, Any]]:
+    varying = [axis for axis in column_order if len({column.get(axis) for column in columns}) > 1]
+    if not varying:
+        varying = ["metric"] if len(metrics) > 1 else [column_order[-1]]
+    group_axis = varying[0] if len(varying) > 1 else None
+    leaf_axis = varying[-1]
+    output = []
+    for column in columns:
+        decorated = dict(column)
+        decorated["group_label"] = _axis_label(group_axis, column, metrics) if group_axis else None
+        decorated["label"] = _axis_label(leaf_axis, column, metrics)
+        output.append(decorated)
+    return output
+
+
+def _selected_axes(aggregates: list[Aggregate], config: dict[str, Any], warnings: list[str]) -> tuple[list[str], list[str], list[str], list[str | None]]:
+    selection = config.get("selection", {})
+    if selection.get("methods") is not None:
+        methods = _select((x.method for x in aggregates), selection["methods"], "methods", warnings)
+    else:
+        methods = _ordered((x.method for x in aggregates), config.get("method_order"))
+    datasets = _select((x.dataset for x in aggregates), selection.get("datasets"), "datasets", warnings)
+    metrics = _select((x.metric for x in aggregates), selection.get("metrics"), "metrics", warnings)
+    available_settings = [x.setting for x in aggregates if x.setting is not None]
+    settings = _select(available_settings, selection.get("settings"), "settings", warnings)
+    return methods, datasets, metrics, settings if settings else [None]
+
+
+def _apply_column_budget(
+    columns: list[dict[str, Any]], config: dict[str, Any], metric_meta: dict[str, Any]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    max_columns = config.get("selection", {}).get("max_columns")
+    if max_columns is None or len(columns) <= int(max_columns):
+        return columns, []
+    ranked = sorted(
+        enumerate(columns),
+        key=lambda pair: (metric_meta.get(pair[1].get("metric"), {}).get("priority", 100), pair[0]),
+    )
+    keep = {index for index, _ in ranked[: int(max_columns)]}
+    return (
+        [column for index, column in enumerate(columns) if index in keep],
+        [column for index, column in enumerate(columns) if index not in keep],
+    )
+
+
+def _plan_methods_rows(
+    aggregates: list[Aggregate], methods: list[str], datasets: list[str], metrics: list[str],
+    settings: list[str | None], metric_meta: dict[str, Any], config: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    layout = config.get("layout", {})
+    identity_columns = _field_defs(layout.get("row_fields"), [{"key": "method", "label": "Method"}])
+    if not any(field["key"] == "method" for field in identity_columns):
+        identity_columns.append({"key": "method", "label": "Method"})
+    filtered = [x for x in aggregates if x.method in methods and x.dataset in datasets and x.metric in metrics and x.setting in settings]
+    entities: dict[tuple, Aggregate] = {}
+    for item in filtered:
+        entities.setdefault(_entity_key(item, identity_columns), item)
+    method_rank = {method: index for index, method in enumerate(methods)}
+    entity_items = sorted(entities.items(), key=lambda pair: method_rank.get(pair[1].method, 10**6))
+
+    available = {(x.dataset, x.setting, x.metric) for x in filtered}
+    raw_columns = [
+        {"dataset": dataset, "setting": setting, "metric": metric}
+        for dataset in datasets for setting in settings for metric in metrics
+        if (dataset, setting, metric) in available
+    ]
+    raw_columns, omitted = _apply_column_budget(raw_columns, config, metric_meta)
+    columns = _decorate_metric_columns(raw_columns, layout.get("column_order", ["dataset", "metric"]), metric_meta)
+    cell_map = {}
+    for item in filtered:
+        key = (_entity_key(item, identity_columns), item.dataset, item.setting, item.metric)
+        if key in cell_map:
+            raise ValueError(
+                "multiple aggregates collapse into one table cell; add the differing "
+                "identity/protocol field to layout.row_fields"
+            )
+        cell_map[key] = item.to_dict()
+    rows = []
+    for entity, item in entity_items:
+        values = _values(item)
+        rows.append({
+            "method": item.method,
+            "group": item.group,
+            "identity": {field["key"]: values.get(field["key"]) for field in identity_columns},
+            "cells": [cell_map.get((entity, c["dataset"], c["setting"], c["metric"])) for c in columns],
+        })
+    return identity_columns, columns, rows, omitted
+
+
+def _plan_datasets_rows(
+    aggregates: list[Aggregate], methods: list[str], datasets: list[str], metrics: list[str],
+    settings: list[str | None], metric_meta: dict[str, Any], config: dict[str, Any],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    layout = config.get("layout", {})
+    entity_fields = _field_defs(layout.get("column_fields"), [{"key": "method", "label": "Method"}])
+    group_field = layout.get("column_group_field")
+    entity_key_fields = list(entity_fields)
+    if group_field and not any(field["key"] == group_field for field in entity_key_fields):
+        entity_key_fields.append({"key": group_field, "label": group_field})
+    filtered = [x for x in aggregates if x.method in methods and x.dataset in datasets and x.metric in metrics and x.setting in settings]
+    entities: dict[tuple, Aggregate] = {}
+    for item in filtered:
+        entities.setdefault(_entity_key(item, entity_key_fields), item)
+    method_rank = {method: index for index, method in enumerate(methods)}
+    group_rank = {
+        value: index
+        for index, value in enumerate(
+            dict.fromkeys(_values(item).get(group_field) for item in filtered)
+        )
+    } if group_field else {}
+    entity_items = sorted(
+        entities.items(),
+        key=lambda pair: (
+            group_rank.get(_values(pair[1]).get(group_field), 10**6),
+            method_rank.get(pair[1].method, 10**6),
+        ),
+    )
+    columns = []
+    for entity, item in entity_items:
+        values = _values(item)
+        label_parts = [str(values.get(field["key"])) for field in entity_fields if values.get(field["key"]) not in (None, "")]
+        columns.append({
+            "method": item.method, "entity_key": entity,
+            "label": " / ".join(label_parts) or item.method,
+            "group_label": str(values.get(group_field)) if group_field and values.get(group_field) else None,
+        })
+    columns, omitted = _apply_column_budget(columns, config, metric_meta)
+    row_defaults = [{"key": "dataset", "label": "Benchmark"}]
+    if len(metrics) > 1:
+        row_defaults.append({"key": "metric", "label": "Metric"})
+    identity_columns = _field_defs(layout.get("row_fields"), row_defaults)
+    available_rows = {(x.dataset, x.setting, x.metric) for x in filtered}
+    row_combos = [
+        (dataset, setting, metric) for dataset in datasets for setting in settings for metric in metrics
+        if (dataset, setting, metric) in available_rows
+    ]
+    cell_map = {}
+    for item in filtered:
+        key = (_entity_key(item, entity_key_fields), item.dataset, item.setting, item.metric)
+        if key in cell_map:
+            raise ValueError(
+                "multiple aggregates collapse into one table cell; add the differing "
+                "identity/protocol field to layout.column_fields or column_group_field"
+            )
+        cell_map[key] = item.to_dict()
+    rows = []
+    for dataset, setting, metric in row_combos:
+        identity_values = {"dataset": dataset, "setting": setting, "metric": metric_meta[metric]["label"]}
+        rows.append({
+            "dataset": dataset, "setting": setting, "metric": metric, "group": setting,
+            "identity": {field["key"]: identity_values.get(field["key"]) for field in identity_columns},
+            "cells": [cell_map.get((c["entity_key"], dataset, setting, metric)) for c in columns],
+        })
+    for column in columns:
+        column.pop("entity_key", None)
+    return identity_columns, columns, rows, omitted
+
+
 def plan_main_table(aggregates: list[Aggregate], config: dict[str, Any] | None = None) -> dict[str, Any]:
     config = config or {}
-    selection = config.get("selection", {})
     warnings: list[str] = []
-
-    if selection.get("methods") is not None:
-        methods = _select([x.method for x in aggregates], selection["methods"], "methods", warnings)
-    else:
-        methods = _ordered([x.method for x in aggregates], config.get("method_order"))
-    datasets = _select([x.dataset for x in aggregates], selection.get("datasets"), "datasets", warnings)
-    metrics = _select([x.metric for x in aggregates], selection.get("metrics"), "metrics", warnings)
-    settings = _select(
-        [x.setting for x in aggregates if x.setting is not None],
-        selection.get("settings"), "settings", warnings,
-    )
+    methods, datasets, metrics, settings = _selected_axes(aggregates, config, warnings)
     metric_meta = {metric: _metric_meta(metric, config, warnings) for metric in metrics}
-
-    available = {(x.dataset, x.setting, x.metric) for x in aggregates}
-    columns: list[dict[str, Any]] = []
-    setting_values: list[str | None] = settings if settings else [None]
-    for dataset in datasets:
-        for setting in setting_values:
-            for metric in metrics:
-                if (dataset, setting, metric) in available:
-                    columns.append({"dataset": dataset, "setting": setting, "metric": metric})
-
-    max_columns = selection.get("max_columns")
-    omitted: list[dict[str, Any]] = []
-    if max_columns is not None and len(columns) > int(max_columns):
-        ranked = sorted(
-            enumerate(columns),
-            key=lambda pair: (metric_meta[pair[1]["metric"]]["priority"], pair[0]),
+    orientation = config.get("layout", {}).get("orientation", "methods_rows")
+    if orientation == "methods_rows":
+        identity_columns, columns, rows, omitted = _plan_methods_rows(
+            aggregates, methods, datasets, metrics, settings, metric_meta, config
         )
-        keep = {index for index, _ in ranked[: int(max_columns)]}
-        omitted = [column for index, column in enumerate(columns) if index not in keep]
-        columns = [column for index, column in enumerate(columns) if index in keep]
+    elif orientation == "datasets_rows":
+        identity_columns, columns, rows, omitted = _plan_datasets_rows(
+            aggregates, methods, datasets, metrics, settings, metric_meta, config
+        )
+    else:
+        raise ValueError(f"unsupported layout.orientation: {orientation}")
+    if omitted:
         warnings.append(f"{len(omitted)} columns were omitted by selection.max_columns")
-
-    cells_by_key = {
-        (x.method, x.dataset, x.setting, x.metric): x.to_dict() for x in aggregates
-        if x.method in methods
-    }
-    rows = []
-    for method in methods:
-        matching = [x for x in aggregates if x.method == method]
-        rows.append({
-            "method": method,
-            "group": next((x.group for x in matching if x.group), None),
-            "cells": [cells_by_key.get((method, c["dataset"], c["setting"], c["metric"])) for c in columns],
-        })
-
     return {
-        "schema_version": "paper-table-spec-v1",
-        "kind": "main",
-        "title": config.get("title", "Main results"),
-        "label": config.get("label", "tab:main-results"),
-        "claim": config.get("claim"),
-        "methods": methods,
-        "metrics": metric_meta,
-        "columns": columns,
-        "rows": rows,
+        "schema_version": "paper-table-spec-v2", "template_id": config.get("template_id", "custom"),
+        "kind": "main", "orientation": orientation, "title": config.get("title", "Main results"),
+        "label": config.get("label", "tab:main-results"), "claim": config.get("claim"),
+        "methods": methods, "datasets": datasets, "metrics": metric_meta,
+        "identity_columns": identity_columns, "columns": columns, "rows": rows,
         "emphasis": config.get("emphasis", {"best": "bold", "second": "underline"}),
-        "caption": config.get("caption"),
-        "notes": list(config.get("notes", [])),
-        "omitted_columns": omitted,
-        "warnings": warnings,
+        "caption": config.get("caption"), "notes": list(config.get("notes", [])),
+        "omitted_columns": omitted, "warnings": warnings,
     }
 
 
 def emphasis_map(spec: dict[str, Any]) -> dict[tuple[int, int], str]:
     output: dict[tuple[int, int], str] = {}
-    for column_index, column in enumerate(spec["columns"]):
-        direction = spec["metrics"][column["metric"]]["direction"]
-        values = [(row_index, row["cells"][column_index]["mean"])
-                  for row_index, row in enumerate(spec["rows"])
-                  if row["cells"][column_index] is not None]
-        distinct = sorted({value for _, value in values}, reverse=direction == "max")
-        if distinct and spec.get("emphasis", {}).get("best"):
-            for row_index, value in values:
-                if value == distinct[0]:
-                    output[(row_index, column_index)] = spec["emphasis"]["best"]
-        if len(distinct) > 1 and spec.get("emphasis", {}).get("second"):
-            for row_index, value in values:
-                if value == distinct[1]:
-                    output[(row_index, column_index)] = spec["emphasis"]["second"]
+    if spec["orientation"] == "methods_rows":
+        for column_index, column in enumerate(spec["columns"]):
+            values = [(row_index, row["cells"][column_index]["mean"])
+                      for row_index, row in enumerate(spec["rows"])
+                      if row["cells"][column_index] is not None]
+            direction = spec["metrics"][column["metric"]]["direction"]
+            _mark_distinct(output, values, direction, spec, lambda index: (index, column_index))
+    else:
+        for row_index, row in enumerate(spec["rows"]):
+            values = [(column_index, cell["mean"]) for column_index, cell in enumerate(row["cells"]) if cell is not None]
+            direction = spec["metrics"][row["metric"]]["direction"]
+            _mark_distinct(output, values, direction, spec, lambda index: (row_index, index))
     return output
+
+
+def _mark_distinct(
+    output: dict[tuple[int, int], str], values: list[tuple[int, float]], direction: str,
+    spec: dict[str, Any], key_builder: Any,
+) -> None:
+    distinct = sorted({value for _, value in values}, reverse=direction == "max")
+    if distinct and spec.get("emphasis", {}).get("best"):
+        for index, value in values:
+            if value == distinct[0]:
+                output[key_builder(index)] = spec["emphasis"]["best"]
+    if len(distinct) > 1 and spec.get("emphasis", {}).get("second"):
+        for index, value in values:
+            if value == distinct[1]:
+                output[key_builder(index)] = spec["emphasis"]["second"]

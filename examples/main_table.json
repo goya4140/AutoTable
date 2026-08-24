@@ -1,4 +1,5 @@
 {
+  "template": "benchmark-wide",
   "title": "Main results",
   "label": "tab:main-results",
   "claim": "AutoResearch improves predictive quality while reducing inference latency.",
@@ -15,4 +16,3 @@
   },
   "notes": ["All methods use the same backbone and evaluation protocol."]
 }
-
