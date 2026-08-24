@@ -1,0 +1,12 @@
+{
+  "title": "Scaling comparison",
+  "label": "tab:scaling",
+  "metrics": {
+    "accuracy": {"label": "Acc.", "direction": "max", "precision": 1}
+  },
+  "selection": {
+    "settings": ["Small", "Base", "Large"],
+    "metrics": ["accuracy"]
+  }
+}
+

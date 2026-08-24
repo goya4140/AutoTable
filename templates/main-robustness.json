@@ -1,0 +1,12 @@
+{
+  "title": "Robustness under distribution shifts",
+  "label": "tab:robustness",
+  "metrics": {
+    "accuracy": {"label": "Acc.", "direction": "max", "precision": 1}
+  },
+  "selection": {
+    "datasets": ["Clean", "Noise", "Blur", "Weather", "Average"],
+    "metrics": ["accuracy"]
+  }
+}
+

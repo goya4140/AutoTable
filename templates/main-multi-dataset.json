@@ -1,0 +1,10 @@
+{
+  "title": "Main benchmark results",
+  "label": "tab:main-benchmark",
+  "metrics": {
+    "accuracy": {"label": "Acc.", "direction": "max", "precision": 1, "priority": 1},
+    "f1": {"label": "F1", "direction": "max", "precision": 1, "priority": 2}
+  },
+  "selection": {"metrics": ["accuracy", "f1"]}
+}
+
