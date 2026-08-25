@@ -176,6 +176,15 @@ def test_gallery_examples_generate_valid_specs(
     assert manifest["displayed_cell_count"] > 0
 
 
+def test_readme_displays_every_gallery_image() -> None:
+    root = Path(__file__).parents[1]
+    readme = (root / "README.md").read_text(encoding="utf-8")
+
+    for image in sorted((root / "docs/assets/gallery").glob("*.png")):
+        relative_path = image.relative_to(root).as_posix()
+        assert f"]({relative_path})" in readme, f"README does not display {relative_path}"
+
+
 def test_all_research_backed_templates_are_discoverable() -> None:
     assert {item["id"] for item in available_templates()} == {
         "benchmark-wide",
