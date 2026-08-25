@@ -18,7 +18,7 @@
 
 ![Statistical table with paired deltas](docs/assets/gallery/statistical-delta.png)
 
-主值、重复实验波动和相对指定 baseline 的绝对增量同时保留；增量不参与 best/second-best 排名。
+主值、重复实验波动和相对指定 baseline 的绝对增量同时保留；辅助增量使用独立次级槽位，不移动各行主值的对齐轴，也不参与 best/second-best 排名。
 
 ### 模型 / 方法 / 可训练参数分层
 

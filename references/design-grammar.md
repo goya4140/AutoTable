@@ -46,6 +46,8 @@ Choose one primary representation per evidence type:
 
 Never infer uncertainty or significance. Define precision and unit per metric. Rank on unrounded values, then format. Missing, not applicable, and failed experiments are different states; the current renderer reserves `--` for unavailable evidence.
 
+Auxiliary values are optional annotations, not peers of the primary measurement. When any row in a metric column shows a delta or interval annotation, reserve the same secondary slot for that whole column (blank in rows without one). The primary values must keep a shared alignment axis; adding information must not shift the focal row's measurements sideways.
+
 ## 5. Emphasis grammar
 
 Recommended default:

@@ -91,6 +91,8 @@ Preserve the primary value while adding a parenthesized absolute or relative cha
 
 Selectors may use any displayed identity field. The baseline must match exactly one row; ambiguity is an error. `kind` is `absolute` or `relative_percent`. The generated caption names the baseline and delta type.
 
+The renderer treats the delta as a secondary subcell. It reserves that subcell across every row of each affected metric column, including blank slots for rows without deltas, so the primary measurements remain aligned.
+
 ## Selection and compression
 
 Lists in `selection` filter and order the corresponding dimension. `max_columns` is optional; when used, metric `priority` chooses which columns stay in the main table. Every removed column is recorded in `manifest.json.omitted_columns`.

@@ -218,14 +218,21 @@ def test_auxiliary_delta_preserves_main_value_and_lineage(tmp_path: Path) -> Non
     )
     spec = json.loads((tmp_path / "statistical-delta/table-spec.json").read_text())
     latex = (tmp_path / "statistical-delta/table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / "statistical-delta/table.html").read_text(encoding="utf-8")
     target = next(row for row in spec["rows"] if row["method"] == "PaperTable-Ours")
 
     assert manifest["auxiliary_display"] == ["delta"]
     assert target["cells"][0]["mean"] == pytest.approx(84.6)
     assert target["cells"][0]["auxiliary"]["value"] == pytest.approx(2.4)
     assert target["cells"][0]["n"] == 2
-    assert r"{\scriptsize (+2.4)}" in latex
-    assert r"{\scriptsize (-2.2)}" in latex
+    assert r"r@{\hspace{0.25em}}l" in latex
+    assert r"\multicolumn{2}{c}{Accuracy (\%) $\uparrow$}" in latex
+    assert r"\textbf{84.6 $\pm$ 0.1} & {\scriptsize (+2.4)}" in latex
+    assert r"\underline{17.8 $\pm$ 0.1} & {\scriptsize (-2.2)}" in latex
+    baseline_line = next(line for line in latex.splitlines() if line.lstrip().startswith("Strong Baseline &"))
+    target_line = next(line for line in latex.splitlines() if "PaperTable-Ours &" in line)
+    assert baseline_line.count(" & ") == target_line.count(" & ") == 12
+    assert html.count('class="cell-grid"') == 24
 
 
 def test_auxiliary_delta_requires_unique_baseline(tmp_path: Path) -> None:
