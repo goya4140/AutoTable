@@ -32,6 +32,18 @@
 
 ![Quality and efficiency table](docs/assets/gallery/quality-efficiency.png)
 
+### 不同推理范式的紧凑比较
+
+![Compact regime comparison table](docs/assets/gallery/compact-regime-comparison.png)
+
+将 prompting、acting、combined 与 supervised reference 分段展示，在保持窄表结构的同时明确比较制度。
+
+### 同一家族的模型规模与深度变体
+
+![Scaled model variants table](docs/assets/gallery/scaled-variants.png)
+
+模型家族、具体变体、深度与参数量分别占列，使规模变化与主要结果保持可追踪关系。
+
 ## 为什么不只有一个“万能表”
 
 我们检查了 [BERT](https://aclanthology.org/N19-1423/)、[LoRA](https://openreview.net/forum?id=nZeVKeeFYf9)、[Vision Transformer](https://openreview.net/forum?id=YicbFdNTTy)、[Transformer](https://papers.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html)、[FlashAttention](https://papers.neurips.cc/paper_files/paper/2022/hash/67d57c32e20fd0a7a302cb81d36e40d5-Abstract-Conference.html)、[ResNet](https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html)、[MAE](https://openaccess.thecvf.com/content/CVPR2022/html/He_Masked_Autoencoders_Are_Scalable_Vision_Learners_CVPR_2022_paper.html)、[ReAct](https://openreview.net/forum?id=WE_vluYUL-X)、[BLIP-2](https://proceedings.mlr.press/v202/li23q.html)、[LLaVA](https://papers.neurips.cc/paper_files/paper/2023/hash/6dcf277ea32ce3288914faf369fe6de0-Abstract-Conference.html)、[ConvNeXt](https://openaccess.thecvf.com/content/CVPR2022/html/Liu_A_ConvNet_for_the_2020s_CVPR_2022_paper.html)、[BirDRec](https://papers.neurips.cc/paper_files/paper/2023/file/08309150af77fc7c79ade0bf8bb6a562-Abstract-Conference.html) 和 [MGM](https://proceedings.mlr.press/v162/bao22c.html) 等论文的实验表。跨论文稳定出现的不是一套装饰风格，而是一个语义骨架：
