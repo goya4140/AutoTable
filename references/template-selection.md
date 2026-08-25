@@ -37,6 +37,6 @@ If changing a value could invalidate a direct comparison, display it as an ident
 
 ## Row grouping
 
-Use group changes for scientifically meaningful regimes: prior work / reproduced baselines / ours; base model family; prompting / finetuning / supervised oracle. Prefer whitespace or a restrained midrule. Avoid repeating the same family label on every row.
+Use group changes for scientifically meaningful regimes: prior work / reproduced baselines / ours; base model family; prompting / finetuning / supervised oracle. Use whitespace for weak subdivisions and a full-width rule when the boundary must be traceable across all metric columns. Avoid repeating the same family label on every row.
 
 Use `family-banded-benchmark` when the group taxonomy is itself one of the first things readers must understand. A band is stronger than whitespace and should not be used for incidental source ordering.

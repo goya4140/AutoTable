@@ -186,7 +186,19 @@ def _plan_methods_rows(
     for item in filtered:
         entities.setdefault(_entity_key(item, identity_columns), item)
     method_rank = {method: index for index, method in enumerate(methods)}
-    entity_items = sorted(entities.items(), key=lambda pair: method_rank.get(pair[1].method, 10**6))
+    separator_fields = [field["key"] for field in identity_columns if field.get("separator")]
+    separator_ranks: dict[str, dict[str | None, int]] = {}
+    for field in separator_fields:
+        ordered_values = list(dict.fromkeys(_values(item).get(field) for item in filtered))
+        separator_ranks[field] = {value: index for index, value in enumerate(ordered_values)}
+
+    entity_items = sorted(
+        entities.items(),
+        key=lambda pair: (
+            *(separator_ranks[field].get(_values(pair[1]).get(field), 10**6) for field in separator_fields),
+            method_rank.get(pair[1].method, 10**6),
+        ),
+    )
 
     available = {(x.dataset, x.setting, x.metric) for x in filtered}
     raw_columns = [

@@ -34,7 +34,7 @@ Templates are JSON objects in `assets/templates/`. User config is deep-merged ov
 ## Layout fields
 
 - `orientation`: `methods_rows` or `datasets_rows`.
-- `row_fields`: identity columns on the left. `suppress_repeat` blanks repeated labels; `separator` inserts whitespace when the value changes.
+- `row_fields`: identity columns on the left. `suppress_repeat` blanks repeated labels; `separator` marks a semantic boundary when the value changes. Its visual treatment is controlled by `style.row_separator_style`.
 - `column_order`: `dataset, metric` or `metric, dataset` for methods-as-rows.
 - `column_fields`: system label fields for datasets-as-rows.
 - `column_group_field`: optional field such as `pretrain_data` rendered above system columns.
@@ -70,7 +70,7 @@ Use `comparison` to define which displayed systems participate in best/second-be
 }
 ```
 
-Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row highlights use `xcolor` with the `table` option.
+Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row highlights use `xcolor` with the `table` option. `row_separator_style` accepts `space` (the default) or `rule`; use `rule` when fields marked with `separator` define visually important families or regimes.
 
 ## Auxiliary deltas
 

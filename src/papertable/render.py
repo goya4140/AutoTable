@@ -115,6 +115,9 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     tabcolsep = float(style.get("tabcolsep", 3.5 if wide else 5.0))
     fit_width = bool(style.get("fit_width", False))
     group_bands = style.get("row_group_style") == "band" and spec["orientation"] == "methods_rows"
+    separator_style = style.get("row_separator_style", "space")
+    if separator_style not in {"space", "rule"}:
+        separator_style = "space"
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
@@ -170,7 +173,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
                 f"\\multicolumn{{{span}}}{{c}}{{\\textbf{{{latex_escape(row['group'])}}}}} \\\\"
             )
         elif _row_separator(spec, row_index):
-            lines.append("    \\addlinespace")
+            lines.append("    \\midrule" if separator_style == "rule" else "    \\addlinespace")
         values = []
         for column_index, (column, cell) in enumerate(zip(columns, row["cells"])):
             value = _formatted_cell(cell, _cell_precision(spec, row, column))
@@ -209,12 +212,15 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
     has_groups = any(label for label, _ in groups)
     style = spec.get("style", {})
     group_bands = style.get("row_group_style") == "band" and spec["orientation"] == "methods_rows"
+    separator_style = style.get("row_separator_style", "space")
+    if separator_style not in {"space", "rule"}:
+        separator_style = "space"
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
     auxiliary_columns = _auxiliary_columns(spec)
     out = ["<!doctype html>", '<meta charset="utf-8">', "<style>",
-           f"table{{border-collapse:collapse;font:14px system-ui;margin:2rem auto}}caption{{font-weight:600;margin:.8rem}}th,td{{padding:.45rem .7rem;text-align:center;border-bottom:1px solid #bbb}}thead tr:first-child th{{border-top:2px solid #222}}tbody tr:last-child td{{border-bottom:2px solid #222}}th:first-child,td:first-child{{text-align:left}}tbody tr.group-start td{{border-top:1.5px solid #555}}tbody tr.group-band th{{background:#{band_color};text-align:center;font-weight:700;border-top:1.5px solid #555}}.cell-grid{{display:inline-grid;width:100%;grid-template-columns:minmax(0,1fr) 4.8em;column-gap:.25em;align-items:baseline}}.cell-grid .primary{{text-align:right}}.cell-grid .aux{{font-size:.78em;color:#555;text-align:left}}",
+           f"table{{border-collapse:collapse;font:14px system-ui;margin:2rem auto}}caption{{font-weight:600;margin:.8rem}}th,td{{padding:.45rem .7rem;text-align:center;border-bottom:1px solid #bbb}}thead tr:first-child th{{border-top:2px solid #222}}tbody tr:last-child td{{border-bottom:2px solid #222}}th:first-child,td:first-child{{text-align:left}}tbody tr.group-start.rule td{{border-top:2px solid #555}}tbody tr.group-start.space td{{padding-top:.8rem}}tbody tr.group-band th{{background:#{band_color};text-align:center;font-weight:700;border-top:1.5px solid #555}}.cell-grid{{display:inline-grid;width:100%;grid-template-columns:minmax(0,1fr) 4.8em;column-gap:.25em;align-items:baseline}}.cell-grid .primary{{text-align:right}}.cell-grid .aux{{font-size:.78em;color:#555;text-align:left}}",
            "</style>", "<table>", f"<caption>{html.escape(caption)}</caption>", "<thead>"]
     if has_groups:
         out.append("<tr>" + "".join(f'<th rowspan="2">{html.escape(f["label"])}</th>' for f in spec["identity_columns"]) + "".join(
@@ -249,7 +255,10 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
                     f'<span class="aux">{auxiliary_html}</span></span>'
                 )
             cells.append(f"<td>{escaped}</td>")
-        class_name = ' class="group-start"' if _row_separator(spec, row_index) and not group_bands else ""
+        class_name = (
+            f' class="group-start {separator_style}"'
+            if _row_separator(spec, row_index) and not group_bands else ""
+        )
         row_style = f' style="background:#{highlight_color}"' if row.get("method") in highlight_methods else ""
         out.append(f"<tr{class_name}{row_style}>{identity}{''.join(cells)}</tr>")
     out.extend(["</tbody>", "</table>"])

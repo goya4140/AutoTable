@@ -36,13 +36,13 @@
 
 ![Compact regime comparison table](docs/assets/gallery/compact-regime-comparison.png)
 
-将 prompting、acting、combined 与 supervised reference 分段展示，在保持窄表结构的同时明确比较制度。
+将 prompting、acting、combined 与 supervised reference 用贯穿整表的横线分段，在保持窄表结构的同时明确比较制度。
 
 ### 同一家族的模型规模与深度变体
 
 ![Scaled model variants table](docs/assets/gallery/scaled-variants.png)
 
-模型家族、具体变体、深度与参数量分别占列，使规模变化与主要结果保持可追踪关系。
+模型家族、具体变体、深度与参数量分别占列，并用横线标出 family 边界，使规模变化与主要结果保持可追踪关系。
 
 ## 为什么不只有一个“万能表”
 

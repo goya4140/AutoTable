@@ -19,7 +19,8 @@ The left side answers "what exactly was run?"
 
 - Use separate identity columns when model, method, backbone, data, budget, protocol, or source changes comparability.
 - Use full-width family bands when readers primarily need to scan categories such as proprietary / general / multimodal / agentic systems.
-- Use whitespace or midrules for lighter distinctions such as prior work / reproduced baselines / ours.
+- Match separator strength to the semantic boundary: whitespace for a weak subdivision, a full-width midrule when a family/regime change must remain visible across numeric columns, and a band when the taxonomy is itself a primary reading axis.
+- When repeated family/regime labels are suppressed, do not rely on the first identity column alone. Use a rule or band if readers otherwise cannot trace the group boundary across the table.
 - Use a restrained focal-row shade only to locate the proposed system. It must not substitute for numerical emphasis.
 
 ## 3. Column topology
