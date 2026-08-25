@@ -11,6 +11,8 @@
       {"key": "params", "label": "# Params"}
     ],
     "column_order": ["dataset", "metric"]
+  },
+  "style": {
+    "row_separator_style": "rule"
   }
 }
-

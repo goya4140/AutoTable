@@ -185,6 +185,28 @@ def test_readme_displays_every_gallery_image() -> None:
         assert f"]({relative_path})" in readme, f"README does not display {relative_path}"
 
 
+@pytest.mark.parametrize(
+    ("stem", "expected_group_rules"),
+    [("compact", 3), ("scaled", 2), ("hierarchical", 1)],
+)
+def test_semantic_group_templates_use_full_width_rules(
+    tmp_path: Path, stem: str, expected_group_rules: int
+) -> None:
+    gallery = Path(__file__).parents[1] / "examples" / "gallery"
+    config = json.loads((gallery / f"{stem}.json").read_text(encoding="utf-8"))
+    generate([gallery / f"{stem}.csv"], tmp_path / stem, config)
+    latex = (tmp_path / stem / "table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / stem / "table.html").read_text(encoding="utf-8")
+    spec = json.loads((tmp_path / stem / "table-spec.json").read_text(encoding="utf-8"))
+
+    assert latex.count("    \\midrule") == expected_group_rules + 1  # includes header rule
+    assert "\\addlinespace" not in latex
+    assert html.count('class="group-start rule"') == expected_group_rules
+    separator_field = next(field["key"] for field in spec["identity_columns"] if field.get("separator"))
+    group_values = [row["identity"].get(separator_field) for row in spec["rows"]]
+    assert len(list(dict.fromkeys(group_values))) == expected_group_rules + 1
+
+
 def test_all_research_backed_templates_are_discoverable() -> None:
     assert {item["id"] for item in available_templates()} == {
         "benchmark-wide",
