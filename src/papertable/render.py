@@ -56,15 +56,26 @@ def _cell_precision(spec: dict[str, Any], row: dict[str, Any], column: dict[str,
     return spec["metrics"][metric]["precision"]
 
 
-def _groups(columns: list[dict[str, Any]]) -> list[tuple[str, int]]:
+def _groups(columns: list[dict[str, Any]], widths: list[int] | None = None) -> list[tuple[str, int]]:
     groups: list[tuple[str, int]] = []
-    for column in columns:
+    for index, column in enumerate(columns):
         label = column.get("group_label") or ""
+        width = widths[index] if widths else 1
         if groups and groups[-1][0] == label:
-            groups[-1] = (label, groups[-1][1] + 1)
+            groups[-1] = (label, groups[-1][1] + width)
         else:
-            groups.append((label, 1))
+            groups.append((label, width))
     return groups
+
+
+def _auxiliary_columns(spec: dict[str, Any]) -> set[int]:
+    """Return logical columns that need a separate, alignment-preserving auxiliary slot."""
+    return {
+        column_index
+        for row in spec["rows"]
+        for column_index, cell in enumerate(row["cells"])
+        if cell and cell.get("auxiliary")
+    }
 
 
 def _row_separator(spec: dict[str, Any], row_index: int) -> bool:
@@ -107,6 +118,12 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
+    auxiliary_columns = _auxiliary_columns(spec)
+    physical_widths = [2 if index in auxiliary_columns else 1 for index in range(len(columns))]
+    column_spec = "l" * len(identity_columns) + "".join(
+        r"r@{\hspace{0.25em}}l" if index in auxiliary_columns else "c"
+        for index in range(len(columns))
+    )
     lines = [
         f"\\begin{{{environment}}}[t]", "  \\centering",
         f"  \\{font_size}",
@@ -116,10 +133,10 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     if fit_width:
         lines.append("  \\resizebox{\\textwidth}{!}{%")
     lines.extend([
-        "  \\begin{tabular}{" + "l" * len(identity_columns) + "c" * len(columns) + "}",
+        "  \\begin{tabular}{" + column_spec + "}",
         "    \\toprule",
     ])
-    groups = _groups(columns)
+    groups = _groups(columns, physical_widths)
     has_groups = any(label for label, _ in groups)
     if has_groups:
         header = [""] * len(identity_columns) + [
@@ -135,7 +152,11 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
         if rules:
             lines.append("    " + " ".join(rules))
     leaf_header = [latex_escape(field["label"]) for field in identity_columns]
-    leaf_header += [_column_header(spec, column) for column in columns]
+    leaf_header += [
+        f"\\multicolumn{{2}}{{c}}{{{_column_header(spec, column)}}}"
+        if index in auxiliary_columns else _column_header(spec, column)
+        for index, column in enumerate(columns)
+    ]
     lines.append("    " + " & ".join(leaf_header) + r" \\")
     lines.append("    \\midrule")
 
@@ -143,7 +164,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     for row_index, row in enumerate(spec["rows"]):
         group_changed = row_index == 0 or row.get("group") != spec["rows"][row_index - 1].get("group")
         if group_bands and row.get("group") and group_changed:
-            span = len(identity_columns) + len(columns)
+            span = len(identity_columns) + sum(physical_widths)
             lines.append(
                 f"    \\rowcolor[HTML]{{{band_color}}} "
                 f"\\multicolumn{{{span}}}{{c}}{{\\textbf{{{latex_escape(row['group'])}}}}} \\\\"
@@ -159,9 +180,9 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
             elif cell_style == "underline":
                 value = f"\\underline{{{value}}}"
             auxiliary = _auxiliary_text(cell)
-            if auxiliary:
-                value += f" {{\\scriptsize ({latex_escape(auxiliary)})}}"
             values.append(value)
+            if column_index in auxiliary_columns:
+                values.append(f"{{\\scriptsize ({latex_escape(auxiliary)})}}" if auxiliary else "")
         prefix = f"\\rowcolor[HTML]{{{highlight_color}}} " if row.get("method") in highlight_methods else ""
         lines.append("    " + prefix + " & ".join(_identity_values(spec, row_index) + values) + r" \\")
     lines.extend(["    \\bottomrule", "  \\end{tabular}"])
@@ -191,8 +212,9 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
+    auxiliary_columns = _auxiliary_columns(spec)
     out = ["<!doctype html>", '<meta charset="utf-8">', "<style>",
-           f"table{{border-collapse:collapse;font:14px system-ui;margin:2rem auto}}caption{{font-weight:600;margin:.8rem}}th,td{{padding:.45rem .7rem;text-align:center;border-bottom:1px solid #bbb}}thead tr:first-child th{{border-top:2px solid #222}}tbody tr:last-child td{{border-bottom:2px solid #222}}th:first-child,td:first-child{{text-align:left}}tbody tr.group-start td{{border-top:1.5px solid #555}}tbody tr.group-band th{{background:#{band_color};text-align:center;font-weight:700;border-top:1.5px solid #555}}.aux{{font-size:.78em;color:#555;margin-left:.25em}}",
+           f"table{{border-collapse:collapse;font:14px system-ui;margin:2rem auto}}caption{{font-weight:600;margin:.8rem}}th,td{{padding:.45rem .7rem;text-align:center;border-bottom:1px solid #bbb}}thead tr:first-child th{{border-top:2px solid #222}}tbody tr:last-child td{{border-bottom:2px solid #222}}th:first-child,td:first-child{{text-align:left}}tbody tr.group-start td{{border-top:1.5px solid #555}}tbody tr.group-band th{{background:#{band_color};text-align:center;font-weight:700;border-top:1.5px solid #555}}.cell-grid{{display:inline-grid;width:100%;grid-template-columns:minmax(0,1fr) 4.8em;column-gap:.25em;align-items:baseline}}.cell-grid .primary{{text-align:right}}.cell-grid .aux{{font-size:.78em;color:#555;text-align:left}}",
            "</style>", "<table>", f"<caption>{html.escape(caption)}</caption>", "<thead>"]
     if has_groups:
         out.append("<tr>" + "".join(f'<th rowspan="2">{html.escape(f["label"])}</th>' for f in spec["identity_columns"]) + "".join(
@@ -220,8 +242,12 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
             elif cell_style == "underline":
                 escaped = f"<u>{escaped}</u>"
             auxiliary = _auxiliary_text(cell)
-            if auxiliary:
-                escaped += f'<span class="aux">({html.escape(auxiliary)})</span>'
+            if column_index in auxiliary_columns:
+                auxiliary_html = f"({html.escape(auxiliary)})" if auxiliary else ""
+                escaped = (
+                    f'<span class="cell-grid"><span class="primary">{escaped}</span>'
+                    f'<span class="aux">{auxiliary_html}</span></span>'
+                )
             cells.append(f"<td>{escaped}</td>")
         class_name = ' class="group-start"' if _row_separator(spec, row_index) and not group_bands else ""
         row_style = f' style="background:#{highlight_color}"' if row.get("method") in highlight_methods else ""
