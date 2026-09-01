@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Skill entrypoint for the deterministic PaperTable CLI."""
+"""Skill entrypoint for the deterministic Paper2Table CLI."""
 
 from __future__ import annotations
 
@@ -16,4 +16,3 @@ from papertable.cli import main  # noqa: E402
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -18,9 +18,10 @@ Display a scientifically useful reference even when it is excluded from ranking,
 The left side answers "what exactly was run?"
 
 - Use separate identity columns when model, method, backbone, data, budget, protocol, or source changes comparability.
-- Use full-width family bands when readers primarily need to scan categories such as proprietary / general / multimodal / agentic systems.
-- Match separator strength to the semantic boundary: whitespace for a weak subdivision, a full-width midrule when a family/regime change must remain visible across numeric columns, and a band when the taxonomy is itself a primary reading axis.
-- When repeated family/regime labels are suppressed, do not rely on the first identity column alone. Use a rule or band if readers otherwise cannot trace the group boundary across the table.
+- Grouping is optional. Do not introduce a taxonomy merely because the input has an ordering or because a template supports groups.
+- Use full-width family bands only when readers primarily need to scan categories such as proprietary / general / multimodal / agentic systems.
+- Match separator strength to the semantic boundary: no separator for an already clear flat list, whitespace for a weak subdivision, a full-width midrule when a regime change must remain visible across numeric columns, and a band when the taxonomy is itself a primary reading axis.
+- When repeated family/regime labels are suppressed, use a rule or band only if readers otherwise cannot trace a scientifically important boundary. Horizontal rules are not a default requirement.
 - Use a restrained focal-row shade only to locate the proposed system. It must not substitute for numerical emphasis.
 
 ## 3. Column topology
@@ -62,7 +63,9 @@ Ties share a marker. Color is secondary and the table must remain intelligible i
 
 ## 6. Caption contract
 
-The caption must explain evaluation scope, grouping, metric direction, uncertainty and run count, missingness, ranking universe, marker semantics, and every auxiliary delta. Put hardware/protocol details in a note when they are essential but too long for headers.
+The caption must explain evaluation scope, metric direction, uncertainty and run count, missingness, ranking universe, marker semantics, every auxiliary delta, and grouping when grouping is used. Put hardware/protocol details in a note when they are essential but too long for headers.
+
+The caption and table are the user-facing deliverables. Provenance manifests and normalized data exist to verify them, not to expand the requested product.
 
 ## 7. Visual QA
 

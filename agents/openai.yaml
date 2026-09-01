@@ -1,8 +1,7 @@
 interface:
-  display_name: "Main Experiment Table"
-  short_description: "Research-backed main-table design from experiment data"
-  default_prompt: "Use $main-experiment-table to turn my experiment results into a publication-ready main table and caption."
+  display_name: "Paper2Table"
+  short_description: "Turn experiment files into a caption and table"
+  default_prompt: "Use $paper2table to turn my uploaded experiment results into a publication-ready caption and table."
 
 policy:
   allow_implicit_invocation: true
-

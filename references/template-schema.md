@@ -38,6 +38,7 @@ Templates are JSON objects in `assets/templates/`. User config is deep-merged ov
 - `column_order`: `dataset, metric` or `metric, dataset` for methods-as-rows.
 - `column_fields`: system label fields for datasets-as-rows.
 - `column_group_field`: optional field such as `pretrain_data` rendered above system columns.
+- `input.method_field`: optional authoritative method-name column. Values are copied verbatim; this option selects a field, not a rename mapping.
 
 ## Comparison scope
 
@@ -73,6 +74,8 @@ Use `comparison` to define which displayed systems participate in best/second-be
 Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row highlights use `xcolor` with the `table` option. `row_separator_style` accepts `space` (the default) or `rule`; use `rule` when fields marked with `separator` define visually important families or regimes.
 
 `missing_marker` defaults to `--`; set it to `N/A` only when missing cells are scientifically not applicable or unsupported, and pair it with an explicit `missing_note` or custom caption.
+
+`group` metadata does not create separators by default. Set `row_group_style: "band"` for explicit full-width bands, or set `separate_row_groups: true` together with `row_separator_style: "space"` or `"rule"`. Fields marked with `separator: true` can still create whitespace/rules when their value changes. Horizontal rules are optional, not a success criterion.
 
 Metric `direction` remains required for numerical semantics. Set `show_direction: false` for descriptive quantities such as category counts or failure rates where an up/down arrow would falsely imply desirability.
 

@@ -45,6 +45,14 @@ def generate(
     (output / "preview.tex").write_text(render_preview_document(), encoding="utf-8")
 
     planned = sum(cell is not None for row in spec["rows"] for cell in row["cells"])
+    method_identity = []
+    for method in dict.fromkeys(item.method for item in observations):
+        matching = [item for item in observations if item.method == method]
+        method_identity.append({
+            "method": method,
+            "input_fields": list(dict.fromkeys(item.method_source_field for item in matching)),
+            "sources": list(dict.fromkeys(item.source for item in matching if item.source)),
+        })
     manifest = {
         "schema_version": "paper-table-manifest-v1",
         "inputs": [str(Path(path)) for path in inputs],
@@ -66,7 +74,10 @@ def generate(
         "omitted_columns": spec["omitted_columns"],
         "warnings": spec["warnings"],
         "verification": verification,
-        "artifacts": ["observations.json", "aggregates.json", "table-spec.json", "table.tex", "table.html", "caption.txt", "preview.tex"],
+        "method_identity_policy": "verbatim_from_input",
+        "method_identity": method_identity,
+        "deliverables": ["caption.txt", "table.tex", "table.html"],
+        "audit_artifacts": ["observations.json", "aggregates.json", "table-spec.json", "manifest.json", "preview.tex"],
     }
     _dump(output / "manifest.json", manifest)
     return manifest

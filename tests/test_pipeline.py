@@ -48,6 +48,57 @@ def test_nested_json(tmp_path: Path) -> None:
     observations = load_inputs([source])
     assert len(observations) == 4
     assert observations[1].run == "2"
+    assert observations[1].method_source_field == "json_object_key"
+
+
+def test_method_name_is_verbatim_from_selected_input_field(tmp_path: Path) -> None:
+    source = tmp_path / "official.csv"
+    source.write_text(
+        "model,official_method_name,dataset,score\n"
+        "backbone,ThAInker++ (Ours),D,91.2\n",
+        encoding="utf-8",
+    )
+    manifest = generate([source], tmp_path / "out", {
+        "input": {"method_field": "official_method_name", "metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text(encoding="utf-8"))
+
+    assert spec["methods"] == ["ThAInker++ (Ours)"]
+    assert spec["rows"][0]["method"] == "ThAInker++ (Ours)"
+    assert manifest["method_identity_policy"] == "verbatim_from_input"
+    assert manifest["method_identity"] == [{
+        "method": "ThAInker++ (Ours)",
+        "input_fields": ["official_method_name"],
+        "sources": [str(source)],
+    }]
+
+
+def test_group_metadata_does_not_force_a_visible_separator(tmp_path: Path) -> None:
+    source = tmp_path / "groups.csv"
+    source.write_text(
+        "group,method,dataset,score\n"
+        "Baseline,A,D,1\n"
+        "Proposed,B,D,2\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "flat", {
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+    })
+    flat_latex = (tmp_path / "flat/table.tex").read_text(encoding="utf-8")
+    flat_html = (tmp_path / "flat/table.html").read_text(encoding="utf-8")
+    assert flat_latex.count(r"\midrule") == 1
+    assert r"\addlinespace" not in flat_latex
+    assert 'class="group-start' not in flat_html
+
+    generate([source], tmp_path / "explicit", {
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+        "style": {"separate_row_groups": True, "row_separator_style": "rule"},
+    })
+    explicit_latex = (tmp_path / "explicit/table.tex").read_text(encoding="utf-8")
+    assert explicit_latex.count(r"\midrule") == 2
 
 
 def test_reported_summary_preserves_sd_n_and_source_without_inventing_runs(tmp_path: Path) -> None:
@@ -289,12 +340,9 @@ def test_readme_displays_every_gallery_image() -> None:
         assert f"]({relative_path})" in readme, f"README does not display {relative_path}"
 
 
-@pytest.mark.parametrize(
-    ("stem", "expected_group_rules"),
-    [("compact", 3), ("scaled", 2), ("hierarchical", 1)],
-)
-def test_semantic_group_templates_use_full_width_rules(
-    tmp_path: Path, stem: str, expected_group_rules: int
+@pytest.mark.parametrize("stem", ["compact", "scaled", "hierarchical"])
+def test_identity_group_templates_default_to_whitespace(
+    tmp_path: Path, stem: str
 ) -> None:
     gallery = Path(__file__).parents[1] / "examples" / "gallery"
     config = json.loads((gallery / f"{stem}.json").read_text(encoding="utf-8"))
@@ -303,12 +351,12 @@ def test_semantic_group_templates_use_full_width_rules(
     html = (tmp_path / stem / "table.html").read_text(encoding="utf-8")
     spec = json.loads((tmp_path / stem / "table-spec.json").read_text(encoding="utf-8"))
 
-    assert latex.count("    \\midrule") == expected_group_rules + 1  # includes header rule
-    assert "\\addlinespace" not in latex
-    assert html.count('class="group-start rule"') == expected_group_rules
+    assert latex.count("    \\midrule") == 1  # header rule only
+    assert "\\addlinespace" in latex
+    assert 'class="group-start space"' in html
     separator_field = next(field["key"] for field in spec["identity_columns"] if field.get("separator"))
     group_values = [row["identity"].get(separator_field) for row in spec["rows"]]
-    assert len(list(dict.fromkeys(group_values))) == expected_group_rules + 1
+    assert len(list(dict.fromkeys(group_values))) > 1
 
 
 def test_all_research_backed_templates_are_discoverable() -> None:

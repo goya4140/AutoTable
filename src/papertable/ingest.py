@@ -34,6 +34,13 @@ def _first(row: dict[str, Any], keys: Iterable[str], default: Any = None) -> Any
     return default
 
 
+def _first_item(row: dict[str, Any], keys: Iterable[str]) -> tuple[str, Any] | None:
+    for key in keys:
+        if key in row and row[key] not in (None, ""):
+            return key, row[key]
+    return None
+
+
 def _number(value: Any, *, field: str) -> float:
     if isinstance(value, bool):
         raise InputError(f"{field} must be numeric, not boolean")
@@ -71,9 +78,19 @@ def _row_observations(
     for index, row in enumerate(rows, 1):
         if not isinstance(row, dict):
             raise InputError(f"{source}: row {index} is not an object")
-        method = _first(row, _METHOD_KEYS)
-        if method is None:
-            raise InputError(f"{source}: row {index} has no method/model/system field")
+        configured_method_field = config.get("input", {}).get("method_field")
+        if configured_method_field:
+            method_item = _first_item(row, (str(configured_method_field),))
+            if method_item is None:
+                raise InputError(
+                    f"{source}: row {index} has no value in configured method field "
+                    f"{configured_method_field!r}"
+                )
+        else:
+            method_item = _first_item(row, _METHOD_KEYS)
+        if method_item is None:
+            raise InputError(f"{source}: row {index} has no method/model/system/approach field")
+        method_source_field, method = method_item
         dimensions = {
             key: str(row[key]) for key in dict.fromkeys((*_DESCRIPTOR_KEYS, *field_keys))
             if key != "method" and row.get(key) not in (None, "")
@@ -82,6 +99,7 @@ def _row_observations(
         run = str(_first(row, _RUN_KEYS)) if _first(row, _RUN_KEYS) is not None else None
         common = {
             "method": str(method),
+            "method_source_field": method_source_field,
             "dataset": str(_first(row, _DATASET_KEYS, "Overall")),
             "setting": str(row["setting"]) if row.get("setting") not in (None, "") else None,
             "group": str(_first(row, ("group", "family"))) if _first(row, ("group", "family")) is not None else None,
@@ -166,7 +184,8 @@ def _nested_observations(data: dict[str, Any], source: str) -> list[Observation]
                 values = value if isinstance(value, list) else [value]
                 for run_index, item in enumerate(values, 1):
                     observations.append(Observation(
-                        method=str(method), dataset=str(dataset), metric=str(metric),
+                        method=str(method), method_source_field="json_object_key",
+                        dataset=str(dataset), metric=str(metric),
                         value=_number(item, field=f"{source}.{method}.{dataset}.{metric}"),
                         run=str(run_index) if isinstance(value, list) else None,
                         source=source,

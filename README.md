@@ -1,14 +1,23 @@
-# PaperTable — Main Experiment Table Skill
+# Paper2Table — Experiment Files to Caption + Table
 
 [![Tests](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml)
 
-把 CSV / TSV / JSON / JSONL 实验数据生成可投稿的 **主实验表 + caption**。这个仓库现在首先是一个 Codex Skill，其次才是 CLI：Agent 负责理解科学比较关系，确定表格布局；确定性流水线负责聚合、排名、渲染和校验，不改写实验数字。
+Paper2Table 的产品边界只有一句话：
+
+```text
+输入：CSV / TSV / JSON / JSONL 实验结果文件
+输出：caption + table
+```
+
+这个仓库首先是一个 Codex Skill，其次才是 CLI。Skill 理解实验文件中的科学比较关系并选择合适布局；确定性流水线负责聚合、排名、渲染和校验。**方法名称逐字取自输入文件，系统不会自行总结、润色或命名。**
+
+`caption.txt` 与 `table.tex`（以及便于查看的 `table.html`）是用户产物；manifest、标准化数据和 preview 只是内部验证材料。
 
 ## 真实生成效果
 
 下列图片由仓库内的 gallery 数据通过完整流水线生成，再从 `preview.pdf` 渲染得到，不是手工画表。数据均为版式测试用的示例值。
 
-### ToolArtist 风格：方法家族组带 + 限定排名范围 + 焦点行
+### 可选的家族组带：限定排名范围 + 焦点行
 
 ![Family-banded benchmark table](docs/assets/gallery/family-banded-benchmark.png)
 
@@ -36,13 +45,13 @@
 
 ![Compact regime comparison table](docs/assets/gallery/compact-regime-comparison.png)
 
-将 prompting、acting、combined 与 supervised reference 用贯穿整表的横线分段，在保持窄表结构的同时明确比较制度。
+将 prompting、acting、combined 与 supervised reference 用留白分段；只有当制度边界必须贯穿数值列时，才把它升级为横线。
 
 ### 同一家族的模型规模与深度变体
 
 ![Scaled model variants table](docs/assets/gallery/scaled-variants.png)
 
-模型家族、具体变体、深度与参数量分别占列，并用横线标出 family 边界，使规模变化与主要结果保持可追踪关系。
+模型家族、具体变体、深度与参数量分别占列。family 边界可以根据阅读需要采用无分隔、留白、横线或组带，而不是固定画线。
 
 ## 为什么不只有一个“万能表”
 
@@ -52,9 +61,9 @@
 [system identity / protocol / budget] | [measured evidence] | [optional cost or aggregate]
 ```
 
-因此 PaperTable 将设计分成 `comparison contract → row/column topology → value grammar → emphasis → caption`，将 `Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开。完整规则见 [design grammar](references/design-grammar.md)，论文观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
+因此 Paper2Table 将设计分成 `comparison contract → row/column topology → value grammar → emphasis → caption`，将 `Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开。横线、留白、组带和高亮只是可选语义通道，不是模板必须项。完整规则见 [design grammar](references/design-grammar.md)，论文观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
 
-## 七类可复用主表
+## 七类可复用起点
 
 | Template | 适用的科学比较 | 关键表达 |
 |---|---|---|
@@ -66,7 +75,7 @@
 | `scaled-variants` | 模型规模 / 深度消融 | family、variant、depth、params 分列 |
 | `compact-regime-comparison` | 少量任务与多种方法机制 | prompting / acting / combined / oracle 分块 |
 
-选择规则见 [template selection](references/template-selection.md)，每个模板都是可覆盖的 JSON config，没有隐藏的渲染分支。
+选择规则见 [template selection](references/template-selection.md)。模板只是可覆盖的 JSON 起点；也可以不用模板，直接由输入几何生成平面表。
 
 ## 作为 Skill 使用
 
@@ -74,13 +83,13 @@
 
 ```bash
 git clone https://github.com/goya4140/PaperTable.git \
-  ~/.codex/skills/main-experiment-table
+  ~/.codex/skills/paper2table
 ```
 
 然后在 Codex 中直接说：
 
 ```text
-$main-experiment-table 读取 results.csv，以参数效率为核心设计主实验表，并生成 LaTeX 和 caption。
+$paper2table 读取 results.csv，保留文件中的方法名称，为我生成 caption 和 LaTeX table。
 ```
 
 Skill 会先识别比较维度和科学口径，再选择模板。具体行为和不可越过的数据约束定义在 [SKILL.md](SKILL.md)。
@@ -103,7 +112,7 @@ python scripts/generate_main_table.py generate \
 
 ```bash
 python -m pip install -e .
-papertable generate results.csv --template benchmark-wide --config table.json --out output/main-table
+paper2table generate results.csv --template benchmark-wide --config table.json --out output/main-table
 ```
 
 `--template` 可以是内置 template ID，也可以是自定义 JSON 路径。配置会深度覆盖模板；输入契约见 [input contract](references/input-contract.md)，布局字段见 [template schema](references/template-schema.md)。
@@ -111,17 +120,15 @@ papertable generate results.csv --template benchmark-wide --config table.json --
 ## 产物与保证
 
 ```text
-experiment files → observations → aggregates → semantic table spec
-                                              ├─ table.tex
-                                              ├─ table.html
-                                              ├─ caption.txt
-                                              └─ manifest.json
+experiment files → verified internal pipeline → caption.txt + table.tex/table.html
 ```
 
+- `caption.txt` 与 `table.tex` / `table.html` 是最终交付。
 - `observations.json` 保留标准化后的每个观测和来源。
 - `aggregates.json` 保留 mean、sample SD、`n`、run IDs 和身份维度。
 - `table-spec.json` 是与 LaTeX / HTML 解耦的语义中间层。
 - `manifest.json` 列出警告、被省略列和校验结果；只有 `verification.valid = true` 才是有效生成。
+- `manifest.json.method_identity` 记录每个展示名称来自哪个输入字段和文件，策略固定为 `verbatim_from_input`。
 - 缺失值始终渲染为 `--` 并排除在排名之外；系统不会伪造误差、显著性或未报告实验。
 - proprietary / oracle / incompatible protocol 可以保留在表中作为参考，同时通过 `comparison` 显式排除在 best/second-best 计算之外。
 - `auxiliary.delta` 始终保留主结果，并强制 baseline 唯一匹配；不会把提升百分比当成主测量值。

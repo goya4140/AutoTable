@@ -82,7 +82,8 @@ def _row_separator(spec: dict[str, Any], row_index: int) -> bool:
     if row_index == 0:
         return False
     current, previous = spec["rows"][row_index], spec["rows"][row_index - 1]
-    if current.get("group") != previous.get("group") and (current.get("group") or previous.get("group")):
+    separate_groups = bool(spec.get("style", {}).get("separate_row_groups", False))
+    if separate_groups and current.get("group") != previous.get("group") and (current.get("group") or previous.get("group")):
         return True
     return any(
         field.get("separator") and current["identity"].get(field["key"]) != previous["identity"].get(field["key"])

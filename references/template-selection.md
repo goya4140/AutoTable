@@ -1,6 +1,6 @@
 # Template selection
 
-Choose the evidence geometry first. Styling comes after the row/column decision.
+Choose the evidence geometry first. Styling comes after the row/column decision. Templates are optional starting points, not mandatory table forms.
 
 | Template | Use when | Identity/field treatment | Evidence axis |
 |---|---|---|---|
@@ -37,6 +37,6 @@ If changing a value could invalidate a direct comparison, display it as an ident
 
 ## Row grouping
 
-Use group changes for scientifically meaningful regimes: prior work / reproduced baselines / ours; base model family; prompting / finetuning / supervised oracle. Use whitespace for weak subdivisions and a full-width rule when the boundary must be traceable across all metric columns. Avoid repeating the same family label on every row.
+Use group changes only for scientifically meaningful regimes: prior work / reproduced baselines / ours; base model family; prompting / finetuning / supervised oracle. A flat table with no internal separator is valid. When grouping helps, prefer whitespace for weak subdivisions and reserve a full-width rule for a boundary that must be traceable across all metric columns. Avoid repeating the same family label on every row.
 
 Use `family-banded-benchmark` when the group taxonomy is itself one of the first things readers must understand. A band is stronger than whitespace and should not be used for incidental source ordering.

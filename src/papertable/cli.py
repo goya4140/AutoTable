@@ -21,7 +21,7 @@ def _config(path: str | None) -> dict[str, Any]:
 
 
 def parser() -> argparse.ArgumentParser:
-    root = argparse.ArgumentParser(prog="papertable", description="Experimental data → main table + caption")
+    root = argparse.ArgumentParser(prog="paper2table", description="Experiment files → caption + table")
     sub = root.add_subparsers(dest="command", required=True)
     generate_parser = sub.add_parser("generate", help="run the complete deterministic pipeline")
     generate_parser.add_argument("inputs", nargs="+", help="CSV, TSV, JSON, or JSONL experiment files")

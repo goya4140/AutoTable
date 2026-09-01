@@ -7,6 +7,7 @@ from typing import Any
 @dataclass(frozen=True)
 class Observation:
     method: str
+    method_source_field: str
     metric: str
     value: float
     dataset: str = "Overall"
@@ -25,6 +26,7 @@ class ReportedSummary:
     """A published aggregate whose underlying run-level values are unavailable."""
 
     method: str
+    method_source_field: str
     metric: str
     mean: float
     sd: float | None
@@ -42,6 +44,7 @@ class ReportedSummary:
 @dataclass(frozen=True)
 class Aggregate:
     method: str
+    method_source_fields: tuple[str, ...]
     metric: str
     dataset: str
     setting: str | None
@@ -60,4 +63,5 @@ class Aggregate:
         data["values"] = list(self.values)
         data["run_ids"] = list(self.run_ids)
         data["sources"] = list(self.sources)
+        data["method_source_fields"] = list(self.method_source_fields)
         return data

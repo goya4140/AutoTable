@@ -1,7 +1,6 @@
-"""PaperTable: experimental results to publication-ready main tables."""
+"""Paper2Table: experiment files to a publication-ready caption and table."""
 
 from .pipeline import generate
 
 __all__ = ["generate"]
-__version__ = "0.2.0"
-
+__version__ = "0.6.0"

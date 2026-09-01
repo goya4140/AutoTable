@@ -27,6 +27,7 @@ def aggregate(observations: list[Observation | ReportedSummary]) -> list[Aggrega
             summary = summaries[0]
             output.append(Aggregate(
                 method=method,
+                method_source_fields=(summary.method_source_field,),
                 dataset=dataset,
                 metric=metric,
                 setting=setting,
@@ -50,6 +51,7 @@ def aggregate(observations: list[Observation | ReportedSummary]) -> list[Aggrega
             )
         output.append(Aggregate(
             method=method,
+            method_source_fields=tuple(dict.fromkeys(item.method_source_field for item in raw_items)),
             dataset=dataset,
             metric=metric,
             setting=setting,
