@@ -5,12 +5,12 @@ import json
 from pathlib import Path
 from typing import Any, Iterable
 
-from .model import Observation
+from .model import Observation, ReportedSummary
 
 _IDENTITY_KEYS = {
     "method", "model", "system", "approach", "dataset", "benchmark", "task",
     "setting", "split", "seed", "run", "run_id", "fold", "group", "family",
-    "metric", "value", "source", "epoch", "step", "n", "backbone",
+    "metric", "value", "mean", "sd", "std", "sample_sd", "source", "epoch", "step", "n", "backbone",
     "pretrain_data", "training_data", "trainable_params", "params", "depth",
     "regime", "protocol", "source_type", "extra_data",
 }
@@ -59,7 +59,7 @@ def _read(path: Path) -> Any:
 
 def _row_observations(
     rows: list[dict[str, Any]], source: str, config: dict[str, Any]
-) -> list[Observation]:
+) -> list[Observation | ReportedSummary]:
     metric_keys = config.get("input", {}).get("metric_columns")
     layout = config.get("layout", {})
     field_defs = list(layout.get("row_fields", [])) + list(layout.get("column_fields", []))
@@ -67,7 +67,7 @@ def _row_observations(
     if layout.get("column_group_field"):
         field_keys.append(layout["column_group_field"])
     field_keys += list(config.get("input", {}).get("dimensions", []))
-    observations: list[Observation] = []
+    observations: list[Observation | ReportedSummary] = []
     for index, row in enumerate(rows, 1):
         if not isinstance(row, dict):
             raise InputError(f"{source}: row {index} is not an object")
@@ -79,10 +79,10 @@ def _row_observations(
             if key != "method" and row.get(key) not in (None, "")
             and not (key == "model" and "method" not in row)
         }
+        run = str(_first(row, _RUN_KEYS)) if _first(row, _RUN_KEYS) is not None else None
         common = {
             "method": str(method),
             "dataset": str(_first(row, _DATASET_KEYS, "Overall")),
-            "run": str(_first(row, _RUN_KEYS)) if _first(row, _RUN_KEYS) is not None else None,
             "setting": str(row["setting"]) if row.get("setting") not in (None, "") else None,
             "group": str(_first(row, ("group", "family"))) if _first(row, ("group", "family")) is not None else None,
             "source": source,
@@ -90,9 +90,35 @@ def _row_observations(
         }
         # Long format: one metric/value pair per row.
         if row.get("metric") not in (None, "") and _first(row, ("value", "score")) is not None:
+            if row.get("mean") not in (None, ""):
+                raise InputError(f"{source}: row {index} cannot contain both value and mean")
             observations.append(Observation(
                 metric=str(row["metric"]),
                 value=_number(_first(row, ("value", "score")), field=f"{source}:{index}.value"),
+                run=run,
+                **common,
+            ))
+            continue
+
+        # Pre-aggregated long format: preserve reported mean/SD/n without inventing runs.
+        if row.get("metric") not in (None, "") and row.get("mean") not in (None, ""):
+            if run is not None:
+                raise InputError(f"{source}: row {index} reported summary cannot also declare a run ID")
+            raw_n = row.get("n", 1)
+            numeric_n = _number(raw_n, field=f"{source}:{index}.n")
+            if numeric_n < 1 or not numeric_n.is_integer():
+                raise InputError(f"{source}:{index}.n must be a positive integer")
+            raw_sd = _first(row, ("sd", "std", "sample_sd"))
+            sd = _number(raw_sd, field=f"{source}:{index}.sd") if raw_sd is not None else None
+            if sd is not None and sd < 0:
+                raise InputError(f"{source}:{index}.sd must be non-negative")
+            if sd is not None and int(numeric_n) < 2:
+                raise InputError(f"{source}:{index}.sd requires n >= 2")
+            observations.append(ReportedSummary(
+                metric=str(row["metric"]),
+                mean=_number(row["mean"], field=f"{source}:{index}.mean"),
+                sd=sd,
+                n=int(numeric_n),
                 **common,
             ))
             continue
@@ -113,6 +139,7 @@ def _row_observations(
             observations.append(Observation(
                 metric=str(metric),
                 value=_number(row[metric], field=f"{source}:{index}.{metric}"),
+                run=run,
                 **common,
             ))
     return observations
@@ -147,9 +174,11 @@ def _nested_observations(data: dict[str, Any], source: str) -> list[Observation]
     return observations
 
 
-def load_inputs(paths: list[str | Path], config: dict[str, Any] | None = None) -> list[Observation]:
+def load_inputs(
+    paths: list[str | Path], config: dict[str, Any] | None = None
+) -> list[Observation | ReportedSummary]:
     config = config or {}
-    all_observations: list[Observation] = []
+    all_observations: list[Observation | ReportedSummary] = []
     for raw_path in paths:
         path = Path(raw_path)
         if not path.is_file():

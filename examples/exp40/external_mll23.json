@@ -1,0 +1,23 @@
+{
+  "template": "family-banded-benchmark",
+  "title": "External MLL23 evaluation",
+  "label": "tab:exp40-external-mll23",
+  "caption": "External MLL23 ten-class results. Values are reported mean ± sample standard deviation over seeds 17, 29, and 43. N/A denotes an unsupported method-output contract, not zero. Best and second-best available results in each metric column are bolded and underlined, respectively; ties share the same marker. The proposed method is shaded. This is bounded external class/path evidence and does not test MLL23 attribute correctness.",
+  "input": {"dimensions": ["protocol", "source_type"]},
+  "metrics": {
+    "weighted_f1": {"label": "Weighted F1", "direction": "max", "precision": 3},
+    "macro_f1": {"label": "Macro F1", "direction": "max", "precision": 3},
+    "prototype_drift": {"label": "Prototype drift", "direction": "min", "precision": 3},
+    "dependency_aopc_gap": {"label": "Dependency AOPC gap", "direction": "max", "precision": 3}
+  },
+  "selection": {
+    "datasets": ["Classification", "Mechanism"],
+    "metrics": ["weighted_f1", "macro_f1", "prototype_drift", "dependency_aopc_gap"]
+  },
+  "style": {
+    "highlight_methods": ["Ours"],
+    "missing_marker": "N/A",
+    "fit_width": true,
+    "font_size": "footnotesize"
+  }
+}

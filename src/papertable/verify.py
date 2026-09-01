@@ -26,8 +26,17 @@ def verify_spec(spec: dict[str, Any]) -> dict[str, Any]:
                 value = cell.get(field)
                 if value is not None and (not isinstance(value, (int, float)) or not math.isfinite(value)):
                     errors.append(f"cell {row_index},{column_index} has non-finite {field}")
-            if len(cell.get("values", [])) != cell.get("n"):
-                errors.append(f"cell {row_index},{column_index} loses value lineage")
+            aggregation_source = cell.get("aggregation_source", "observations")
+            if aggregation_source == "observations":
+                if len(cell.get("values", [])) != cell.get("n"):
+                    errors.append(f"cell {row_index},{column_index} loses value lineage")
+            elif aggregation_source == "reported_summary":
+                if cell.get("values") or cell.get("run_ids") or not cell.get("sources"):
+                    errors.append(f"cell {row_index},{column_index} has invalid summary lineage")
+                if cell.get("sd") is not None and cell.get("n", 0) < 2:
+                    errors.append(f"cell {row_index},{column_index} reports SD with n < 2")
+            else:
+                errors.append(f"cell {row_index},{column_index} has invalid aggregation source")
             auxiliary = cell.get("auxiliary")
             if auxiliary:
                 if auxiliary.get("kind") not in {"absolute", "relative_percent"}:

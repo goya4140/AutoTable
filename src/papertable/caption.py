@@ -32,7 +32,14 @@ def build_caption(spec: dict[str, Any]) -> str:
     else:
         caption += " Arrows indicate whether higher or lower values are better."
     if any(cell is None for row in spec["rows"] for cell in row["cells"]):
-        caption += " Dashes denote unavailable results."
+        missing_note = spec.get("style", {}).get("missing_note")
+        missing_marker = str(spec.get("style", {}).get("missing_marker", "--"))
+        if missing_note:
+            caption += f" {missing_note}"
+        elif missing_marker == "--":
+            caption += " Dashes denote unavailable results."
+        else:
+            caption += f" {missing_marker} denotes unavailable results."
     emphasis = spec.get("emphasis", {})
     comparison_axis = "column" if spec["orientation"] == "methods_rows" else "row"
     scope = spec.get("comparison", {}).get("rank_scope_label")

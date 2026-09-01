@@ -7,6 +7,7 @@ from typing import Any
 from .aggregate import aggregate
 from .caption import build_caption
 from .ingest import load_inputs
+from .model import Observation, ReportedSummary
 from .planner import plan_main_table
 from .render import render_html, render_latex, render_preview_document
 from .templates import resolve_config
@@ -47,7 +48,12 @@ def generate(
     manifest = {
         "schema_version": "paper-table-manifest-v1",
         "inputs": [str(Path(path)) for path in inputs],
-        "observation_count": len(observations),
+        "input_record_count": len(observations),
+        "observation_count": sum(isinstance(item, Observation) for item in observations),
+        "reported_summary_count": sum(isinstance(item, ReportedSummary) for item in observations),
+        "represented_run_count": sum(
+            item.n if isinstance(item, ReportedSummary) else 1 for item in observations
+        ),
         "aggregate_count": len(aggregates),
         "displayed_cell_count": planned,
         "method_count": len(spec["methods"]),

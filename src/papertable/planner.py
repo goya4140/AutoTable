@@ -37,6 +37,7 @@ def _metric_meta(metric: str, config: dict[str, Any], warnings: list[str]) -> di
         "precision": int(configured.get("precision", 2)),
         "unit": configured.get("unit"),
         "priority": int(configured.get("priority", 100)),
+        "show_direction": bool(configured.get("show_direction", True)),
     }
 
 

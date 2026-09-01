@@ -17,14 +17,14 @@ def latex_escape(value: Any) -> str:
 
 
 def _metric_header(meta: dict[str, Any], label: str | None = None) -> str:
-    arrow = r"$\uparrow$" if meta["direction"] == "max" else r"$\downarrow$"
+    arrow = (r"$\uparrow$" if meta["direction"] == "max" else r"$\downarrow$") if meta.get("show_direction", True) else ""
     unit = f" ({latex_escape(meta['unit'])})" if meta.get("unit") else ""
-    return f"{latex_escape(label or meta['label'])}{unit} {arrow}"
+    return f"{latex_escape(label or meta['label'])}{unit}{f' {arrow}' if arrow else ''}"
 
 
-def _formatted_cell(cell: dict[str, Any] | None, precision: int) -> str:
+def _formatted_cell(cell: dict[str, Any] | None, precision: int, missing_marker: str = "--") -> str:
     if cell is None:
-        return "--"
+        return latex_escape(missing_marker)
     mean = f"{cell['mean']:.{precision}f}"
     return mean if cell["sd"] is None else f"{mean} $\\pm$ {cell['sd']:.{precision}f}"
 
@@ -121,6 +121,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
+    missing_marker = str(style.get("missing_marker", "--"))
     auxiliary_columns = _auxiliary_columns(spec)
     physical_widths = [2 if index in auxiliary_columns else 1 for index in range(len(columns))]
     column_spec = "l" * len(identity_columns) + "".join(
@@ -176,7 +177,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
             lines.append("    \\midrule" if separator_style == "rule" else "    \\addlinespace")
         values = []
         for column_index, (column, cell) in enumerate(zip(columns, row["cells"])):
-            value = _formatted_cell(cell, _cell_precision(spec, row, column))
+            value = _formatted_cell(cell, _cell_precision(spec, row, column), missing_marker)
             cell_style = styles.get((row_index, column_index))
             if cell_style == "bold":
                 value = f"\\textbf{{{value}}}"
@@ -218,6 +219,7 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
     band_color = _color(style.get("group_band_color"), "EFEFEF")
     highlight_color = _color(style.get("highlight_color"), "E8F1FF")
     highlight_methods = set(style.get("highlight_methods", []))
+    missing_marker = str(style.get("missing_marker", "--"))
     auxiliary_columns = _auxiliary_columns(spec)
     out = ["<!doctype html>", '<meta charset="utf-8">', "<style>",
            f"table{{border-collapse:collapse;font:14px system-ui;margin:2rem auto}}caption{{font-weight:600;margin:.8rem}}th,td{{padding:.45rem .7rem;text-align:center;border-bottom:1px solid #bbb}}thead tr:first-child th{{border-top:2px solid #222}}tbody tr:last-child td{{border-bottom:2px solid #222}}th:first-child,td:first-child{{text-align:left}}tbody tr.group-start.rule td{{border-top:2px solid #555}}tbody tr.group-start.space td{{padding-top:.8rem}}tbody tr.group-band th{{background:#{band_color};text-align:center;font-weight:700;border-top:1.5px solid #555}}.cell-grid{{display:inline-grid;width:100%;grid-template-columns:minmax(0,1fr) 4.8em;column-gap:.25em;align-items:baseline}}.cell-grid .primary{{text-align:right}}.cell-grid .aux{{font-size:.78em;color:#555;text-align:left}}",
@@ -240,7 +242,7 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
         identity = "".join(f"<td>{html.escape(v)}</td>" for v in _identity_values_html(spec, row_index))
         cells = []
         for column_index, (column, cell) in enumerate(zip(spec["columns"], row["cells"])):
-            value = _formatted_cell(cell, _cell_precision(spec, row, column)).replace("$\\pm$", "±")
+            value = _formatted_cell(cell, _cell_precision(spec, row, column), missing_marker).replace("$\\pm$", "±")
             escaped = html.escape(value)
             cell_style = styles.get((row_index, column_index))
             if cell_style == "bold":
@@ -271,8 +273,8 @@ def _html_column_header(spec: dict[str, Any], column: dict[str, Any]) -> str:
     meta = spec["metrics"][column["metric"]]
     label = column.get("label") or meta["label"]
     unit = f" ({meta['unit']})" if meta.get("unit") else ""
-    arrow = "↑" if meta["direction"] == "max" else "↓"
-    return html.escape(f"{label}{unit} {arrow}")
+    arrow = ("↑" if meta["direction"] == "max" else "↓") if meta.get("show_direction", True) else ""
+    return html.escape(f"{label}{unit}{f' {arrow}' if arrow else ''}")
 
 
 def _identity_values_html(spec: dict[str, Any], row_index: int) -> list[str]:

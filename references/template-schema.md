@@ -72,6 +72,10 @@ Use `comparison` to define which displayed systems participate in best/second-be
 
 Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row highlights use `xcolor` with the `table` option. `row_separator_style` accepts `space` (the default) or `rule`; use `rule` when fields marked with `separator` define visually important families or regimes.
 
+`missing_marker` defaults to `--`; set it to `N/A` only when missing cells are scientifically not applicable or unsupported, and pair it with an explicit `missing_note` or custom caption.
+
+Metric `direction` remains required for numerical semantics. Set `show_direction: false` for descriptive quantities such as category counts or failure rates where an up/down arrow would falsely imply desirability.
+
 ## Auxiliary deltas
 
 Preserve the primary value while adding a parenthesized absolute or relative change:

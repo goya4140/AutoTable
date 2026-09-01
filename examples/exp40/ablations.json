@@ -1,0 +1,26 @@
+{
+  "template": "family-banded-benchmark",
+  "title": "Single-axis ablations",
+  "label": "tab:exp40-ablations",
+  "caption": "Single-axis ablations. Each row changes one registered axis; values are reported mean ± sample standard deviation over seeds 17, 29, and 43. The full configuration is shaded for orientation. Numerical best/second-best markers are intentionally omitted because the observed ablations do not provide uniform causal support for the proposed mechanism.",
+  "input": {"dimensions": ["protocol", "source_type"]},
+  "metrics": {
+    "coord_top1": {"label": "Coord. top-1", "direction": "max", "precision": 3},
+    "local_attr_f1": {"label": "Local attr. F1", "direction": "max", "precision": 3},
+    "stmt_error": {"label": "Stmt. error", "direction": "min", "precision": 3},
+    "inertia": {"label": "Inertia", "direction": "min", "precision": 3},
+    "joint_aopc_gap": {"label": "Joint AOPC gap", "direction": "max", "precision": 3}
+  },
+  "selection": {
+    "datasets": ["Primary", "Mechanism"],
+    "metrics": ["coord_top1", "local_attr_f1", "stmt_error", "inertia", "joint_aopc_gap"]
+  },
+  "emphasis": {},
+  "style": {
+    "highlight_methods": ["Full"],
+    "fit_width": true,
+    "font_size": "footnotesize",
+    "tabcolsep": 2.7
+  },
+  "notes": ["All unfavorable ablation outcomes are retained."]
+}

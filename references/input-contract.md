@@ -41,11 +41,22 @@ method → dataset → metric → scalar or list-of-runs
 
 Use tabular input instead when model/method/budget fields must remain separate.
 
+## Reported summaries
+
+When only an authoritative aggregate is available, use long-format rows with:
+
+```text
+method,dataset,metric,mean,sd,n
+```
+
+`sd` may be blank for a singleton or a source that reports only a point estimate. These rows are recorded as `reported_summary`; their underlying values and run IDs remain empty, and the pipeline never synthesizes pseudo-runs. A reported summary cannot share a table cell with raw observations or another summary.
+
 ## Scientific semantics
 
 - Repeated values with distinct run IDs are aggregated with arithmetic mean and sample SD.
 - Duplicate run IDs inside one method/dataset/setting/metric cell are rejected.
 - A singleton stays a scalar; no uncertainty is inferred.
+- Pre-aggregated `mean`, `sd`, and `n` are accepted only when explicitly reported and retain summary-only lineage.
 - Missing cells remain missing and render as `--`.
 - Metric direction should be explicit. Name-based inference emits a warning and is not equivalent to author confirmation.
 - Published values and newly reproduced values should use a `source_type` or `group` field and an explanatory note.

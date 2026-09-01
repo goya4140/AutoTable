@@ -21,6 +21,25 @@ class Observation:
 
 
 @dataclass(frozen=True)
+class ReportedSummary:
+    """A published aggregate whose underlying run-level values are unavailable."""
+
+    method: str
+    metric: str
+    mean: float
+    sd: float | None
+    n: int
+    dataset: str = "Overall"
+    setting: str | None = None
+    group: str | None = None
+    source: str | None = None
+    dimensions: dict[str, str] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class Aggregate:
     method: str
     metric: str
@@ -34,6 +53,7 @@ class Aggregate:
     values: tuple[float, ...]
     run_ids: tuple[str, ...]
     sources: tuple[str, ...]
+    aggregation_source: str = "observations"
 
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)

@@ -50,6 +50,110 @@ def test_nested_json(tmp_path: Path) -> None:
     assert observations[1].run == "2"
 
 
+def test_reported_summary_preserves_sd_n_and_source_without_inventing_runs(tmp_path: Path) -> None:
+    source = tmp_path / "summary.csv"
+    source.write_text(
+        "method,dataset,metric,mean,sd,n\n"
+        "A,D,accuracy,87.4,0.3,3\n"
+        "B,D,accuracy,88.1,0.2,3\n",
+        encoding="utf-8",
+    )
+    manifest = generate([source], tmp_path / "out", {
+        "metrics": {"accuracy": {"direction": "max", "precision": 1}},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text())
+    cell = spec["rows"][0]["cells"][0]
+
+    assert manifest["observation_count"] == 0
+    assert manifest["reported_summary_count"] == 2
+    assert manifest["represented_run_count"] == 6
+    assert cell["mean"] == pytest.approx(87.4)
+    assert cell["sd"] == pytest.approx(0.3)
+    assert cell["n"] == 3
+    assert cell["values"] == []
+    assert cell["run_ids"] == []
+    assert cell["aggregation_source"] == "reported_summary"
+
+
+def test_reported_summary_cannot_mix_with_raw_observation(tmp_path: Path) -> None:
+    source = tmp_path / "mixed.csv"
+    source.write_text(
+        "method,dataset,metric,value,mean,sd,n\n"
+        "A,D,score,1,,,\n"
+        "A,D,score,,2,0.1,3\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="reported summary cannot be mixed"):
+        generate([source], tmp_path / "out", {"metrics": {"score": {"direction": "max"}}})
+
+
+def test_custom_missing_marker_renders_in_latex_and_html(tmp_path: Path) -> None:
+    source = tmp_path / "missing.csv"
+    source.write_text(
+        "method,dataset,metric,value\nA,D1,score,1\nB,D2,score,2\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "metrics": {"score": {"direction": "max"}},
+        "style": {"missing_marker": "N/A", "missing_note": "N/A is not applicable."},
+    })
+    assert "N/A" in (tmp_path / "out/table.tex").read_text()
+    assert "N/A" in (tmp_path / "out/table.html").read_text()
+    assert "N/A is not applicable" in (tmp_path / "out/caption.txt").read_text()
+
+
+def test_descriptive_metric_can_hide_direction_arrow(tmp_path: Path) -> None:
+    source = tmp_path / "descriptive.csv"
+    source.write_text("method,dataset,metric,value\nSide effect,D,rate,41.6\n", encoding="utf-8")
+    generate([source], tmp_path / "out", {
+        "metrics": {"rate": {"direction": "max", "show_direction": False}},
+        "emphasis": {},
+    })
+    latex = (tmp_path / "out/table.tex").read_text()
+    html = (tmp_path / "out/table.html").read_text()
+    assert r"Rate $\uparrow$" not in latex
+    assert "Rate ↑" not in html
+
+
+@pytest.mark.parametrize(
+    ("stem", "record_count"),
+    [
+        ("core_evidence", 33),
+        ("external_mll23", 18),
+        ("ablations", 30),
+        ("c2_diagnostic", 4),
+        ("failure_taxonomy", 7),
+    ],
+)
+def test_exp40_reported_tables_preserve_summary_lineage(
+    tmp_path: Path, stem: str, record_count: int
+) -> None:
+    root = Path(__file__).parents[1]
+    config = json.loads((root / f"examples/exp40/{stem}.json").read_text(encoding="utf-8"))
+    manifest = generate(
+        [root / f"examples/exp40/{stem}.csv"], tmp_path / stem, config
+    )
+    spec = json.loads((tmp_path / stem / "table-spec.json").read_text(encoding="utf-8"))
+
+    assert manifest["verification"] == {"valid": True, "errors": []}
+    assert manifest["warnings"] == []
+    assert manifest["omitted_columns"] == []
+    assert manifest["observation_count"] == 0
+    assert manifest["reported_summary_count"] == record_count
+    cells = [cell for row in spec["rows"] for cell in row["cells"] if cell is not None]
+    assert len(cells) == record_count
+    assert all(cell["aggregation_source"] == "reported_summary" for cell in cells)
+    assert all(cell["values"] == [] and cell["run_ids"] == [] for cell in cells)
+
+    if stem == "c2_diagnostic":
+        assert spec["emphasis"] == {}
+        assert "INCOMPLETE" in spec["caption"]
+        assert "NOT EVALUABLE" in spec["caption"]
+    if stem == "failure_taxonomy":
+        assert spec["emphasis"] == {}
+        assert all(not metric["show_direction"] for metric in spec["metrics"].values())
+
+
 def test_column_budget_records_omissions(tmp_path: Path) -> None:
     source = tmp_path / "results.csv"
     source.write_text("method,dataset,a,b,c\nM,D,1,2,3\n", encoding="utf-8")
