@@ -92,9 +92,11 @@ def _row_separator(spec: dict[str, Any], row_index: int) -> bool:
     )
 
 
-def _group_sizes(spec: dict[str, Any]) -> Counter[str]:
-    """Count displayed methods per group; singleton groups do not earn a header row."""
-    return Counter(str(row["group"]) for row in spec["rows"] if row.get("group"))
+def _banded_groups(spec: dict[str, Any]) -> set[str]:
+    """Return groups worth showing as a parallel visual classification."""
+    sizes = Counter(str(row["group"]) for row in spec["rows"] if row.get("group"))
+    eligible = {group for group, size in sizes.items() if size >= 2}
+    return eligible if len(eligible) >= 2 else set()
 
 
 def _identity_values(spec: dict[str, Any], row_index: int) -> list[str]:
@@ -122,7 +124,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     tabcolsep = float(style.get("tabcolsep", 3.5 if wide else 5.0))
     fit_width = bool(style.get("fit_width", False))
     group_bands = style.get("row_group_style") == "band" and spec["orientation"] == "methods_rows"
-    group_sizes = _group_sizes(spec)
+    banded_groups = _banded_groups(spec)
     separator_style = style.get("row_separator_style", "space")
     if separator_style not in {"space", "rule"}:
         separator_style = "space"
@@ -175,7 +177,7 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     styles = emphasis_map(spec)
     for row_index, row in enumerate(spec["rows"]):
         group_changed = row_index == 0 or row.get("group") != spec["rows"][row_index - 1].get("group")
-        if group_bands and row.get("group") and group_sizes[str(row["group"])] >= 2 and group_changed:
+        if group_bands and str(row.get("group")) in banded_groups and group_changed:
             span = len(identity_columns) + sum(physical_widths)
             lines.append(
                 f"    \\rowcolor[HTML]{{{band_color}}} "
@@ -219,7 +221,7 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
     has_groups = any(label for label, _ in groups)
     style = spec.get("style", {})
     group_bands = style.get("row_group_style") == "band" and spec["orientation"] == "methods_rows"
-    group_sizes = _group_sizes(spec)
+    banded_groups = _banded_groups(spec)
     separator_style = style.get("row_separator_style", "space")
     if separator_style not in {"space", "rule"}:
         separator_style = "space"
@@ -241,7 +243,7 @@ def render_html(spec: dict[str, Any], caption: str) -> str:
     out.extend(["</thead>", "<tbody>"])
     for row_index, row in enumerate(spec["rows"]):
         group_changed = row_index == 0 or row.get("group") != spec["rows"][row_index - 1].get("group")
-        if group_bands and row.get("group") and group_sizes[str(row["group"])] >= 2 and group_changed:
+        if group_bands and str(row.get("group")) in banded_groups and group_changed:
             colspan = len(spec["identity_columns"]) + len(spec["columns"])
             out.append(
                 f'<tr class="group-band"><th colspan="{colspan}">{html.escape(str(row["group"]))}</th></tr>'

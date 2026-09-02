@@ -414,7 +414,7 @@ def test_family_bands_scoped_ranking_and_focal_highlight(tmp_path: Path) -> None
     assert manifest["context_notes"]
 
 
-def test_family_band_suppresses_singleton_group_row(tmp_path: Path) -> None:
+def test_family_bands_flatten_when_only_one_multirow_group_remains(tmp_path: Path) -> None:
     source = tmp_path / "groups.csv"
     source.write_text(
         "group,method,dataset,score\n"
@@ -432,11 +432,37 @@ def test_family_band_suppresses_singleton_group_row(tmp_path: Path) -> None:
     latex = (tmp_path / "out/table.tex").read_text(encoding="utf-8")
     html = (tmp_path / "out/table.html").read_text(encoding="utf-8")
 
-    assert r"\textbf{Baselines}" in latex
+    assert r"\textbf{Baselines}" not in latex
     assert "Proposed method" not in latex
     assert r"\rowcolor[HTML]{E8F1FF} Ours" in latex
-    assert html.count('class="group-band"') == 1
+    assert 'class="group-band"' not in html
     assert ">Proposed method<" not in html
+
+
+def test_family_bands_require_two_parallel_multirow_groups(tmp_path: Path) -> None:
+    source = tmp_path / "groups.csv"
+    source.write_text(
+        "group,method,dataset,score\n"
+        "Family A,A1,D,1\n"
+        "Family A,A2,D,2\n"
+        "Family B,B1,D,3\n"
+        "Family B,B2,D,4\n"
+        "Proposed method,Ours,D,5\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "template": "family-banded-benchmark",
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+        "style": {"highlight_methods": ["Ours"]},
+    })
+    latex = (tmp_path / "out/table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / "out/table.html").read_text(encoding="utf-8")
+
+    assert r"\textbf{Family A}" in latex
+    assert r"\textbf{Family B}" in latex
+    assert "Proposed method" not in latex
+    assert html.count('class="group-band"') == 2
 
 
 def test_auxiliary_delta_preserves_main_value_and_lineage(tmp_path: Path) -> None:

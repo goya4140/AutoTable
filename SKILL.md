@@ -37,7 +37,7 @@ Return `caption.txt` and an editable table (`table.tex`, with `table.html` as a 
 - Keep identity/protocol fields separate from measured evidence when they affect comparability.
 - Choose row/column topology from the input geometry and paper claim; do not force a fixed template.
 - Row groups, whitespace, horizontal rules, bands, shading, bold, and underline are optional semantic channels. A `group` column alone does not require a visible separator. Use a rule only when a boundary must be traced across numeric columns; omit it when labels or whitespace already give sufficient hierarchy.
-- A full-width group row must contain at least two displayed methods. Never spend a separate classification row on a singleton group such as `Proposed method → Ours` or `Reference configuration → Full`; show that method directly and use restrained row highlighting if emphasis is needed.
+- Full-width group rows are a parallel classification system, so render them only when at least two categories coexist and each contains at least two displayed methods. If only one eligible category remains, flatten the entire body. Never spend a classification row on `Proposed method → Ours` or `Reference configuration → Full`; show that method directly and use restrained row highlighting if emphasis is needed.
 - Rank only inside a declared comparison universe. Missing evidence is never zero and is excluded from ranking.
 - Auxiliary values must occupy a separate aligned slot and must not displace the primary values.
 - Reported `mean`, `sd`, and `n` retain summary-only lineage; never reconstruct pseudo-runs.

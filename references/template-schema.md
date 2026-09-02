@@ -77,7 +77,7 @@ Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row 
 
 `group` metadata does not create separators by default. Set `row_group_style: "band"` for explicit full-width bands, or set `separate_row_groups: true` together with `row_separator_style: "space"` or `"rule"`. Fields marked with `separator: true` can still create whitespace/rules when their value changes. Horizontal rules are optional, not a success criterion.
 
-Even with `row_group_style: "band"`, groups containing only one displayed method are rendered without a band. This prevents a single focal or reference method from consuming a redundant classification row.
+Even with `row_group_style: "band"`, bands appear only when at least two groups each contain at least two displayed methods. If only one group qualifies, the entire body is flattened. This prevents singleton focal/reference groups and lone residual categories from consuming redundant classification rows.
 
 Metric `direction` remains required for numerical semantics. Set `show_direction: false` for descriptive quantities such as category counts or failure rates where an up/down arrow would falsely imply desirability.
 

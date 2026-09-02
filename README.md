@@ -72,7 +72,7 @@ Caption 默认只有一句简洁的表格主题说明。指标计算、比较对
 | Template | 适用的科学比较 | 关键表达 |
 |---|---|---|
 | `benchmark-wide` | 多任务、多指标 | 方法为行，dataset × metric 多级表头 |
-| `family-banded-benchmark` | 稠密 leaderboard 且存在多个方法家族 | 通栏组带、排名范围、焦点行和缺失值 |
+| `family-banded-benchmark` | 稠密 leaderboard 且至少两个家族各含两种方法 | 并列通栏组带、排名范围、焦点行和缺失值 |
 | `hierarchical-method-budget` | PEFT / 微调方法 | model、method、trainable params 分列 |
 | `transposed-benchmark` | 数据集多、焦点系统少 | dataset 为行，system 为列，可按预训练数据分组 |
 | `quality-efficiency` | 质量—成本权衡 | quality、time/FLOPs、speedup 独立呈现 |
