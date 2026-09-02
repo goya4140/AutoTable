@@ -130,4 +130,4 @@ The recurring grammar is:
 [identity / protocol fields] | [measured evidence blocks] | [optional aggregate or cost]
 ```
 
-The left region answers “what exactly was run?” The right region answers “what happened?” Multi-level headers encode real experimental dimensions. Row whitespace encodes comparability regimes. Captions define aggregation, source markers, protocol, and metric semantics that would be too verbose inside cells.
+The left region answers “what exactly was run?” The right region answers “what happened?” Multi-level headers encode real experimental dimensions. Row whitespace encodes comparability regimes. Published papers vary in how much methodology they place in captions; Paper2Table adopts the concise end of that range and keeps aggregation, source markers, protocol, metric semantics, and caveats in正文-oriented `context_notes` by default.

@@ -36,7 +36,7 @@ def test_wide_csv_end_to_end(tmp_path: Path) -> None:
     assert spec["rows"][1]["cells"][1]["mean"] == 8
     assert r"\textbf{85.0 $\pm$ 1.4}" in latex
     assert r"\textbf{8.0 $\pm$ 1.4}" in latex
-    assert "mean ± sample standard deviation" in caption
+    assert caption == "Main results.\n"
 
 
 def test_nested_json(tmp_path: Path) -> None:
@@ -145,12 +145,33 @@ def test_custom_missing_marker_renders_in_latex_and_html(tmp_path: Path) -> None
         encoding="utf-8",
     )
     generate([source], tmp_path / "out", {
+        "title": "Coverage results",
         "metrics": {"score": {"direction": "max"}},
-        "style": {"missing_marker": "N/A", "missing_note": "N/A is not applicable."},
+        "style": {"missing_marker": "N/A"},
+        "context_notes": ["N/A is not applicable."],
     })
     assert "N/A" in (tmp_path / "out/table.tex").read_text()
     assert "N/A" in (tmp_path / "out/table.html").read_text()
-    assert "N/A is not applicable" in (tmp_path / "out/caption.txt").read_text()
+    assert (tmp_path / "out/caption.txt").read_text() == "Coverage results.\n"
+
+
+def test_context_notes_are_internal_and_never_render_below_table(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text("method,dataset,score\nA,D,1\n", encoding="utf-8")
+    note = "This belongs in the paper body, not below the table."
+    manifest = generate([source], tmp_path / "out", {
+        "title": "Concise result",
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+        "context_notes": [note],
+    })
+    latex = (tmp_path / "out/table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / "out/table.html").read_text(encoding="utf-8")
+
+    assert manifest["context_notes"] == [note]
+    assert note not in latex and note not in html
+    assert r"\parbox" not in latex
+    assert (tmp_path / "out/caption.txt").read_text() == "Concise result.\n"
 
 
 def test_descriptive_metric_can_hide_direction_arrow(tmp_path: Path) -> None:
@@ -198,8 +219,9 @@ def test_exp40_reported_tables_preserve_summary_lineage(
 
     if stem == "c2_diagnostic":
         assert spec["emphasis"] == {}
-        assert "INCOMPLETE" in spec["caption"]
-        assert "NOT EVALUABLE" in spec["caption"]
+        assert spec["caption"] == "Matched-coverage diagnostic for C2."
+        assert any("not evaluable" in note for note in spec["context_notes"])
+        assert any(row["identity"]["evidence_status"].startswith("INCOMPLETE") for row in spec["rows"])
     if stem == "failure_taxonomy":
         assert spec["emphasis"] == {}
         assert all(not metric["show_direction"] for metric in spec["metrics"].values())
@@ -287,7 +309,7 @@ def test_transposed_benchmark_ranks_across_method_columns(tmp_path: Path) -> Non
     assert [column["method"] for column in spec["columns"]] == ["ViT", "BiT"]
     assert [row["dataset"] for row in spec["rows"]] == ["ImageNet", "CIFAR-10"]
     assert r"\textbf{88.5}" in latex
-    assert "in each row" in (tmp_path / "out/caption.txt").read_text()
+    assert (tmp_path / "out/caption.txt").read_text() == "Main results.\n"
 
 
 def test_transposed_columns_keep_groups_contiguous(tmp_path: Path) -> None:
@@ -388,9 +410,8 @@ def test_family_bands_scoped_ranking_and_focal_highlight(tmp_path: Path) -> None
     assert r"\rowcolor[HTML]{E8F1FF} PaperTable-Agent & \textbf{0.88}" in latex
     assert "--" in latex
     assert 'class="group-band"' in html
-    assert "among non-proprietary systems" in caption
-    assert "Dashes denote unavailable results" in caption
-    assert "Ties share the same marker" in caption
+    assert caption == "Main results on WISE and HumanitiesBench.\n"
+    assert manifest["context_notes"]
 
 
 def test_auxiliary_delta_preserves_main_value_and_lineage(tmp_path: Path) -> None:

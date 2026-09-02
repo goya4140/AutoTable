@@ -5,6 +5,5 @@
   "input": {"metric_columns": ["accuracy"]},
   "metrics": {"accuracy": {"label": "Accuracy", "direction": "max", "unit": "%", "precision": 2}},
   "selection": {"metrics": ["accuracy"]},
-  "notes": ["Point estimates shown for layout demonstration; pre-training data is displayed above each system group."]
+  "context_notes": ["Point estimates shown for layout demonstration; pre-training data is displayed above each system group."]
 }
-

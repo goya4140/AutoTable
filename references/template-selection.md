@@ -27,7 +27,7 @@ An identity field defines *what was run*; a measured field reports *what happene
 - Identity: model family, method, backbone, training data, trainable parameter budget, supervision, protocol, source, scale.
 - Measured: accuracy, F1, BLEU, loss, latency, memory, FLOPs, human win rate.
 
-If changing a value could invalidate a direct comparison, display it as an identity/protocol field or state it in the note. Do not hide it in the caption only.
+If changing a value could invalidate a direct comparison, display it as an identity/protocol field or state it in the正文 and internal `context_notes`. Do not overload the caption with it.
 
 ## Header order
 

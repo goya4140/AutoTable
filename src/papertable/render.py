@@ -193,8 +193,6 @@ def render_latex(spec: dict[str, Any], caption: str) -> str:
     lines.extend(["    \\bottomrule", "  \\end{tabular}"])
     if fit_width:
         lines.append("  }")
-    for note in spec.get("notes", []):
-        lines.append(f"  \\parbox{{0.98\\linewidth}}{{\\footnotesize {latex_escape(note)}}}")
     lines.append(f"\\end{{{environment}}}")
     return "\n".join(lines) + "\n"
 

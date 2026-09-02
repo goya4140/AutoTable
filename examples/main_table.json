@@ -14,5 +14,5 @@
     "datasets": ["CIFAR-10", "CIFAR-100"],
     "metrics": ["accuracy", "f1", "latency_ms"]
   },
-  "notes": ["All methods use the same backbone and evaluation protocol."]
+  "context_notes": ["All methods use the same backbone and evaluation protocol."]
 }

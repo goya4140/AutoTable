@@ -54,7 +54,7 @@ def generate(
             "sources": list(dict.fromkeys(item.source for item in matching if item.source)),
         })
     manifest = {
-        "schema_version": "paper-table-manifest-v1",
+        "schema_version": "paper-table-manifest-v2",
         "inputs": [str(Path(path)) for path in inputs],
         "input_record_count": len(observations),
         "observation_count": sum(isinstance(item, Observation) for item in observations),
@@ -76,6 +76,7 @@ def generate(
         "verification": verification,
         "method_identity_policy": "verbatim_from_input",
         "method_identity": method_identity,
+        "context_notes": spec.get("context_notes", []),
         "deliverables": ["caption.txt", "table.tex", "table.html"],
         "audit_artifacts": ["observations.json", "aggregates.json", "table-spec.json", "manifest.json", "preview.tex"],
     }

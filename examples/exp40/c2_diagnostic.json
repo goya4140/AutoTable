@@ -2,7 +2,7 @@
   "template": "benchmark-wide",
   "title": "Incomplete C2 matched-coverage diagnostic",
   "label": "tab:exp40-c2-diagnostic",
-  "caption": "Prospective C2 matched-coverage confirmation. The registered three-seed result is INCOMPLETE because seeds 53 and 79 have zero matched nucleus-shape coverage. Seed 67 values are shown only as diagnostics and cannot fill the claim-bearing aggregate. The registered 2.0 pp C2 decision effect is NOT EVALUABLE; unavailable seeds are not encoded as zero.",
+  "caption": "Matched-coverage diagnostic for C2.",
   "input": {"dimensions": ["evidence_status", "protocol", "source_type"]},
   "layout": {
     "orientation": "methods_rows",
@@ -22,5 +22,9 @@
   },
   "emphasis": {},
   "style": {"fit_width": true, "font_size": "footnotesize"},
-  "notes": ["This table is a limitation/diagnostic artifact, not a formal three-seed result."]
+  "context_notes": [
+    "This table is a limitation/diagnostic artifact, not a formal three-seed result.",
+    "Seeds 53 and 79 have zero matched nucleus-shape coverage; seed 67 is diagnostic only.",
+    "The registered 2.0 pp C2 decision effect is not evaluable, and unavailable seeds are not encoded as zero."
+  ]
 }

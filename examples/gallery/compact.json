@@ -7,6 +7,5 @@
     "accuracy": {"label": "Accuracy", "direction": "max", "precision": 1}
   },
   "selection": {"datasets": ["HotpotQA", "FEVER"], "metrics": ["em", "accuracy"]},
-  "notes": ["The supervised system is an oracle-style reference and is separated from prompting regimes."]
+  "context_notes": ["The supervised system is an oracle-style reference and is separated from prompting regimes."]
 }
-

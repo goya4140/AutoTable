@@ -24,7 +24,7 @@
     "fit_width": true,
     "highlight_color": "E8F1FF"
   },
-  "notes": [
+  "context_notes": [
     "Mean ± sample SD over two illustrative runs; parenthesized values compare PaperTable-Ours with Strong Baseline."
   ]
 }

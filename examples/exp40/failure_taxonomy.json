@@ -2,7 +2,7 @@
   "template": "family-banded-benchmark",
   "title": "Paired failure taxonomy",
   "label": "tab:exp40-failure-taxonomy",
-  "caption": "Paired failure taxonomy over 5,247 eligible outcomes. Category values are rates in percent; the recovery-minus-side-effect row is a percentage-point difference. N/A denotes a non-applicable count, not zero. Side effects exceed recoveries, so the registered benefit-over-harm criterion is missed. Numerical best/second-best markers are intentionally omitted.",
+  "caption": "Paired failure taxonomy.",
   "input": {"dimensions": ["protocol", "source_type"]},
   "metrics": {
     "rate_or_difference": {"label": "Rate / difference", "direction": "max", "show_direction": false, "precision": 3},
@@ -17,5 +17,10 @@
     "missing_marker": "N/A",
     "fit_width": false,
     "font_size": "small"
-  }
+  },
+  "context_notes": [
+    "The taxonomy covers 5,247 eligible paired outcomes.",
+    "Category values are rates in percent; recovery minus side effect is a percentage-point difference.",
+    "Side effects exceed recoveries, so the registered benefit-over-harm criterion is missed."
+  ]
 }

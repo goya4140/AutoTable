@@ -27,7 +27,7 @@ Templates are JSON objects in `assets/templates/`. User config is deep-merged ov
     "metrics": ["accuracy"],
     "max_columns": 8
   },
-  "notes": ["All methods use the same backbone and evaluation protocol."]
+  "context_notes": ["All methods use the same backbone and evaluation protocol."]
 }
 ```
 
@@ -53,7 +53,7 @@ Use `comparison` to define which displayed systems participate in best/second-be
 }
 ```
 
-`rank_include_groups`, `rank_include_methods`, and `rank_exclude_methods` are also supported. `rank_scope_label` is inserted into the generated caption; it should be a short human-readable description of the actual comparison universe.
+`rank_include_groups`, `rank_include_methods`, and `rank_exclude_methods` are also supported. `rank_scope_label` is retained in the semantic spec for正文 writing; the concise caption does not expand it automatically.
 
 ## Visual hierarchy
 
@@ -73,7 +73,7 @@ Use `comparison` to define which displayed systems participate in best/second-be
 
 Colors are six-digit RGB hex values. `fit_width` uses `graphicx`; bands and row highlights use `xcolor` with the `table` option. `row_separator_style` accepts `space` (the default) or `rule`; use `rule` when fields marked with `separator` define visually important families or regimes.
 
-`missing_marker` defaults to `--`; set it to `N/A` only when missing cells are scientifically not applicable or unsupported, and pair it with an explicit `missing_note` or custom caption.
+`missing_marker` defaults to `--`; set it to `N/A` only when missing cells are scientifically not applicable or unsupported. Record its meaning in `context_notes` for正文 writing rather than adding prose below the table.
 
 `group` metadata does not create separators by default. Set `row_group_style: "band"` for explicit full-width bands, or set `separate_row_groups: true` together with `row_separator_style: "space"` or `"rule"`. Fields marked with `separator: true` can still create whitespace/rules when their value changes. Horizontal rules are optional, not a success criterion.
 
@@ -96,7 +96,7 @@ Preserve the primary value while adding a parenthesized absolute or relative cha
 }
 ```
 
-Selectors may use any displayed identity field. The baseline must match exactly one row; ambiguity is an error. `kind` is `absolute` or `relative_percent`. The generated caption names the baseline and delta type.
+Selectors may use any displayed identity field. The baseline must match exactly one row; ambiguity is an error. `kind` is `absolute` or `relative_percent`. Record the baseline and delta meaning in正文 or `context_notes`; the generated caption remains concise.
 
 The renderer treats the delta as a secondary subcell. It reserves that subcell across every row of each affected metric column, including blank slots for rows without deltas, so the primary measurements remain aligned.
 

@@ -40,7 +40,7 @@
   "style": {
     "highlight_methods": ["PaperTable-Agent"]
   },
-  "notes": [
+  "context_notes": [
     "Illustrative values for layout testing; ranking excludes the proprietary reference block."
   ]
 }

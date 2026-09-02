@@ -11,7 +11,7 @@ Write down the valid ranking universe before arranging cells.
 - Is best/second-best computed globally, within a method family, or among open/reproducible systems?
 - What is the explicit baseline for every delta, speedup, or relative improvement?
 
-Display a scientifically useful reference even when it is excluded from ranking, but state that exclusion in the caption.
+Display a scientifically useful reference even when it is excluded from ranking, and state that exclusion in the正文 or internal `context_notes`.
 
 ## 2. Row topology
 
@@ -63,10 +63,10 @@ Ties share a marker. Color is secondary and the table must remain intelligible i
 
 ## 6. Caption contract
 
-The caption must explain evaluation scope, metric direction, uncertainty and run count, missingness, ranking universe, marker semantics, every auxiliary delta, and grouping when grouping is used. Put hardware/protocol details in a note when they are essential but too long for headers.
+Use one concise identifying sentence, normally `Main results on ...`, `Ablation results`, or another direct description of the table's subject. Do not turn the caption into an experimental-method paragraph. Metric definitions, aggregation, run count, compared systems, protocol, ranking scope, missingness, caveats, and interpretation belong in the paper body unless the user explicitly requests a necessary legend.
 
-The caption and table are the user-facing deliverables. Provenance manifests and normalized data exist to verify them, not to expand the requested product.
+Do not render prose or notes below the table. Preserve useful author context in internal `context_notes` so a writing system can place it in the正文 later. The caption and table are the only user-facing deliverables; provenance manifests and normalized data exist to verify them.
 
 ## 7. Visual QA
 
-Compile the actual LaTeX. Check that group bands span the full table, focal shading does not hide rules, multi-level headers align with their evidence columns, numbers remain readable after width fitting, and the table still has a clear scan path in grayscale.
+Compile the actual LaTeX. Check that group bands span the full table, focal shading does not hide rules, multi-level headers align with their evidence columns, numbers remain readable after width fitting, the table has no prose below its bottom rule, and it still has a clear scan path in grayscale.
