@@ -20,6 +20,7 @@ The left side answers "what exactly was run?"
 - Use separate identity columns when model, method, backbone, data, budget, protocol, or source changes comparability.
 - Grouping is optional. Do not introduce a taxonomy merely because the input has an ordering or because a template supports groups.
 - Use full-width family bands only when readers primarily need to scan categories such as proprietary / general / multimodal / agentic systems.
+- Require at least two displayed methods in a group before drawing a full-width band. A singleton category does not justify an extra row; render the method directly, optionally with focal-row shading.
 - Match separator strength to the semantic boundary: no separator for an already clear flat list, whitespace for a weak subdivision, a full-width midrule when a regime change must remain visible across numeric columns, and a band when the taxonomy is itself a primary reading axis.
 - When repeated family/regime labels are suppressed, use a rule or band only if readers otherwise cannot trace a scientifically important boundary. Horizontal rules are not a default requirement.
 - Use a restrained focal-row shade only to locate the proposed system. It must not substitute for numerical emphasis.

@@ -414,6 +414,31 @@ def test_family_bands_scoped_ranking_and_focal_highlight(tmp_path: Path) -> None
     assert manifest["context_notes"]
 
 
+def test_family_band_suppresses_singleton_group_row(tmp_path: Path) -> None:
+    source = tmp_path / "groups.csv"
+    source.write_text(
+        "group,method,dataset,score\n"
+        "Baselines,Base A,D,1\n"
+        "Baselines,Base B,D,2\n"
+        "Proposed method,Ours,D,3\n",
+        encoding="utf-8",
+    )
+    generate([source], tmp_path / "out", {
+        "template": "family-banded-benchmark",
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+        "style": {"highlight_methods": ["Ours"]},
+    })
+    latex = (tmp_path / "out/table.tex").read_text(encoding="utf-8")
+    html = (tmp_path / "out/table.html").read_text(encoding="utf-8")
+
+    assert r"\textbf{Baselines}" in latex
+    assert "Proposed method" not in latex
+    assert r"\rowcolor[HTML]{E8F1FF} Ours" in latex
+    assert html.count('class="group-band"') == 1
+    assert ">Proposed method<" not in html
+
+
 def test_auxiliary_delta_preserves_main_value_and_lineage(tmp_path: Path) -> None:
     gallery = Path(__file__).parents[1] / "examples" / "gallery"
     config = json.loads((gallery / "statistical_delta.json").read_text(encoding="utf-8"))
