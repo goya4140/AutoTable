@@ -65,7 +65,7 @@ Caption 默认只有一句简洁的表格主题说明。指标计算、比较对
 [system identity / protocol / budget] | [measured evidence] | [optional cost or aggregate]
 ```
 
-因此 Paper2Table 将设计分成 `comparison contract → row/column topology → value grammar → emphasis → caption`，将 `Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开。横线、留白、组带和高亮只是可选语义通道，不是模板必须项。完整规则见 [design grammar](references/design-grammar.md)，论文观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
+因此 Paper2Table 会先对完整输入规划 `comparison contract → rows → groups → columns → values → emphasis → caption`，再选择或调整模板。`Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开；横线、留白、组带和高亮只是可选语义通道，不是模板必须项。分组带只在至少两个方法家族各含两条结果时出现，避免由孤立分类行破坏视觉层级。完整规则见 [design grammar](references/design-grammar.md)，论文观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
 
 ## 七类可复用起点
 

@@ -2,6 +2,18 @@
 
 A strong main table is a compact scientific argument. Design it in this order; visual styling is the final layer, not the first.
 
+Before rendering, record a compact visual plan with five decisions:
+
+```text
+rows       exact identity fields and order
+groups     none / whitespace / rules / bands, with the semantic reason
+columns    evidence hierarchy and reading direction
+values     primary statistic plus any aligned auxiliary slot
+emphasis   focal row and valid ranking/significance scope
+```
+
+Evaluate these decisions together. Each visible channel must add information that another channel does not already communicate. A group name in the data is evidence available to the planner, not an instruction to draw a group row.
+
 ## 1. Comparison contract
 
 Write down the valid ranking universe before arranging cells.
@@ -70,4 +82,4 @@ Do not render prose or notes below the table. Preserve useful author context in 
 
 ## 7. Visual QA
 
-Compile the actual LaTeX. Check that group bands span the full table, focal shading does not hide rules, multi-level headers align with their evidence columns, numbers remain readable after width fitting, the table has no prose below its bottom rule, and it still has a clear scan path in grayscale.
+Compile the actual LaTeX and compare it with the visual plan. Check that group bands occur only as two or more meaningful parallel categories, no orphan band remains after singleton suppression, focal shading does not hide rules, multi-level headers align with their evidence columns, primary numbers share an alignment axis, the table has no prose below its bottom rule, and the scan path remains clear in grayscale.
