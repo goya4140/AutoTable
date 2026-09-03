@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .aggregate import aggregate
-from .caption import build_caption
+from .caption import build_caption, build_description
 from .ingest import load_inputs
 from .model import Observation, ReportedSummary
 from .planner import plan_main_table
@@ -30,6 +30,8 @@ def generate(
     spec = plan_main_table(aggregates, config)
     caption = build_caption(spec)
     spec["caption"] = caption
+    description = build_description(spec)
+    spec["description"] = description
     verification = verify_spec(spec)
     if not verification["valid"]:
         raise ValueError("invalid table spec: " + "; ".join(verification["errors"]))
@@ -38,6 +40,7 @@ def generate(
     _dump(output / "aggregates.json", [item.to_dict() for item in aggregates])
     _dump(output / "table-spec.json", spec)
     (output / "caption.txt").write_text(caption + "\n", encoding="utf-8")
+    (output / "description.txt").write_text(description + "\n", encoding="utf-8")
     latex = render_latex(spec, caption)
     html = render_html(spec, caption)
     (output / "table.tex").write_text(latex, encoding="utf-8")
@@ -54,7 +57,7 @@ def generate(
             "sources": list(dict.fromkeys(item.source for item in matching if item.source)),
         })
     manifest = {
-        "schema_version": "paper-table-manifest-v2",
+        "schema_version": "paper-table-manifest-v3",
         "inputs": [str(Path(path)) for path in inputs],
         "input_record_count": len(observations),
         "observation_count": sum(isinstance(item, Observation) for item in observations),
@@ -68,6 +71,8 @@ def generate(
         "displayed_system_count": len(spec["rows"]) if spec["orientation"] == "methods_rows" else len(spec["columns"]),
         "column_count": len(spec["columns"]),
         "template_id": spec["template_id"],
+        "table_type": spec["table_type"],
+        "focal_methods": spec.get("focal_methods", []),
         "orientation": spec["orientation"],
         "ranking_scope": spec.get("comparison", {}).get("rank_scope_label", "all displayed systems"),
         "auxiliary_display": list(spec.get("auxiliary", {})),
@@ -77,7 +82,7 @@ def generate(
         "method_identity_policy": "verbatim_from_input",
         "method_identity": method_identity,
         "context_notes": spec.get("context_notes", []),
-        "deliverables": ["caption.txt", "table.tex", "table.html"],
+        "deliverables": ["caption.txt", "description.txt", "table.tex", "table.html"],
         "audit_artifacts": ["observations.json", "aggregates.json", "table-spec.json", "manifest.json", "preview.tex"],
     }
     _dump(output / "manifest.json", manifest)

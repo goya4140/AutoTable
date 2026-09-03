@@ -6,6 +6,7 @@ import pytest
 from papertable.ingest import load_inputs
 from papertable.pipeline import generate
 from papertable.templates import available_templates
+from papertable.table_types import available_table_types
 
 
 def test_wide_csv_end_to_end(tmp_path: Path) -> None:
@@ -29,6 +30,7 @@ def test_wide_csv_end_to_end(tmp_path: Path) -> None:
     spec = json.loads((tmp_path / "out/table-spec.json").read_text())
     latex = (tmp_path / "out/table.tex").read_text()
     caption = (tmp_path / "out/caption.txt").read_text()
+    description = (tmp_path / "out/description.txt").read_text()
 
     assert manifest["observation_count"] == 8
     assert manifest["displayed_cell_count"] == 4
@@ -37,6 +39,28 @@ def test_wide_csv_end_to_end(tmp_path: Path) -> None:
     assert r"\textbf{85.0 $\pm$ 1.4}" in latex
     assert r"\textbf{8.0 $\pm$ 1.4}" in latex
     assert caption == "Main results.\n"
+    assert "compares 2 displayed systems" in description
+    assert "Accuracy" in description and "Latency Ms" in description
+
+
+def test_authored_description_is_preserved_as_a_user_facing_deliverable(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text("method,dataset,score\nA,D,1\n", encoding="utf-8")
+    authored = (
+        "This table reports system A on dataset D using the registered score. "
+        "Its purpose is to document the primary quantitative comparison."
+    )
+    manifest = generate([source], tmp_path / "out", {
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+        "description": authored,
+    })
+
+    assert (tmp_path / "out/description.txt").read_text(encoding="utf-8") == authored + "\n"
+    assert json.loads((tmp_path / "out/table-spec.json").read_text())["description"] == authored
+    assert manifest["deliverables"] == [
+        "caption.txt", "description.txt", "table.tex", "table.html"
+    ]
 
 
 def test_nested_json(tmp_path: Path) -> None:
@@ -391,6 +415,76 @@ def test_all_research_backed_templates_are_discoverable() -> None:
         "scaled-variants",
         "transposed-benchmark",
     }
+
+
+def test_all_scientific_table_types_are_discoverable() -> None:
+    assert {item["id"] for item in available_table_types()} == {
+        "main_benchmark",
+        "main_tradeoff",
+        "ablation",
+        "analysis",
+        "diagnostic",
+        "simple_comparison",
+    }
+
+
+def test_main_benchmark_requires_focal_baseline_comparison_on_every_benchmark(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "method,dataset,score\n"
+        "Baseline,D1,1\n"
+        "Ours,D1,2\n"
+        "Ours,D2,3\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="lacks a direct focal-versus-baseline comparison"):
+        generate([source], tmp_path / "out", {
+            "table_type": "main_benchmark",
+            "focal_methods": ["Ours"],
+            "input": {"metric_columns": ["score"]},
+            "metrics": {"score": {"direction": "max"}},
+        })
+
+
+def test_ablation_type_suppresses_ranking_and_decorative_family_bands(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text(
+        "group,method,dataset,score\n"
+        "Reference,Full,D,4\n"
+        "Reference,Alt reference,D,3\n"
+        "Ablations,No A,D,2\n"
+        "Ablations,No B,D,1\n",
+        encoding="utf-8",
+    )
+    manifest = generate([source], tmp_path / "out", {
+        "template": "family-banded-benchmark",
+        "table_type": "ablation",
+        "focal_methods": ["Full"],
+        "input": {"metric_columns": ["score"]},
+        "metrics": {"score": {"direction": "max"}},
+    })
+    spec = json.loads((tmp_path / "out/table-spec.json").read_text())
+    latex = (tmp_path / "out/table.tex").read_text()
+
+    assert manifest["table_type"] == "ablation"
+    assert manifest["focal_methods"] == ["Full"]
+    assert spec["emphasis"] == {}
+    assert r"\rowcolor[HTML]{EFEFEF} \multicolumn" not in latex
+    assert r"\textbf{4.00}" not in latex
+
+
+def test_unknown_table_type_is_rejected(tmp_path: Path) -> None:
+    source = tmp_path / "results.csv"
+    source.write_text("method,dataset,score\nA,D,1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown table_type"):
+        generate([source], tmp_path / "out", {
+            "table_type": "decorative",
+            "input": {"metric_columns": ["score"]},
+        })
 
 
 def test_family_bands_scoped_ranking_and_focal_highlight(tmp_path: Path) -> None:

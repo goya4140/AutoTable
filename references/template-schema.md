@@ -5,7 +5,10 @@ Templates are JSON objects in `assets/templates/`. User config is deep-merged ov
 ```json
 {
   "template_id": "hierarchical-method-budget",
+  "table_type": "main_tradeoff",
+  "focal_methods": ["Ours"],
   "title": "Main results",
+  "description": "This table compares the displayed adaptation methods across the selected tasks. Its purpose is to assess quality under different trainable-parameter budgets.",
   "label": "tab:main",
   "claim": "The adaptation method improves quality at lower trainable-parameter cost.",
   "input": {"metric_columns": ["accuracy"]},
@@ -30,6 +33,10 @@ Templates are JSON objects in `assets/templates/`. User config is deep-merged ov
   "context_notes": ["All methods use the same backbone and evaluation protocol."]
 }
 ```
+
+`description` is written to `description.txt`. Prefer two or three compact sentences that identify the displayed evidence and its purpose in the paper. It is separate from the one-sentence caption and is never rendered below the table.
+
+`table_type` selects the scientific-role strategy; `template_id` selects the row/column geometry. See [table types](table-types.md). `focal_methods` must use exact method names from the input and is required for claim-bearing main-table types.
 
 ## Layout fields
 

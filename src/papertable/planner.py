@@ -318,16 +318,23 @@ def plan_main_table(aggregates: list[Aggregate], config: dict[str, Any] | None =
     _apply_auxiliary_values(rows, columns, config, orientation)
     if omitted:
         warnings.append(f"{len(omitted)} columns were omitted by selection.max_columns")
+    style = dict(config.get("style", {}))
+    focal_methods = list(config.get("focal_methods", style.get("highlight_methods", [])))
+    if orientation == "methods_rows" and focal_methods and not style.get("highlight_methods"):
+        style["highlight_methods"] = focal_methods
     spec = {
-        "schema_version": "paper-table-spec-v4", "template_id": config.get("template_id", "custom"),
-        "kind": "main", "orientation": orientation, "title": config.get("title", "Main results"),
+        "schema_version": "paper-table-spec-v5", "template_id": config.get("template_id", "custom"),
+        "kind": "main", "table_type": config.get("table_type", "unclassified"),
+        "orientation": orientation, "title": config.get("title", "Main results"),
         "label": config.get("label", "tab:main-results"), "claim": config.get("claim"),
         "methods": methods, "datasets": datasets, "metrics": metric_meta,
         "identity_columns": identity_columns, "columns": columns, "rows": rows,
         "emphasis": config.get("emphasis", {"best": "bold", "second": "underline"}),
-        "comparison": config.get("comparison", {}), "style": config.get("style", {}),
+        "comparison": config.get("comparison", {}), "style": style,
+        "focal_methods": focal_methods,
         "auxiliary": config.get("auxiliary", {}),
         "caption": config.get("caption"),
+        "description": config.get("description"),
         "context_notes": list(config.get("context_notes", config.get("notes", []))),
         "omitted_columns": omitted, "warnings": warnings,
     }

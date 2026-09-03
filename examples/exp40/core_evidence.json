@@ -1,8 +1,11 @@
 {
   "template": "benchmark-wide",
+  "table_type": "main_benchmark",
+  "focal_methods": ["Ours"],
   "title": "Core evidence on WBCAtt and Acevedo",
   "label": "tab:exp40-core-evidence",
   "caption": "Main results on WBCAtt and Acevedo.",
+  "description": "This table compares Ours with six baseline and reference systems on WBCAtt attribute and statement metrics, Acevedo weighted F1, and intervention-dependency response. Its purpose is to provide the main quantitative evidence for assessing predictive performance, statement behavior, and decision response under the shared three-seed protocol.",
   "input": {"dimensions": ["protocol", "source_type"]},
   "metrics": {
     "attr_f1": {"label": "Attr. F1", "direction": "max", "precision": 3},

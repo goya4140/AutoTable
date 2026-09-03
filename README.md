@@ -2,16 +2,18 @@
 
 [![Tests](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml)
 
-Paper2Table 的产品边界只有一句话：
+Paper2Table 的主要产品契约是：
 
 ```text
-输入：CSV / TSV / JSON / JSONL 实验结果文件
-输出：caption + table
+输入：LaTeX ZIP + 可选的已编译 PDF
+输出：实验表格替换代码 + 替换后的 LaTeX 工程 + 编译成功的 PDF
 ```
+
+PDF 只用于检查原稿中的溢出、裁切、字号、浮动位置和视觉层级；可编辑内容以 ZIP 中的 LaTeX 源码为准。替换目录还可以包含 `preamble.tex`，用于统一多级表头样式与主实验焦点方法行高亮。仓库仍保留 CSV / TSV / JSON / JSONL 到表格的结构化数据流水线。
 
 这个仓库首先是一个 Codex Skill，其次才是 CLI。Skill 理解实验文件中的科学比较关系并选择合适布局；确定性流水线负责聚合、排名、渲染和校验。**方法名称逐字取自输入文件，系统不会自行总结、润色或命名。**
 
-`caption.txt` 与 `table.tex`（以及便于查看的 `table.html`）是用户产物；manifest、标准化数据和 preview 只是内部验证材料。
+`caption.txt`、`description.txt` 与 `table.tex`（以及便于查看的 `table.html`）是用户产物；manifest、标准化数据和 preview 只是内部验证材料。
 
 Caption 默认只有一句简洁的表格主题说明。指标计算、比较对象、实验设置和限制条件留给论文正文；表格底部不渲染任何说明文字。
 
@@ -65,7 +67,7 @@ Caption 默认只有一句简洁的表格主题说明。指标计算、比较对
 [system identity / protocol / budget] | [measured evidence] | [optional cost or aggregate]
 ```
 
-因此 Paper2Table 会先对完整输入规划 `comparison contract → rows → groups → columns → values → emphasis → caption`，再选择或调整模板。`Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开；横线、留白、组带和高亮只是可选语义通道，不是模板必须项。分组带只在至少两个方法家族各含两条结果时出现，避免由孤立分类行破坏视觉层级。完整规则见 [design grammar](references/design-grammar.md)，论文观察和设计映射见 [pattern catalog](references/pattern-catalog.md)。
+因此 Paper2Table 会先规划 `scientific role → comparison contract → rows → groups → columns → values → emphasis → caption`，再选择或调整模板。表格科学类型与版式模板相互独立：主实验可以有多张且使用更高的信息密度，消融、诊断和简单对比默认保持克制。`Model`、`Method`、`Pre-train Data`、`Budget`、`Protocol` 等身份字段与指标彻底分开；横线、留白、组带和高亮只是可选语义通道。完整分类见 [table types](references/table-types.md)，视觉规则见 [design grammar](references/design-grammar.md)。
 
 ## 七类可复用起点
 
@@ -80,6 +82,8 @@ Caption 默认只有一句简洁的表格主题说明。指标计算、比较对
 | `compact-regime-comparison` | 少量任务与多种方法机制 | prompting / acting / combined / oracle 分块 |
 
 选择规则见 [template selection](references/template-selection.md)。模板只是可覆盖的 JSON 起点；也可以不用模板，直接由输入几何生成平面表。
+
+表格先按科学角色分为 `main_benchmark`、`main_tradeoff`、`ablation`、`analysis`、`diagnostic` 和 `simple_comparison`。运行 `python scripts/generate_main_table.py list-types` 可查看类型说明。`main_benchmark` 不限制为一张表，但每张都必须声明焦点方法，并在各 benchmark 上保留与 baseline 的直接比较。
 
 ## 作为 Skill 使用
 
@@ -103,7 +107,15 @@ Skill 会先识别比较维度和科学口径，再选择模板。具体行为�
 Python 3.10+，运行时无第三方 Python 依赖。
 
 ```bash
+python scripts/generate_main_table.py inspect-manuscript manuscript.zip \
+  --pdf manuscript.pdf --out output/manuscript-inspection
+
+python scripts/generate_main_table.py replace-manuscript manuscript.zip \
+  --pdf manuscript.pdf --replacements replacements \
+  --out output/manuscript-patched --compile
+
 python scripts/generate_main_table.py list-templates
+python scripts/generate_main_table.py list-types
 
 python scripts/generate_main_table.py generate \
   examples/gallery/family_banded.csv \
@@ -124,10 +136,10 @@ paper2table generate results.csv --template benchmark-wide --config table.json -
 ## 产物与保证
 
 ```text
-experiment files → verified internal pipeline → caption.txt + table.tex/table.html
+experiment files → verified internal pipeline → caption.txt + description.txt + table.tex/table.html
 ```
 
-- `caption.txt` 与 `table.tex` / `table.html` 是最终交付。
+- `caption.txt`、`description.txt` 与 `table.tex` / `table.html` 是最终交付；description 用于说明表格内容及其论文用途。
 - `observations.json` 保留标准化后的每个观测和来源。
 - `aggregates.json` 保留 mean、sample SD、`n`、run IDs 和身份维度。
 - `table-spec.json` 是与 LaTeX / HTML 解耦的语义中间层。

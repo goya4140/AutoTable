@@ -1,8 +1,10 @@
 {
   "template": "family-banded-benchmark",
+  "table_type": "analysis",
   "title": "Paired failure taxonomy",
   "label": "tab:exp40-failure-taxonomy",
   "caption": "Paired failure taxonomy.",
+  "description": "This table reports the rates and counts of recovered, unrecovered, and side-effect outcomes across 5,247 eligible pairs, together with the recovery-minus-side-effect balance. Its purpose is to evaluate the registered benefit-harm criterion and keep adverse outcomes visible in the paper's evidence record.",
   "input": {"dimensions": ["protocol", "source_type"]},
   "metrics": {
     "rate_or_difference": {"label": "Rate / difference", "direction": "max", "show_direction": false, "precision": 3},

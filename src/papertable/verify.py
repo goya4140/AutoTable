@@ -12,6 +12,39 @@ def verify_spec(spec: dict[str, Any]) -> dict[str, Any]:
         errors.append("table has no columns")
     if not rows:
         errors.append("table has no rows")
+    table_type = spec.get("table_type", "unclassified")
+    focal_methods = set(spec.get("focal_methods", []))
+    displayed_methods = set(spec.get("methods", []))
+    if not focal_methods.issubset(displayed_methods):
+        errors.append("focal_methods contains a method that is not displayed")
+    if table_type in {"main_benchmark", "main_tradeoff"}:
+        if not focal_methods:
+            errors.append(f"{table_type} requires at least one focal method")
+        if displayed_methods and not (displayed_methods - focal_methods):
+            errors.append(f"{table_type} requires at least one non-focal baseline")
+    if table_type == "main_benchmark":
+        datasets = list(spec.get("datasets", []))
+        if len(datasets) < 2:
+            errors.append("main_benchmark requires at least two displayed benchmarks")
+        if focal_methods and displayed_methods - focal_methods:
+            for dataset in datasets:
+                focal_evidence = False
+                baseline_evidence = False
+                for row in rows:
+                    for column_index, cell in enumerate(row.get("cells", [])):
+                        if cell is None:
+                            continue
+                        column = columns[column_index]
+                        cell_dataset = row.get("dataset") if spec.get("orientation") == "datasets_rows" else column.get("dataset")
+                        if cell_dataset != dataset:
+                            continue
+                        method = cell.get("method")
+                        focal_evidence = focal_evidence or method in focal_methods
+                        baseline_evidence = baseline_evidence or method in (displayed_methods - focal_methods)
+                if not focal_evidence or not baseline_evidence:
+                    errors.append(
+                        f"main_benchmark dataset {dataset!r} lacks a direct focal-versus-baseline comparison"
+                    )
     for row_index, row in enumerate(rows):
         cells = row.get("cells", [])
         if len(cells) != len(columns):

@@ -5,6 +5,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from .table_types import table_type_strategy
+
 
 def template_directory() -> Path:
     return Path(__file__).resolve().parents[2] / "assets" / "templates"
@@ -48,7 +50,11 @@ def deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]
 def resolve_config(config: dict[str, Any] | None, template: str | None = None) -> dict[str, Any]:
     config = config or {}
     selected = template or config.get("template")
-    if not selected:
+    base = load_template(str(selected)) if selected else {}
+    table_type = config.get("table_type")
+    if table_type:
+        base = deep_merge(base, table_type_strategy(str(table_type)))
+    if not selected and not table_type:
         return config
     override = {key: value for key, value in config.items() if key != "template"}
-    return deep_merge(load_template(str(selected)), override)
+    return deep_merge(base, override)

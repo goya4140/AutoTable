@@ -1,7 +1,7 @@
 interface:
   display_name: "Paper2Table"
-  short_description: "Turn experiment files into a caption and table"
-  default_prompt: "Use $paper2table to turn my uploaded experiment results into a publication-ready caption and table."
+  short_description: "Replace experiment tables in a LaTeX manuscript"
+  default_prompt: "Use $paper2table to inspect my LaTeX ZIP and optional compiled PDF, redesign the experiment tables without changing evidence, replace them in the source, and return a verified compiled PDF."
 
 policy:
   allow_implicit_invocation: true

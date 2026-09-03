@@ -1,8 +1,10 @@
 {
   "template": "benchmark-wide",
+  "table_type": "diagnostic",
   "title": "Incomplete C2 matched-coverage diagnostic",
   "label": "tab:exp40-c2-diagnostic",
   "caption": "Matched-coverage diagnostic for C2.",
+  "description": "This table compares Global bypass and Ours on matched statement error and common coverage for diagnostic seed 67. Its purpose is to document the incomplete C2 measurement without treating seed 67 as a formal three-seed aggregate; seeds 53 and 79 have no matched nucleus-shape coverage.",
   "input": {"dimensions": ["evidence_status", "protocol", "source_type"]},
   "layout": {
     "orientation": "methods_rows",
