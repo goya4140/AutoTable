@@ -1,6 +1,6 @@
 # Paper2Table — Experiment Files to Caption + Table
 
-[![Tests](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/PaperTable/actions/workflows/tests.yml)
+[![Tests](https://github.com/goya4140/AutoTable/actions/workflows/tests.yml/badge.svg)](https://github.com/goya4140/AutoTable/actions/workflows/tests.yml)
 
 Paper2Table 的主要产品契约是：
 
@@ -90,7 +90,7 @@ Caption 默认只有一句简洁的表格主题说明。指标计算、比较对
 把仓库放入 Codex skills 目录：
 
 ```bash
-git clone https://github.com/goya4140/PaperTable.git \
+git clone https://github.com/goya4140/AutoTable.git \
   ~/.codex/skills/paper2table
 ```
 
