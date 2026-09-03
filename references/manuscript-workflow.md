@@ -22,8 +22,8 @@ The replacement may change:
 - concise caption wording without changing scientific meaning;
 - spacing and type size within legibility limits;
 - best/second-best or focal-row emphasis when the comparison scope is explicit.
-- compact single-line metric headers, with a group tier only for adjacent metrics that share a meaningful category;
-- a restrained full-row highlight for the focal method in baseline-comparison main tables.
+- compact single-line metric headers, with a group tier only when at least two clear categories each span two or more adjacent metrics;
+- a restrained, visually continuous full-row highlight for the focal method in baseline-comparison main tables.
 
 The replacement must not silently change:
 
@@ -33,6 +33,8 @@ The replacement must not silently change:
 - labels referenced elsewhere in the paper.
 
 Avoid `\resizebox` as the first response to overflow. Prefer concise single-line labels, meaningful grouped headers, reduced `\tabcolsep`, or a justified `table*`. Do not add line breaks when the unbroken header fits at a legible size. Scaling is acceptable only after those options fail and the rendered text remains legible.
+
+When a row is highlighted, compile-time intent is not enough: the rendered shade must be one uninterrupted band from the first displayed column through the last. Prefer `\rowcolor` with a column specification whose normal intercolumn spacing is painted. Do not simulate the effect with repeated `\cellcolor`, and do not use `@{\extracolsep{\fill}}` when it creates white gutters between highlighted cells. If stretchable spacing is necessary, render and verify that it is colored; otherwise use fixed `\tabcolsep`, a regular `tabular`, or another layout that preserves a continuous band.
 
 ## Outputs and acceptance
 
@@ -44,4 +46,4 @@ Avoid `\resizebox` as the first response to overflow. Prefer concise single-line
 - `manuscript-patched.pdf`: compiled manuscript;
 - `manifest.json` and `latexmk.log`: audit evidence.
 
-Do not deliver merely because `latexmk` returned zero. Render the relevant PDF pages and verify no clipping, overlap, unreadable text, or layout regression. Compare table labels and visible values against the originals.
+Do not deliver merely because `latexmk` returned zero. Render the relevant PDF pages and verify no clipping, overlap, unreadable text, layout regression, or segmented row highlight. Compare table labels and visible values against the originals.

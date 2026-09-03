@@ -43,6 +43,9 @@ The right side answers "what happened?"
 
 - `dataset → metric` supports benchmark-by-benchmark reading.
 - `metric family → dataset` supports quality-efficiency or clean-robustness trade-offs.
+- A manuscript table may instead use semantic metric families when they are explicit in the evidence: for example, two morphology metrics, two statement metrics, and two task/mechanism metrics; or two classification metrics and two mechanism metrics. These are examples of the grouping test, not fixed names.
+- Add a top-level metric tier only when at least two categories each span two or more adjacent leaf metrics. Keep the header flat when categories would be ambiguous, overlap, reorder the scientific scan path, or leave singleton pseudo-groups.
+- Keep category labels short and neutral. A group heading organizes measurements; it must not introduce a stronger scientific claim than the leaf metrics support.
 - Put `Avg.` at the end of a benchmark block only when its macro/micro/weighted definition is known.
 - Keep quality, absolute cost, and relative speedup separate. Do not collapse them into a decorative composite score.
 
@@ -74,6 +77,8 @@ Recommended default:
 
 Ties share a marker. Color is secondary and the table must remain intelligible in grayscale.
 
+A focal-row shade is one continuous semantic channel, not a collection of highlighted cells. It must cover the identity columns, every evidence column, and the spacing between them. In LaTeX, prefer a single `\rowcolor` applied before the first cell and a column layout that paints ordinary intercolumn padding. Avoid repeated `\cellcolor` and verify that `tabular*` stretch glue does not split the band into blocks. If the rasterized PDF shows gaps, change the column specification or fitting strategy before delivery.
+
 ## 6. Caption contract
 
 Use one concise identifying sentence, normally `Main results on ...`, `Ablation results`, or another direct description of the table's subject. Do not turn the caption into an experimental-method paragraph. Metric definitions, aggregation, run count, compared systems, protocol, ranking scope, missingness, caveats, and interpretation belong in the paper body unless the user explicitly requests a necessary legend.
@@ -82,4 +87,4 @@ Do not render prose or notes below the table. Preserve useful author context in 
 
 ## 7. Visual QA
 
-Compile the actual LaTeX and compare it with the visual plan. Check that group bands occur only as two or more meaningful parallel categories, no orphan band remains after singleton suppression, focal shading does not hide rules, multi-level headers align with their evidence columns, primary numbers share an alignment axis, the table has no prose below its bottom rule, and the scan path remains clear in grayscale.
+Compile the actual LaTeX and compare it with the visual plan. Check that group bands occur only as two or more meaningful parallel categories, no orphan band remains after singleton suppression, metric groups each span at least two genuinely related adjacent metrics, focal shading is continuous across the complete row and does not hide rules, multi-level headers align with their evidence columns, primary numbers share an alignment axis, the table has no prose below its bottom rule, and the scan path remains clear in grayscale.
